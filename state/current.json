@@ -130,6 +130,8 @@
     "confirmed_enforcement_reason": "Support_cited_prohibited_Actions_use_specific_workflow_step_and_category_not_identified",
     "relationship_to_Actions": "cited_by_GitHub_Support_in_reinstatement_denial",
     "support_ticket": "4990916",
+    "support_ticket_status": "closed_cannot_be_reopened_email_replies_not_seen_by_team",
+    "further_contact_route": "new_ticket_via_support_portal_no_reconsideration_guaranteed",
     "support_reply_moscow_date": "2026-11-12",
     "reinstatement_status": "denied_without_expiry_stated",
     "local_mitigation": "both_workflows_moved_out_of_recognized_directory_without_content_changes",

@@ -18,6 +18,12 @@ Dates in this note use Europe/Moscow.
   describe it as a confirmed finding of cryptomining or all three examples.
   The reply states that restrictions will not be removed and gives no expiry.
   Restoration must not be assumed when planning further work.
+- The owner replied with a follow-up and received a service notice that ticket
+  #4990916 is closed, cannot be reopened, and replies will not be seen by the
+  team. Do not suggest replying to that email thread again or count the notice
+  as a second review of the additional arguments. GitHub directs further
+  contact to a new ticket through its support portal; this does not guarantee
+  reconsideration, and no new ticket has been submitted by the assistant.
 - Earlier published workflows used GitHub-hosted Linux and Windows runners.
   Besides compiling code, they executed real CPU matrix/jackpot/proof code and
   a synthetic loopback TCP peer. The saved evidence distinguishes this from
