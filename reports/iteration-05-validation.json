@@ -1,0 +1,270 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 5,
+  "date": "2026-11-11",
+  "generated_at": "2026-11-11T17:20:18.988785+03:00",
+  "passed": true,
+  "scope": "bounded_loopback_host_compute_real_PlainProof_submit_and_response_lifecycle",
+  "parent_commit": "7d202255a2f2516eff351f9f4c26fc2603f751be",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "cxx": "g++ (Debian 14.2.0-19) 14.2.0",
+    "cmake": "3.31.6",
+    "cuda": "13.5.37",
+    "cuda_architecture": "SM120"
+  },
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "proof_dependency": {
+    "build_origin": "iteration_4_verified_local_artifacts",
+    "rebuilt_locally_this_iteration": false,
+    "rust_unit_tests_rerun_locally": false,
+    "build_report": "reports/iteration-04-proof-build.json",
+    "donor_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+    "official_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+    "proof_stub_used": false
+  },
+  "checks": {
+    "native_ctest": {
+      "passed": 13,
+      "failed": 0,
+      "log": "reports/iteration-05-ctest.log"
+    },
+    "host_lifecycle": {
+      "schema": "neuro.mining_job_test.v1",
+      "status": "PASS",
+      "kind": "bounded_cpu_host_lifecycle",
+      "checks": 141,
+      "full_matrix_cpu_reference_calls": 1,
+      "fixture_backend_calls": 12,
+      "cancellation_checkpoints": 7,
+      "controlled_concurrency_cases": 4,
+      "genuine_plain_proof_observed": true,
+      "gpu_execution_observed": false,
+      "pool_connection_observed": false,
+      "pool_share_accepted": false,
+      "mining_performance_evidence": false
+    },
+    "wire_component": {
+      "positive_checks": 41,
+      "rejected_cases": 54,
+      "loopback_connections": 5,
+      "real_donor_parser_and_serializer": true,
+      "real_Rust_gzip": true
+    },
+    "python": {
+      "passed": 63,
+      "peer_tests": 18,
+      "failed": 0,
+      "log": "reports/iteration-05-python-tests.log"
+    },
+    "cpu_loopback_replay": {
+      "passed": 15,
+      "failed": 0,
+      "actual_wire_proofs_officially_verified": 17,
+      "gzip_payloads": 15,
+      "plain_payloads": 2,
+      "aggregate_native_counters": {
+        "connections": 18,
+        "jobs_received": 22,
+        "jobs_started": 22,
+        "attempts_finished": 22,
+        "cancelled": 5,
+        "misses": 0,
+        "errors": 0,
+        "duplicates": 1,
+        "protocol_errors": 4,
+        "unmatched_responses": 1,
+        "submissions": 17,
+        "accepted": 13,
+        "rejected": 2,
+        "pending_lost": 2,
+        "checkpoints": 5
+      },
+      "report": "reports/iteration-05-pool-replay.json"
+    },
+    "proof_regression": {
+      "passed": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60,
+      "genuine_gzip_roundtrips": 6,
+      "report": "reports/iteration-05-proof-check.json"
+    },
+    "cuda_build": {
+      "compiled_and_linked": true,
+      "architecture": "SM120",
+      "full_host_proof_wire_executable": true,
+      "gpu_execution": false,
+      "logs": [
+        "reports/iteration-05-cuda-configure.log",
+        "reports/iteration-05-cuda-build.log"
+      ]
+    },
+    "cuda_host_ctest": {
+      "passed": 3,
+      "failed": 0,
+      "new_host_input_rejections_before_cuda": 5,
+      "gpu_execution": false,
+      "log": "reports/iteration-05-cuda-ctest.log"
+    },
+    "cuda_linked_cpu_replay": {
+      "passed": 2,
+      "official_proof_verifications": 2,
+      "backend": "cpu",
+      "gpu_execution": false,
+      "report": "reports/iteration-05-cuda-linked-replay.json"
+    },
+    "empty_readme": {
+      "bytes": 0,
+      "passed": true
+    }
+  },
+  "observed_boundaries": {
+    "loopback_tcp_execution": true,
+    "synthetic_work": true,
+    "cpu_execution": true,
+    "gpu_execution": false,
+    "windows_execution": false,
+    "external_pool_connection": false,
+    "live_pool_acceptance": false,
+    "stark_generated": false,
+    "continuous_mining_search": false,
+    "reseller_model_api_calls": false,
+    "dsh_cost_enforcement": false
+  },
+  "review_fixes": [
+    "full_job_identity_beyond_donor_first_8_header_bytes",
+    "backend_exception_preserved_during_concurrent_invalidation",
+    "stdout_thread_errors_reach_replay_verdict",
+    "separate_EOF_and_open_socket_ACK_timeout_cases"
+  ],
+  "commands": [
+    "cmake -S . -B build/proof-cmake -DCMAKE_BUILD_TYPE=Release -DNEURO_ENABLE_PROOF=ON",
+    "cmake --build build/proof-cmake --parallel 2",
+    "RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure",
+    "python -m unittest discover -s tests -v",
+    "python tools/check_pearl_proofs.py",
+    "python tools/replay_pool.py --output artifacts/pool-replay.json",
+    "cmake -S . -B build/host-cuda -DCMAKE_BUILD_TYPE=Release -DNEURO_ENABLE_CUDA=ON -DNEURO_ENABLE_PROOF=ON -DNEURO_BUILD_CPU_CHECKS=OFF -DCMAKE_CUDA_ARCHITECTURES=120 -DCMAKE_CUDA_COMPILER=/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+    "cmake --build build/host-cuda --parallel 2",
+    "RAYON_NUM_THREADS=2 ctest --test-dir build/host-cuda --output-on-failure",
+    "python tools/replay_pool.py --native build/host-cuda/neuro_pool_replay_client_cuda --backend cpu --scenario gzip_happy --scenario plain_happy --work-dir artifacts/pool-replay-cuda-linked --output artifacts/pool-replay-cuda-linked.json",
+    "python tools/neuroctl.py source-check"
+  ],
+  "source_sha256": {
+    "CMakeLists.txt": "c598b4415c604eee1e40cb7fbcf7e4ea05e3b97866ba13669096d64a7257da18",
+    "cmake/Proof.cmake": "09ebae86efd192bf9ab788e49608add151bd7b5488b23d0e27d573802b706fb9",
+    "cmake/Host.cmake": "cbbeddc7f79b36f0ffb35e471d14a927c2aa1c9dfeaa64b1a1f95f2bf604a9d2",
+    "native/include/neuro/mining_job.hpp": "152ad7e312aa40ecb1aa1dc5584bad5370d9de9372c4a81bd662f3cb52ae44cb",
+    "native/host/mining_job.cpp": "baa149a25990f221d83b4b319325d848daa51fe6a2587c9b89bf189385e2a2f6",
+    "native/tests/mining_job_test.cpp": "19b7bc68a7ac9304b221fe196ba7a9e2bd7ee12de34e0add3f301b3b78b74f8a",
+    "native/include/neuro/pool_wire.hpp": "773151de50d10262f147e982c7d231d4432c3d047befad602a0c41f1bb098738",
+    "native/host/pool_wire.cpp": "ad0072b0bf39bc9a119a5d9c9ba2a5378113d122ac7bca7d80c871fca1c6cf4a",
+    "native/tests/pool_wire_test.cpp": "8d715284e15d088a1b01dd621cf5342be9dfa7857dfc54b2f4b71afdb4e6d861",
+    "native/host/pool_replay_client.cpp": "ef6e21aa6ada32611c9fed1a4cd93fd5a2a1ab8cea777ed100cb633cb2ab0a2a",
+    "native/include/neuro/mining_cuda.hpp": "e90f00c796c62121926e6b448ac003c5403f3c5742f935ecc2ca7b762b7fbedb",
+    "native/cuda/mining_cuda.cu": "f8891bb7e2ae21d895e39158e5c7608b23be257c0f89a93e7f5da0a86c0e21b8",
+    "native/tests/mining_cuda_host_test.cpp": "05e5e2ac432ca5837cbcb032c6301890e8526760d7cfe101bd2605a495de88bc",
+    "tools/replay_pool.py": "4d3ac033f2998f506073ebfe3e6ae5a6139cff258e561a38d4ea3d0c1b4cb975",
+    "tests/test_pool_replay.py": "5b9cd31b5b0fdafe5492b2f8261fe25a25f622e86d638a3ce6f42555e0aa09a2",
+    "native/cuda/fullk_kernel.cu": "a8bd682e454bd21e81253a8f7aee7f7acc100b23a54a93b5ff799aa42df79d37",
+    "native/include/neuro/fullk.hpp": "588078751744ab4fcd3a2365193bf69b4a9de87a4d5c5aa772726f6734b1eca7",
+    "native/pearl/pearl_input.cpp": "71a6236fab4e89396fe368edbd117fd6bd02d54832f871fa1d71600d4a479057",
+    "native/proof/pearl_proof.cpp": "fce94ef2577f8c2184098d938bb2e6670b93f3c70625e92e4deba29c3eca85ac",
+    "native/proof/pearl_witness.cpp": "151e4ac0d97fc83b68feda89ccb7c483090a5480e882584b9c6bfee4f989a835",
+    "native/fixtures/proof_manifest.json": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa",
+    "native/fixtures/pearl_manifest.json": "c6c52355e16e8de5b0e6c9c74141146b5cf23de55c60586e5f7423917c483ba5",
+    "configs/proof-build.json": "299b49972a2e19d0654f5a55ab6f0d4f04daece06035203e29d35b51485e9e1c",
+    "rust/pearl-proof-check/Cargo.lock": "78711222bd48509ba382cfbaa5e8ae5482978937932a78b4b502ada3fcbceba0",
+    "rust/pearl-proof-check/src/main.rs": "4aa15236a9052d17daf8362a50f4c23146928e5d50e3246bde6f9aaaaad8040b",
+    ".github/workflows/offline.yml": "4ac760633aa3d569f30462d59cd04dc4f0b147065831791b2845c0eccd6c3f39",
+    "README.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "artifacts": {
+    "build/proof-cmake/neuro_pool_replay_client": {
+      "bytes": 5768896,
+      "sha256": "33c4a708c9a0c16c34874016b5978eaf29bc7870db3716a957b6774e1af5f34a"
+    },
+    "build/host-cuda/neuro_pool_replay_client_cuda": {
+      "bytes": 6887144,
+      "sha256": "3e2ef82302229188555549d4bbe7bc9bd19ad60494ee789f59ecf4560f16f278"
+    },
+    "build/host-cuda/neuro_mining_cuda_host_test": {
+      "bytes": 1139688,
+      "sha256": "ecb7e15ed7cb840e64e9750a9f7f29b62b19e699ebbcaa5e341b2e403141b00b"
+    },
+    "build/proof-target/x86_64-unknown-linux-gnu/release/pearl-proof-check": {
+      "bytes": 1491696,
+      "sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+    },
+    "build/proof-target/x86_64-unknown-linux-gnu/release/libcp_proof_ffi.a": {
+      "bytes": 45805354,
+      "sha256": "aaf9a7db9fa6d036f36aff8598358b3e7849ec0136b2d24dcb2e179554da54f6"
+    }
+  },
+  "evidence": {
+    "reports/iteration-05-pool-replay.json": {
+      "bytes": 104008,
+      "sha256": "ba2d8e520cd63ae00006d6554fa6e28b006c04a90741990626b03ab6409755f0"
+    },
+    "reports/iteration-05-cuda-linked-replay.json": {
+      "bytes": 11604,
+      "sha256": "61e59d15534af5a52cb15090d8a8286e9117cfd383966934f6e2c27d8ae8ae36"
+    },
+    "reports/iteration-05-proof-check.json": {
+      "bytes": 159052,
+      "sha256": "1cd8575b5b0403496df10c80e07ae0969605edb78d2eedffb98a65b2c0688ddb"
+    },
+    "reports/iteration-05-native-build.log": {
+      "bytes": 1674,
+      "sha256": "9849b51f0c89eabbc8465e1668d4d0e542a2d012cbd3ea06b2351b5c8d836003"
+    },
+    "reports/iteration-05-ctest.log": {
+      "bytes": 12502,
+      "sha256": "74938009d11aefe9ac46b1191a713ed6b468eb8f7967e64fcf47ee7c6b9a5705"
+    },
+    "reports/iteration-05-python-tests.log": {
+      "bytes": 8154,
+      "sha256": "87f4ca31f4e62670578de58fb89bbc5c7a7d8f9814085dcb41b2a66ae68f8a17"
+    },
+    "reports/iteration-05-cuda-configure.log": {
+      "bytes": 1131,
+      "sha256": "ee2430caf7a99648ce1d9012cb572e5f11c646fb4b44b4bd00ec32549c3d34c9"
+    },
+    "reports/iteration-05-cuda-build.log": {
+      "bytes": 4215,
+      "sha256": "77bad10feefe19b85b45c33bc6fba7b894171b004ad42dfea85e0163fc646c81"
+    },
+    "reports/iteration-05-cuda-ctest.log": {
+      "bytes": 2671,
+      "sha256": "502000910e087b8e3509b5f1c4a49a34f5e99ba5d0c22e6cd219d395f457398d"
+    }
+  },
+  "ci": {
+    "workflow": ".github/workflows/offline.yml",
+    "committed_report_scope": "local_precommit_results",
+    "remote_run_result": "consult_the_published_commit_Actions_run"
+  }
+}

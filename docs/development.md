@@ -96,7 +96,7 @@ This builds actual `cp-proof-ffi` in a generated source copy, executes its 20
 unit tests, and builds an official Pearl verifier from a separate pinned Git
 dependency. CMake's proof option checks the successful build report and static
 library hash. Missing real Rust output is an error; no stub is available.
-The Linux native CTest set now has eleven entries with proof mode enabled.
+The Linux native CTest set now has thirteen entries with proof mode enabled.
 Ordinary ten-test CPU builds remain independent of Cargo.
 
 The corpus check generates six proofs and performs 66 checks across the native
@@ -116,9 +116,31 @@ The builder and checks save JSON evidence under `artifacts/`. The GitHub proof
 job runs the same workflow and uploads the logs. Initial dependency download is
 required; subsequent builds reuse Cargo's cache.
 
+## Host lifecycle and real loopback replay
+
+After the preceding proof build:
+
+```bash
+python tools/replay_pool.py --output artifacts/pool-replay.json
+```
+
+This launches a real native TCP client and a local Python peer. It exercises
+generation changes, cancellation during computation/proof, reconnects, malformed
+messages and exact acknowledgement accounting. Actual submitted PlainProofs
+are decoded and checked in the separate official verifier. All jobs and wallet
+labels are synthetic; no external pool connection is made. The default backend
+is CPU. `docs/host-replay.md` specifies the supported donor wire dialect and
+provides combined CUDA/proof build commands and the explicit hardware-run mode.
+
+An ordinary proof-enabled native CTest run includes the coordinator and wire
+component tests. The Python replay is an additional process-level gate and is
+also run by GitHub's proof job. Native failure in an expected disconnect or
+ACK-timeout scenario counts as a replay pass only when its exact unresolved
+result and zero accepted/rejected counters are observed.
+
 ## Evidence and fixture changes
 
-`reports/iteration-04-validation.json` records the checked source hashes and
+`reports/iteration-05-validation.json` records the checked source hashes and
 coverage. Reports from earlier iterations describe their historical inputs.
 
 `tools/generate_fullk_fixtures.py` defaults to read-only verification. Its

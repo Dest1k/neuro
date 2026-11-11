@@ -1,0 +1,33 @@
+[  2%] Built target neuro_fullk_reference
+[  8%] Built target neuro_blake3
+[ 11%] Built target neuro_fullk_warp
+[ 14%] Built target neuro_cli_test
+[ 18%] Built target neuro_mma_layout_test
+[ 25%] Built target neuro_protocol_test
+[ 31%] Built target neuro_fullk_test
+[ 31%] Built target neuro_blake3_vectors_test
+[ 45%] Built target neuro_math_probe
+[ 45%] Built target neuro_fullk_upstream_test
+[ 58%] Built target neuro_pearl_donor
+[ 61%] Built target neuro_pearl_input
+[ 64%] Built target neuro_pearl_alignment_test
+[ 68%] Built target neuro_pearl_proof
+[ 71%] Built target neuro_pearl_input_test
+[ 78%] Built target neuro_pearl_proof_cli
+[ 82%] Built target neuro_pearl_upstream_test
+[ 84%] Building CXX object CMakeFiles/neuro_mining_job.dir/native/host/mining_job.cpp.o
+[ 87%] Built target neuro_pearl_proof_test
+[ 88%] Linking CXX static library libneuro_mining_job.a
+[ 88%] Built target neuro_mining_job
+[ 90%] Building CXX object CMakeFiles/neuro_pool_wire.dir/native/host/pool_wire.cpp.o
+[ 91%] Building CXX object CMakeFiles/neuro_mining_job_test.dir/native/tests/mining_job_test.cpp.o
+[ 92%] Linking CXX static library libneuro_pool_wire.a
+[ 92%] Built target neuro_pool_wire
+[ 94%] Building CXX object CMakeFiles/neuro_pool_replay_client.dir/native/host/pool_replay_client.cpp.o
+[ 95%] Linking CXX executable neuro_mining_job_test
+[ 95%] Built target neuro_mining_job_test
+[ 97%] Building CXX object CMakeFiles/neuro_pool_wire_test.dir/native/tests/pool_wire_test.cpp.o
+[ 98%] Linking CXX executable neuro_pool_replay_client
+[100%] Linking CXX executable neuro_pool_wire_test
+[100%] Built target neuro_pool_replay_client
+[100%] Built target neuro_pool_wire_test

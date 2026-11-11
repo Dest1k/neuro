@@ -72,6 +72,8 @@ jobs:
           RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure
       - name: Verify proof corpus and controlled corruption with both implementations
         run: python tools/check_pearl_proofs.py
+      - name: Exercise real loopback job lifecycle and independently verify submissions
+        run: python tools/replay_pool.py --output artifacts/pool-replay.json
       - name: Retain proof evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,4 +83,6 @@ jobs:
             artifacts/proof-build.json
             artifacts/proof-build/*.log
             artifacts/proof-check.json
+            artifacts/pool-replay.json
+            artifacts/pool-replay/
             build/proof-cmake/Testing/Temporary/LastTest.log

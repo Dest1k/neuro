@@ -58,6 +58,14 @@ independent jackpot fixtures default to check-only. Pool acceptance, recursive
 STARK generation, sustained GPU operation and Windows execution need their own
 observed evidence. Upstream proof stubs must never satisfy a proof gate.
 
+The bounded host lifecycle and real TCP replay are in `docs/host-replay.md`.
+Run `python tools/replay_pool.py` after the proof build. Its peer verifies received
+proofs with the separate official executable and supplies expectations from its
+own issued-job ledger. Preserve full job identity, generation checks and distinct
+submitted/accepted/rejected/unacknowledged counts. Local peer acceptance is not
+live pool acceptance. Default replay is CPU; an explicit CUDA backend must report
+actual observed GPU execution. A CUDA-linked CPU run is still a CPU run.
+
 An optimization is useful only if exact results remain correct and repeated
 measurements under comparable conditions support it. Keep independent expected
 results separate from candidate code. Never weaken a verifier to accept a

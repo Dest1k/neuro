@@ -1,0 +1,405 @@
+{
+  "schema": "neuro.pool_replay.v1",
+  "passed": true,
+  "transport": "loopback_tcp",
+  "protocol": "CPPminer_LuckyPool_Kryptex_dialect",
+  "backend": "cpu",
+  "device": null,
+  "scenarios_run": 2,
+  "scenarios": [
+    {
+      "name": "gzip_happy",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 95,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.119,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "difficulty",
+          "sequence": 3,
+          "connection": 1
+        },
+        {
+          "event": "job_received",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 15,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "gzip_happy-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "gzip_happy-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "plain_happy",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 33,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.057,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": false
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "status": "found",
+          "tiles_scanned": 3
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 14,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "plain_happy-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": false,
+          "wire_bytes": 100432,
+          "raw_bytes": 100432,
+          "wire_sha256": "368751d63845612e4d29124b95f6df83537760788f74e49b60273007bd1a3e46",
+          "proof_sha256": "368751d63845612e4d29124b95f6df83537760788f74e49b60273007bd1a3e46",
+          "official_verifier": {
+            "cert_version": 2,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "plain_happy-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  ],
+  "submitted_proofs_checked": 2,
+  "official_reference_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+  "fixture_manifest_sha256": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa",
+  "binaries": {
+    "native_sha256": "3e2ef82302229188555549d4bbe7bc9bd19ad60494ee789f59ecf4560f16f278",
+    "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+  },
+  "external_pool_connection": false,
+  "live_pool_acceptance": false,
+  "model_api_calls": false,
+  "cpu_execution": true,
+  "gpu_execution": false,
+  "windows_execution": false
+}

@@ -1,0 +1,61 @@
+[  4%] Building CXX object CMakeFiles/neuro_fullk_reference.dir/native/reference/fullk_reference.cpp.o
+[  4%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3.c.o
+[  6%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_dispatch.c.o
+[  9%] Linking CXX static library libneuro_fullk_reference.a
+[  9%] Built target neuro_fullk_reference
+[ 11%] Building CXX object CMakeFiles/neuro_fullk_warp.dir/native/reference/fullk_warp.cpp.o
+[ 13%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_portable.c.o
+[ 15%] Linking CXX static library libneuro_fullk_warp.a
+[ 15%] Built target neuro_fullk_warp
+[ 18%] Building CUDA object CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o
+[ 20%] Linking C static library libneuro_blake3.a
+[ 20%] Built target neuro_blake3
+[ 22%] Building CUDA object CMakeFiles/neuro_fullk_cuda.dir/native/cuda/fullk_kernel.cu.o
+[ 25%] Linking CUDA static library libneuro_fullk_cuda.a
+[ 25%] Built target neuro_fullk_cuda
+[ 27%] Building C object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_noise.c.o
+[ 29%] Linking CUDA executable neuro_mma_probe
+[ 29%] Built target neuro_mma_probe
+[ 31%] Building CUDA object CMakeFiles/neuro_fullk_probe.dir/native/cuda/fullk_probe.cu.o
+[ 34%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_job_ctrl.cpp.o
+[ 36%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_pool.cpp.o
+[ 38%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_pool_notify.cpp.o
+[ 40%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_tcp.cpp.o
+[ 43%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_json_frame.cpp.o
+[ 45%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_util.cpp.o
+[ 47%] Linking CXX executable neuro_fullk_probe
+[ 47%] Built target neuro_fullk_probe
+[ 50%] Building CUDA object CMakeFiles/neuro_mining_cuda.dir/native/cuda/mining_cuda.cu.o
+[ 52%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_state.cpp.o
+[ 54%] Linking CXX static library libneuro_pearl_donor.a
+[ 54%] Built target neuro_pearl_donor
+[ 56%] Building CXX object CMakeFiles/neuro_pearl_input.dir/native/pearl/pearl_input.cpp.o
+[ 59%] Linking CXX static library libneuro_pearl_input.a
+[ 59%] Built target neuro_pearl_input
+[ 61%] Building CXX object CMakeFiles/neuro_pearl_proof.dir/native/proof/pearl_proof.cpp.o
+[ 63%] Building CXX object CMakeFiles/neuro_pearl_proof.dir/native/proof/pearl_witness.cpp.o
+[ 65%] Linking CXX static library libneuro_pearl_proof.a
+[ 65%] Built target neuro_pearl_proof
+[ 68%] Building CUDA object CMakeFiles/neuro_pearl_probe.dir/native/cuda/pearl_probe.cu.o
+[ 70%] Linking CUDA static library libneuro_mining_cuda.a
+[ 70%] Built target neuro_mining_cuda
+[ 72%] Building CXX object CMakeFiles/neuro_pearl_proof_cli.dir/native/proof/pearl_proof_cli.cpp.o
+[ 75%] Linking CXX executable neuro_pearl_proof
+[ 75%] Built target neuro_pearl_proof_cli
+[ 77%] Building CXX object CMakeFiles/neuro_mining_job.dir/native/host/mining_job.cpp.o
+[ 79%] Linking CXX executable neuro_pearl_probe
+[ 79%] Built target neuro_pearl_probe
+[ 81%] Building CXX object CMakeFiles/neuro_mining_cuda_host_test.dir/native/tests/mining_cuda_host_test.cpp.o
+[ 84%] Linking CXX static library libneuro_mining_job.a
+[ 84%] Built target neuro_mining_job
+[ 86%] Building CXX object CMakeFiles/neuro_pool_wire.dir/native/host/pool_wire.cpp.o
+[ 88%] Linking CXX executable neuro_mining_cuda_host_test
+[ 88%] Built target neuro_mining_cuda_host_test
+[ 90%] Linking CXX static library libneuro_pool_wire.a
+[ 90%] Built target neuro_pool_wire
+[ 95%] Building CXX object CMakeFiles/neuro_pool_replay_client.dir/native/host/pool_replay_client.cpp.o
+[ 95%] Building CXX object CMakeFiles/neuro_pool_replay_client_cuda.dir/native/host/pool_replay_client.cpp.o
+[ 97%] Linking CXX executable neuro_pool_replay_client
+[100%] Linking CXX executable neuro_pool_replay_client_cuda
+[100%] Built target neuro_pool_replay_client
+[100%] Built target neuro_pool_replay_client_cuda

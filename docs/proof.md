@@ -165,12 +165,14 @@ integration needs its own observed build and tests.
 `artifacts/proof-check.json`. The GitHub `proof` job reproduces the build,
 fixture check, native suite and cross-process verification, and retains logs.
 
-## Next integration boundary
+## Host integration
 
-Connect this proof path to a host/backend job lifecycle: receipt of work,
-job/generation identity, stale-work cancellation, arithmetic result selection,
-proof construction and submission payload. Exercise that lifecycle against an
-offline pool replay before using real credentials or starting laptop work.
+Iteration 5 connects this proof path to the bounded host/backend lifecycle:
+receipt of work, immutable job/generation identity, stale-work cancellation,
+arithmetic selection, proof construction and actual TCP submission payload.
+`docs/host-replay.md` describes the local peer, independent verification of the
+received bytes and expected failure cases. It also documents the combined CUDA
+executable and its observed CPU-only replay.
 Persistent zero-B attempts, production-sized scheduling, physical CUDA results,
 Windows execution, accepted network shares and DSH billing remain separate
 work items.

@@ -10,8 +10,8 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 | 2 — complete within offline boundary | Standalone full-K INT8 CUDA kernel with transcript interface | Independent fixed vectors, C++ oracle, warp emulator, donor differential; SM120 compile/link; physical GPU comparison pending |
 | 3 — complete within offline boundary | Real signal/commitment/noise preparation, independent vectors and full-K consumer | Three fixed jobs; byte-exact donor differential; official BLAKE3 vectors; 10 CPU tests; CUDA consumer compiled, GPU unrun |
 | 4 — complete within offline boundary | Real Rust PlainProof/witness, independent jackpots and official verifier | 20 Rust tests; 11 native tests; 66 cross-process checks; real winner/loser and corruption cases; GPU/network unrun |
-| 5 | Miner host/backend adapter, job cancellation and offline pool replay | Complete offline job lifecycle and error recovery |
-| 6 | Windows SSH worker and DSH usage/cost bridge | Bounded commands, saved logs; live cache/billing only if endpoint access exists |
+| 5 — complete within offline boundary | Immutable host/backend lifecycle, real TCP replay, independent verification of wire submissions and combined CUDA executable | Cancellation/ACK/reconnect scenarios; CPU execution and SM120 compile/link; GPU/Windows/live pool unrun |
+| 6 | Windows build/SSH worker and DSH usage/cost boundary | Prepare bounded hardware commands and exact usage records; observe Windows/cache/billing only with actual endpoint access |
 | 7 | Bounded optimization loop with preserved baseline | Correctness before timing; no-progress and spending stops |
 | 8 | End-to-end recovery and stability work | Broken jobs, disconnects, CUDA errors; physical GPU coverage explicitly distinguished |
 | 9 | Fresh-directory handoff rehearsal | Rebuild from pinned sources, resolve missing dependencies, verify package contents |

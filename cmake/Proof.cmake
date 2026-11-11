@@ -2,6 +2,7 @@
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
   message(FATAL_ERROR "The recorded proof link recipe is Linux 64-bit; validate a separate Windows recipe first")
 endif()
+
 set(NEURO_PROOF_LIBRARY "${CMAKE_SOURCE_DIR}/build/proof-target/x86_64-unknown-linux-gnu/release/libcp_proof_ffi.a"
     CACHE FILEPATH "Real Rust proof static library")
 set(NEURO_PROOF_BUILD_REPORT "${CMAKE_SOURCE_DIR}/artifacts/proof-build.json"
@@ -42,3 +43,5 @@ if(NEURO_BUILD_CPU_CHECKS)
   add_test(NAME neuro_pearl_proof COMMAND neuro_pearl_proof_test)
   set_tests_properties(neuro_pearl_proof PROPERTIES TIMEOUT 120)
 endif()
+
+include("${CMAKE_SOURCE_DIR}/cmake/Host.cmake")

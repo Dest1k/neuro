@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 4,
+  "preparation_iteration": 5,
   "preparation_total": 10,
-  "status": "iteration_4_complete_ready_for_iteration_5",
+  "status": "iteration_5_complete_ready_for_iteration_6",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/04.md"
+    "docs/iterations/05.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
     "gpu": "CUDA_C++17_inline_PTX_as_needed",
-    "host": "reuse_CPPminer",
+    "host": "pinned_CPPminer_wire_plus_immutable_generation_coordinator",
     "proof": "pinned_Rust_PlainProof_and_separate_official_Pearl_verifier",
     "executor": "openai/gpt-6.1-sol",
     "executor_selection": "provisional",
@@ -21,15 +21,15 @@
     "hash_implementation": "official_pinned_BLAKE3_C_portable"
   },
   "coverage": {
-    "python_controls": "passed_45_tests",
+    "python_controls": "passed_63_tests",
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
-    "cuda_compilation": "passed_sm120_pearl_consumer_linux_compile_and_link",
+    "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
     "windows_execution": "not_run",
     "full_proof": "plainproof_built_and_verified_stark_not_generated",
-    "pool_shares": "not_run",
+    "pool_shares": "not_run_external_pool_no_live_share_acceptance",
     "dsh_api_integration": "not_implemented",
     "provider_cache_billing": "not_verified",
     "cpu_fullk": "passed_python_gold_cpp_oracle_and_warp_emulator_10240_values",
@@ -41,7 +41,7 @@
     "cpu_pearl_full_builders": "passed_3670016_noisy_bytes_against_actual_donor_builders",
     "cpu_blake3": "passed_105_official_known_answer_modes",
     "cpu_job_cancellation": "passed_13_real_donor_component_checks_without_pool_connection",
-    "cpu_native": "passed_11_CMake_tests_with_optional_real_proof_mode",
+    "cpu_native": "passed_13_CMake_tests_with_real_proof_and_host_mode",
     "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
     "gpu_pearl_execution": "not_run_no_gpu",
     "plain_proof": "passed_6_full_signal_proofs_and_3_byte_identical_witness_proofs",
@@ -52,13 +52,22 @@
     "proof_expected_values": "passed_independent_python_512_tiles_and_exact_target_boundaries",
     "proof_provenance": "official_Pearl_ISC_notice_and_349_file_comparisons_plus_locked_registry_inventory",
     "proof_windows_build": "not_run_Linux_x86_64_only",
-    "stark_proof": "not_generated"
+    "stark_proof": "not_generated",
+    "cpu_host_lifecycle": "passed_141_checks_7_cancellation_stages_4_controlled_concurrency_cases",
+    "cpu_pool_wire": "passed_41_checks_54_rejections_5_real_loopback_connections",
+    "cpu_pool_replay": "passed_15_scenarios_17_actual_wire_proofs_verified_by_official_Pearl",
+    "local_peer_responses": "13_synthetic_acceptances_2_rejections_2_unacknowledged_not_live_pool_shares",
+    "pool_ack_timeout": "passed_open_socket_silence_and_separate_EOF_without_ACK",
+    "cuda_host_backend": "passed_5_invalid_inputs_before_CUDA_calls",
+    "cuda_linked_cpu_replay": "passed_2_scenarios_2_officially_verified_wire_proofs_no_GPU_execution",
+    "host_proof_windows_build": "not_run_Linux_x86_64_only",
+    "continuous_mining_search": "not_implemented_one_synthetic_attempt_per_generation"
   },
   "next_iteration": {
-    "number": 5,
-    "goal": "Connect host/backend job lifecycle to the real PlainProof path and exercise an offline pool replay",
-    "first_step": "Read docs/proof.md and the donor job/notify/submit code. Add an offline work-to-result-to-proof adapter with explicit job generation identity, stale-work cancellation and submit payload replay; preserve the independent proof gates and bounded native profile.",
-    "avoid": "Do not treat synthetic proof acceptance as live pool shares; do not replace host integration with another model framework or require a human CUDA programmer."
+    "number": 6,
+    "goal": "Prepare the Windows build/SSH worker and the DSH usage/cost boundary for bounded real hardware work",
+    "first_step": "Read docs/host-replay.md and docs/proof.md. Establish a reproducible Windows build recipe for the real proof plus CUDA host, implement a small bounded SSH worker with saved hardware inventory/results, and define the DSH usage adapter against an actual available interface. Preserve the local replay and official proof gates; missing endpoint access must remain explicit.",
+    "avoid": "Do not claim Windows/GPU execution, live shares or enforced DSH spending without observed endpoint evidence. Do not replace miner progress with a general agent framework or fake cached usage."
   },
   "handoff": {
     "target_iteration": 10,
@@ -66,7 +75,7 @@
     "archive_created": false,
     "must_include_submodule_contents": true
   },
-  "validation_report": "reports/iteration-04-validation.json",
+  "validation_report": "reports/iteration-05-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points."
   }

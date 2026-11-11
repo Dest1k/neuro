@@ -1,0 +1,3552 @@
+{
+  "schema": "neuro.pool_replay.v1",
+  "passed": true,
+  "transport": "loopback_tcp",
+  "protocol": "CPPminer_LuckyPool_Kryptex_dialect",
+  "backend": "cpu",
+  "device": null,
+  "scenarios_run": 15,
+  "scenarios": [
+    {
+      "name": "gzip_happy",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 91,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.118,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "difficulty",
+          "sequence": 3,
+          "connection": 1
+        },
+        {
+          "event": "job_received",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "gzip_happy-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 15,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "gzip_happy-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "gzip_happy-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "plain_happy",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 54,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.078,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": false
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "status": "found",
+          "tiles_scanned": 3
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "plain_happy-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 14,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "plain_happy-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": false,
+          "wire_bytes": 100432,
+          "raw_bytes": 100432,
+          "wire_sha256": "368751d63845612e4d29124b95f6df83537760788f74e49b60273007bd1a3e46",
+          "proof_sha256": "368751d63845612e4d29124b95f6df83537760788f74e49b60273007bd1a3e46",
+          "official_verifier": {
+            "cert_version": 2,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "plain_happy-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "wrong_id_then_reject",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 135,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 1,
+          "submissions": 2,
+          "accepted": 1,
+          "rejected": 1,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.16,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "id": 2
+        },
+        {
+          "event": "unmatched_response",
+          "sequence": 13,
+          "connection": 1,
+          "id": 1000002
+        },
+        {
+          "event": "share_response",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "id": 2,
+          "accepted": false
+        },
+        {
+          "event": "job_received",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 20,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 21,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 22,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 23,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 24,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "id": 3
+        },
+        {
+          "event": "share_response",
+          "sequence": 25,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "id": 3,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 26,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": false
+        },
+        {
+          "connection": 1,
+          "id": 3,
+          "revision": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "wrong_id_then_reject-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "wrong_id_then_reject-job-next",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "stale_response",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 102,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 2,
+          "accepted": 1,
+          "rejected": 1,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.127,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "stale_response-job",
+          "id": 2,
+          "accepted": false
+        },
+        {
+          "event": "job_received",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next"
+        },
+        {
+          "event": "stage",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 20,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 21,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 22,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 23,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "id": 3
+        },
+        {
+          "event": "share_response",
+          "sequence": 24,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "stale_response-job-next",
+          "id": 3,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 25,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "stale_response-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": false
+        },
+        {
+          "connection": 1,
+          "id": 3,
+          "revision": 2,
+          "job_id": "stale_response-job-next",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "stale_response-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "stale_response-job-next",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "duplicate_notify",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 60,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 1,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.085,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job"
+        },
+        {
+          "event": "duplicate_job",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "duplicate_notify-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 15,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "duplicate_notify-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "duplicate_notify-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "cancel_before_compute",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 74,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 1,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 1
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.098,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "checkpoint",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "job_received",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_before_compute-job",
+          "status": "cancelled",
+          "tiles_scanned": 0
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 20,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "cancel_before_compute-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "cancel_before_compute-job-replacement",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "cancel_after_compute_header",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 59,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 1,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 1
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.083,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "checkpoint",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "job_received",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "status": "cancelled",
+          "tiles_scanned": 0
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 20,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 21,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "211ecc857072f8d16fc0d9c45be10054ea569dbdbb9cb40cf509a4de0f164192",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 923,
+          "raw_bytes": 100432,
+          "wire_sha256": "847f411da325419e570dede83e3c9bbf74c0fc8d2e952ccabca853b20c9d9aee",
+          "proof_sha256": "22f87b99de5966b775a6413361a0bad4fe2ee3432b6a43333db3616490a25e2b",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "cancel_after_compute_header-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "cancel_after_compute_header-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "211ecc857072f8d16fc0d9c45be10054ea569dbdbb9cb40cf509a4de0f164192",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "cancel_after_proof_cert",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 76,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 1,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 1
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.1,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "checkpoint",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "job_received",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "status": "cancelled",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 20,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "status": "found",
+          "tiles_scanned": 3
+        },
+        {
+          "event": "submitted",
+          "sequence": 21,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 22,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 23,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 921,
+          "raw_bytes": 100432,
+          "wire_sha256": "8eb0444b7f4a7396c06f276b7c77c0ebeb31a180183cecbb45f60b552f56304d",
+          "proof_sha256": "368751d63845612e4d29124b95f6df83537760788f74e49b60273007bd1a3e46",
+          "official_verifier": {
+            "cert_version": 2,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "cancel_after_proof_cert-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "cancel_after_proof_cert-job",
+          "cert_version": 2,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "cancel_after_compute_target",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 61,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 1,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 1
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.084,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "checkpoint",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "job_received",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "status": "cancelled",
+          "tiles_scanned": 0
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 18,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 19,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 20,
+          "connection": 1,
+          "generation": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 21,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "cert_version": 3,
+          "nbits": "0x1e040000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000040000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e040000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "cancel_after_compute_target-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 1,
+          "revision": 2,
+          "job_id": "cancel_after_compute_target-job",
+          "cert_version": 3,
+          "nbits": "0x1e040000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000040000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "reconnect_after_verify",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 80,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 2,
+          "jobs_received": 2,
+          "jobs_started": 2,
+          "attempts_finished": 2,
+          "cancelled": 1,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 1
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.103,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "checkpoint",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "disconnected",
+          "sequence": 12,
+          "connection": 1,
+          "reason": "connection_lost_or_bad_frame"
+        },
+        {
+          "event": "connected",
+          "sequence": 13,
+          "connection": 2
+        },
+        {
+          "event": "authorized",
+          "sequence": 14,
+          "connection": 2,
+          "gzip": false
+        },
+        {
+          "event": "job_received",
+          "sequence": 15,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "reconnect_after_verify-job",
+          "status": "cancelled",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "stage",
+          "sequence": 17,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 18,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 19,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 20,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 21,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 22,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 23,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 24,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 25,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "id": 3
+        },
+        {
+          "event": "share_response",
+          "sequence": 26,
+          "connection": 2,
+          "generation": 3,
+          "job_id": "reconnect_after_verify-job",
+          "id": 3,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 27,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 2,
+          "id": 3,
+          "revision": 1,
+          "job_id": "reconnect_after_verify-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": false,
+          "wire_bytes": 100432,
+          "raw_bytes": 100432,
+          "wire_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "reconnect_after_verify-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        },
+        {
+          "connection": 2,
+          "revision": 1,
+          "job_id": "reconnect_after_verify-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "malformed_notify_recovery",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 36,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 3,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.06,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "rejected_message",
+          "sequence": 3,
+          "connection": 1,
+          "error": "pool notify requires explicit integer cert_version 2 or 3"
+        },
+        {
+          "event": "rejected_message",
+          "sequence": 4,
+          "connection": 1,
+          "error": "pool header must encode exactly 76 bytes"
+        },
+        {
+          "event": "rejected_message",
+          "sequence": 5,
+          "connection": 1,
+          "error": "pool message is missing job_id"
+        },
+        {
+          "event": "job_received",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 14,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 15,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "id": 2
+        },
+        {
+          "event": "share_response",
+          "sequence": 16,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "id": 2,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 17,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "malformed_notify_recovery-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "malformed_frame_reconnect",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 35,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 2,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.06,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "disconnected",
+          "sequence": 3,
+          "connection": 1,
+          "reason": "connection_lost_or_bad_frame"
+        },
+        {
+          "event": "connected",
+          "sequence": 4,
+          "connection": 2
+        },
+        {
+          "event": "authorized",
+          "sequence": 5,
+          "connection": 2,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 6,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 13,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 14,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 15,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "id": 3
+        },
+        {
+          "event": "share_response",
+          "sequence": 16,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "id": 3,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 17,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 2,
+          "id": 3,
+          "revision": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 2,
+          "revision": 1,
+          "job_id": "malformed_frame_reconnect-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "authorize_rejected_reconnect",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": true,
+        "reason": "submission_limit",
+        "backend": "cpu",
+        "elapsed_ms": 46,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 2,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 1,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 1,
+          "rejected": 0,
+          "pending_lost": 0,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 0,
+      "elapsed_seconds": 0.072,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "disconnected",
+          "sequence": 2,
+          "connection": 1,
+          "reason": "authorize_rejected"
+        },
+        {
+          "event": "connected",
+          "sequence": 3,
+          "connection": 2
+        },
+        {
+          "event": "authorized",
+          "sequence": 4,
+          "connection": 2,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 5,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 11,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 12,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 13,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 14,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "id": 3
+        },
+        {
+          "event": "share_response",
+          "sequence": 15,
+          "connection": 2,
+          "generation": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "id": 3,
+          "accepted": true
+        },
+        {
+          "event": "completed",
+          "sequence": 16,
+          "completed": true,
+          "reason": "submission_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 2,
+          "id": 3,
+          "revision": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": true
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 2,
+          "revision": 1,
+          "job_id": "authorize_rejected_reconnect-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "unacknowledged_submit",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": false,
+        "reason": "connection_limit",
+        "backend": "cpu",
+        "elapsed_ms": 43,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 0,
+          "rejected": 0,
+          "pending_lost": 1,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 1,
+      "elapsed_seconds": 0.067,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "id": 2
+        },
+        {
+          "event": "share_unresolved",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "unacknowledged_submit-job",
+          "id": 2
+        },
+        {
+          "event": "disconnected",
+          "sequence": 14,
+          "connection": 1,
+          "reason": "connection_lost_or_bad_frame"
+        },
+        {
+          "event": "completed",
+          "sequence": 15,
+          "completed": false,
+          "reason": "connection_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "unacknowledged_submit-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": null
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "unacknowledged_submit-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    },
+    {
+      "name": "ack_timeout",
+      "passed": true,
+      "native_report": {
+        "schema": "neuro.pool_client.v1",
+        "completed": false,
+        "reason": "connection_limit",
+        "backend": "cpu",
+        "elapsed_ms": 3049,
+        "cpu_execution": true,
+        "gpu_execution": false,
+        "live_pool": false,
+        "synthetic_work": true,
+        "error": "",
+        "counters": {
+          "connections": 1,
+          "jobs_received": 1,
+          "jobs_started": 1,
+          "attempts_finished": 1,
+          "cancelled": 0,
+          "misses": 0,
+          "errors": 0,
+          "duplicates": 0,
+          "protocol_errors": 0,
+          "unmatched_responses": 0,
+          "submissions": 1,
+          "accepted": 0,
+          "rejected": 0,
+          "pending_lost": 1,
+          "checkpoints": 0
+        }
+      },
+      "native_returncode": 1,
+      "elapsed_seconds": 3.076,
+      "events": [
+        {
+          "event": "connected",
+          "sequence": 1,
+          "connection": 1
+        },
+        {
+          "event": "authorized",
+          "sequence": 2,
+          "connection": 1,
+          "gzip": true
+        },
+        {
+          "event": "job_received",
+          "sequence": 3,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job"
+        },
+        {
+          "event": "stage",
+          "sequence": 4,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "before_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 5,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "after_prepare"
+        },
+        {
+          "event": "stage",
+          "sequence": 6,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "before_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 7,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "after_compute"
+        },
+        {
+          "event": "stage",
+          "sequence": 8,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "before_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 9,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "after_proof"
+        },
+        {
+          "event": "stage",
+          "sequence": 10,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "stage": "after_verify"
+        },
+        {
+          "event": "attempt_finished",
+          "sequence": 11,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "status": "found",
+          "tiles_scanned": 6
+        },
+        {
+          "event": "submitted",
+          "sequence": 12,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "id": 2
+        },
+        {
+          "event": "share_unresolved",
+          "sequence": 13,
+          "connection": 1,
+          "generation": 1,
+          "job_id": "ack_timeout-job",
+          "id": 2
+        },
+        {
+          "event": "disconnected",
+          "sequence": 14,
+          "connection": 1,
+          "reason": "submit_response_timeout"
+        },
+        {
+          "event": "completed",
+          "sequence": 15,
+          "completed": false,
+          "reason": "connection_limit"
+        }
+      ],
+      "submitted_proofs": [
+        {
+          "connection": 1,
+          "id": 2,
+          "revision": 1,
+          "job_id": "ack_timeout-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+          "gzip": true,
+          "wire_bytes": 922,
+          "raw_bytes": 100432,
+          "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+          "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+          "official_verifier": {
+            "cert_version": 3,
+            "gpu_executed": false,
+            "nbits": "0x1e080000",
+            "pool_acceptance_checked": false,
+            "proof_bytes": 100432,
+            "proof_kind": "PlainProof",
+            "schema_version": 1,
+            "stage": "verified",
+            "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+            "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+            "verified": true,
+            "verifier": "official_pearl_verify_plain_proof",
+            "zk_proof_generated": false
+          },
+          "official_process_returncode": 0,
+          "synthetic_peer_accepted": null
+        }
+      ],
+      "issued_jobs": [
+        {
+          "connection": 1,
+          "revision": 1,
+          "job_id": "ack_timeout-job",
+          "cert_version": 3,
+          "nbits": "0x1e080000",
+          "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+          "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000"
+        }
+      ]
+    }
+  ],
+  "submitted_proofs_checked": 17,
+  "official_reference_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+  "fixture_manifest_sha256": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa",
+  "binaries": {
+    "native_sha256": "33c4a708c9a0c16c34874016b5978eaf29bc7870db3716a957b6774e1af5f34a",
+    "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+  },
+  "external_pool_connection": false,
+  "live_pool_acceptance": false,
+  "model_api_calls": false,
+  "cpu_execution": true,
+  "gpu_execution": false,
+  "windows_execution": false
+}

@@ -1,7 +1,7 @@
 # Architecture and current implementation
 
-Current preparation: iteration 4 of 10. Read `state/current.json` for the next
-task and `docs/iterations/04.md` for observed evidence. Build commands live in
+Current preparation: iteration 5 of 10. Read `state/current.json` for the next
+task and `docs/iterations/05.md` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
 ## Goal
@@ -41,7 +41,7 @@ distributed-derivative license requires the original 2% fee.
 | Layer | Choice | First responsibility |
 |---|---|---|
 | Orchestration | Existing DSH + small Python stdlib tools | Run bounded experiments, capture observations, keep project state |
-| Miner host | Reuse CPPminer C++ | Job lifecycle, pool connection, GPU/proof handoff |
+| Miner host | Pinned CPPminer wire code + small C++ coordinator | Immutable work identity, cancellation, GPU/proof handoff and exact response accounting |
 | GPU math | CUDA C++17 + selective inline PTX | Exact INT8/INT32 matrix work and intermediate transcript |
 | Proof | Existing Rust proof code | Generate and independently verify the protocol's required evidence |
 | Model cost | Saved final usage + exact Decimal pricing | Track observed usage without inventing cache savings |
@@ -87,11 +87,21 @@ proofs pass both paths; losing and deliberately corrupted cases are rejected.
 This verifies the bounded dense proof path, without generating a recursive
 STARK or establishing live pool acceptance. See `docs/proof.md`.
 
-The next boundary is the complete host job lifecycle: work identity,
-cancellation, arithmetic/proof handoff and submission payload under an offline
-pool replay. Large-panel scheduling, production memory staging and performance
-tuning follow integration; accepting larger dimensions alone would not supply
-them.
+Iteration 5 connects that path to actual TCP exchanges with a local synthetic
+pool. Work snapshots include the entire header, target, certificate, shape,
+encoding and connection; monotonic generations prevent stale local results from
+being submitted. A selected winning tile is independently recomputed before
+the real proof/verification path. Exact pending request IDs distinguish accepted,
+rejected and unacknowledged submissions. The peer verifies received proofs with
+the separate official checker against its own issued-job ledger. See
+`docs/host-replay.md` for the bounded donor dialect and recovery scenarios.
+
+The same host accepts our CUDA compute callback. The combined SM120 executable
+compiles and links on Linux; its CPU backend passes the real loopback exchange.
+This provides a hardware-test entry point without claiming observed GPU work.
+The optional proof/network build remains Linux-only. Windows build validation,
+SSH worker execution, actual DSH usage accounting, continuous search scheduling,
+large-panel staging and performance tuning remain ahead.
 
 ## Measurement policy
 

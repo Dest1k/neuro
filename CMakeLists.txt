@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(NEURO_BUILD_CPU_CHECKS "Build offline CPU component checks" ON)
 option(NEURO_ENABLE_CUDA "Build bounded CUDA arithmetic kernels and probes (not a miner)" OFF)
-option(NEURO_ENABLE_PROOF "Build genuine Rust-backed offline Pearl proof tools" OFF)
+option(NEURO_ENABLE_PROOF "Build real Pearl proof tools and bounded loopback host integration" OFF)
 
 include(CTest)
 set(CPPMINER "${CMAKE_CURRENT_SOURCE_DIR}/upstream/cppminer")
@@ -13,8 +13,8 @@ include(cmake/Blake3.cmake)
 find_package(Threads REQUIRED)
 
 # Preserve actual upstream hashing, noise and job-cancellation implementations.
-# Section GC removes the unused network client from cp_pool.cpp; no pool
-# connection or fake cancellation/hash/proof functions are needed by these checks.
+# Section GC removes unused network code from ordinary CPU checks. Proof mode
+# adds the real donor transport for explicit loopback replay; no stubs are used.
 add_library(neuro_pearl_donor STATIC
   "${CPPMINER}/src/common/cp_noise.c"
   "${CPPMINER}/src/common/cp_job_ctrl.cpp"
@@ -161,4 +161,19 @@ if(NEURO_ENABLE_CUDA)
   # Exercises real host preparation and fixed expected outputs inside the CUDA
   # executable. Actual GPU launches remain explicit, outside ordinary CTest.
   add_test(NAME neuro_pearl_host_preparation COMMAND neuro_pearl_probe --host-only)
+
+  if(NEURO_ENABLE_PROOF)
+    add_library(neuro_mining_cuda STATIC native/cuda/mining_cuda.cu)
+    target_include_directories(neuro_mining_cuda PUBLIC native/include)
+    target_link_libraries(neuro_mining_cuda PUBLIC neuro_fullk_cuda)
+    set_target_properties(neuro_mining_cuda PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON)
+
+    add_executable(neuro_pool_replay_client_cuda native/host/pool_replay_client.cpp)
+    target_compile_definitions(neuro_pool_replay_client_cuda PRIVATE NEURO_REPLAY_CUDA=1)
+    target_link_libraries(neuro_pool_replay_client_cuda PRIVATE neuro_pool_wire neuro_mining_cuda)
+
+    add_executable(neuro_mining_cuda_host_test native/tests/mining_cuda_host_test.cpp)
+    target_link_libraries(neuro_mining_cuda_host_test PRIVATE neuro_mining_cuda)
+    add_test(NAME neuro_mining_cuda_host_boundary COMMAND neuro_mining_cuda_host_test)
+  endif()
 endif()
