@@ -23,8 +23,13 @@ target_include_directories(neuro_pearl_donor PUBLIC "${CPPMINER}/include")
 target_link_libraries(neuro_pearl_donor PUBLIC neuro_blake3 Threads::Threads)
 set_target_properties(neuro_pearl_donor PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON)
 if(MSVC)
-  target_compile_options(neuro_pearl_donor PRIVATE /Gy /Gw)
-  target_link_options(neuro_pearl_donor INTERFACE /OPT:REF)
+  # The bounded host never starts the donor's asynchronous reader. MSVC's
+  # section GC alone still retained its dispatcher references. Give the host
+  # linker the donor IR so it can remove unreachable code before codegen.
+  # These objects are built and linked together, never shipped as an SDK .lib.
+  target_compile_options(neuro_pearl_donor PRIVATE /Gy /Gw /GL)
+  target_link_options(neuro_pearl_donor INTERFACE
+    "$<HOST_LINK:LINKER:/LTCG>" "$<HOST_LINK:LINKER:/OPT:REF>")
 elseif(APPLE)
   target_compile_options(neuro_pearl_donor PRIVATE -ffunction-sections -fdata-sections)
   target_link_options(neuro_pearl_donor INTERFACE -Wl,-dead_strip)
