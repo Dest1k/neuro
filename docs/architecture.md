@@ -4,6 +4,12 @@ Current preparation: iteration 7 of 10. Read `state/current.json` for the next
 task and the latest entry in `docs/iterations/` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
+Iteration 7 passed its local search/proof/identity gates. Its changed Windows
+worker and GPU handoff have not run: GitHub rejected publication with an
+account-suspended HTTP 403. Recover the unpublished work from
+`neuro-iteration07-checkpoint.zip` if needed; the current validation report keeps
+this block separate from the observed iteration-6 Windows results.
+
 ## Goal
 
 Produce a personally operated Pearl miner through an autonomous model-driven

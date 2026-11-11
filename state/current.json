@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 6,
+  "preparation_iteration": 7,
   "preparation_total": 10,
-  "status": "iteration_6_complete_with_observed_windows_cpu_and_local_budget_boundary",
+  "status": "iteration_7_local_search_complete_Windows_handoff_validation_and_GitHub_publication_pending",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/06.md"
+    "docs/iterations/07.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
     "gpu": "CUDA_C++17_inline_PTX_as_needed",
-    "host": "pinned_CPPminer_wire_plus_immutable_generation_coordinator",
+    "host": "pinned_CPPminer_wire_immutable_generation_and_bounded_cumulative_attempts",
     "proof": "pinned_Rust_PlainProof_and_separate_official_Pearl_verifier",
     "executor": "minimax/minimax-m3",
     "executor_selection": "provisional_owner_selected_second_trial",
@@ -21,13 +21,13 @@
     "fallback": "openai/gpt-6.1-sol_disabled_by_default"
   },
   "coverage": {
-    "python_controls": "passed_110_of_111_Linux_tests_1_Windows_specific_skip",
+    "python_controls": "passed_139_of_140_Linux_tests_1_Windows_specific_skip",
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
     "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
-    "windows_execution": "passed_actual_GitHub_Windows2025_CPU_proof_TCP_and_worker_not_owner_laptop",
+    "windows_execution": "historical_iteration6_actual_CPU_proof_TCP_pass_iteration7_changes_not_executed",
     "full_proof": "plainproof_built_and_verified_stark_not_generated",
     "pool_shares": "not_run_external_pool_no_live_share_acceptance",
     "dsh_api_integration": "local_budget_boundary_implemented_actual_DSH_provider_transport_not_connected",
@@ -41,40 +41,42 @@
     "cpu_pearl_full_builders": "passed_3670016_noisy_bytes_against_actual_donor_builders",
     "cpu_blake3": "passed_105_official_known_answer_modes",
     "cpu_job_cancellation": "passed_13_real_donor_component_checks_without_pool_connection",
-    "cpu_native": "passed_13_CMake_tests_with_real_proof_and_host_mode",
+    "cpu_native": "passed_14_CMake_tests_with_real_proof_and_host_mode",
     "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
     "gpu_pearl_execution": "not_run_no_gpu",
     "plain_proof": "passed_6_full_signal_proofs_and_3_byte_identical_witness_proofs",
-    "proof_rust_unit_tests": "passed_20_Linux_and_20_Windows_real_Rust_tests",
+    "proof_rust_unit_tests": "historical_20_Linux_and_20_Windows_real_Rust_tests_pinned_Rust_sources_unchanged",
     "proof_native": "passed_46_verifier_calls_and_69_rejected_cases_including_37_real_semantic_rejections",
     "proof_official_verification": "passed_66_crossprocess_checks_6_acceptances_60_rejections_across_two_verifiers",
     "proof_gzip": "passed_6_exact_raw_proof_roundtrips",
     "proof_expected_values": "passed_independent_python_512_tiles_and_exact_target_boundaries",
     "proof_provenance": "official_Pearl_ISC_notice_and_349_file_comparisons_plus_locked_registry_inventory",
-    "proof_windows_build": "passed_real_Rust_native_Msvc_release_dynamic_CRT_and_official_verifier",
+    "proof_windows_build": "historical_iteration6_real_Rust_native_MSVC_release_current_iteration_not_rerun",
     "stark_proof": "not_generated",
     "cpu_host_lifecycle": "passed_141_checks_7_cancellation_stages_4_controlled_concurrency_cases",
     "cpu_pool_wire": "passed_41_checks_54_rejections_5_real_loopback_connections",
-    "cpu_pool_replay": "passed_15_scenarios_17_actual_wire_proofs_verified_by_official_Pearl",
-    "local_peer_responses": "13_synthetic_acceptances_2_rejections_2_unacknowledged_not_live_pool_shares",
+    "cpu_pool_replay": "passed_19_scenarios_23_actual_wire_proofs_verified_by_official_Pearl",
+    "local_peer_responses": "19_synthetic_acceptances_2_rejections_2_unacknowledged_not_live_pool_shares",
     "pool_ack_timeout": "passed_open_socket_silence_and_separate_EOF_without_ACK",
     "cuda_host_backend": "passed_5_invalid_inputs_before_CUDA_calls",
-    "cuda_linked_cpu_replay": "passed_2_scenarios_2_officially_verified_wire_proofs_no_GPU_execution",
-    "host_proof_windows_build": "passed_real_MSVC_WinSock_15_TCP_scenarios_17_independently_verified_wire_proofs",
-    "continuous_mining_search": "not_implemented_one_synthetic_attempt_per_generation",
+    "cuda_linked_cpu_replay": "passed_6_scenarios_8_officially_verified_wire_proofs_no_GPU_execution",
+    "host_proof_windows_build": "historical_iteration6_MSVC_WinSock_15_TCP_scenarios_current_19_scenarios_not_run_on_Windows",
+    "continuous_mining_search": "bounded_64_attempt_sequence_implemented_sustained_production_search_not_implemented",
     "model_budget": "implemented_durable_SQLite_reserve_single_dispatch_reconcile_25_tests_passed",
-    "remote_worker": "passed_21_synthetic_controller_tests_23_actual_Windows_runner_checks_55_actual_whole_worker_checks_SSH_not_run",
+    "remote_worker": "passed_26_synthetic_controller_tests_current_Windows_v2_not_run_historical_iteration6_in_own_report",
     "model_executor": "MiniMax_M3_owner_selected_no_live_endpoint_trial",
-    "remote_candidate_identity": "not_implemented_full_cross_host_manifest_worker_and_entrypoint_identity_only",
-    "windows_python_controls": "passed_109_of_111_tests_2_platform_specific_skips",
-    "windows_native": "passed_10_native_tests_real_MSVC_dynamic_CRT",
-    "bounded_donor_source": "passed_4_copy_preparation_checks_pinned_patch_and_output_hashes_untouched_reference_real_Linux_and_MSVC_links"
+    "remote_candidate_identity": "implemented_complete_public_candidate_22_actual_Linux_Git_fixture_tests_passed_Windows_v2_unrun",
+    "windows_python_controls": "historical_iteration6_109_of_111_current_140_test_suite_not_run_on_Windows",
+    "windows_native": "historical_iteration6_10_native_tests_iteration7_attempt_target_not_run_on_Windows",
+    "bounded_donor_source": "passed_4_copy_preparation_checks_and_current_Linux_link_historical_iteration6_MSVC_link_unchanged_patch",
+    "bounded_attempt_search": "passed_187_checks_11_independent_full_matrix_cases_22_genuine_proofs_7_misses_then_attempt7_proof",
+    "gpu_miner_handoff": "implemented_exact_batch_visible_restore_watchdog_and_fixture_tests_current_Windows_not_run"
   },
   "next_iteration": {
-    "number": 7,
-    "goal": "Advance the miner to bounded reproducible multi-attempt search with a preserved verified baseline",
-    "first_step": "Read the donor attempt/mutation semantics, native/pearl/pearl_input.cpp, native/host/mining_job.cpp and docs/host-replay.md. Replace the one-first-zero-B-attempt limit with a bounded explicit attempt sequence, preserving full job identity, cancellation, independent proof validation and at-most-once submission per attempt. Extend real CPU/TCP checks before performance work. Bind full candidate source identity to remote deployment and returned evidence before using remote results for candidate comparisons.",
-    "avoid": "Do not invent GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner progress with another agent framework."
+    "number": 8,
+    "goal": "Resume the unpublished iteration-7 checkpoint, execute pending Windows gates when access returns, and add durable bounded-search recovery",
+    "first_step": "If the remote main still ends at c864e1eaf513ccefcf786f412d0b0ac151d2b983, restore neuro-iteration07-checkpoint.zip rather than discarding this local work. Read reports/iteration-07-validation.json and docs/iterations/07.md. Resolve the GitHub account suspension through the account owner before publishing; do not substitute credentials or bypass the restriction. Run the current Windows fixtures/build/CPU gates when execution is available. Then persist complete job identity, root seed, next attempt and terminal/uncertain submission outcomes, with real restart/loopback tests. Only use the guarded owner GPU path after its Windows preflight is actually validated.",
+    "avoid": "Do not treat iteration6 Windows evidence as a pass for iteration7 changes. Do not invent owner SSH, console restoration, GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner work with another agent framework."
   },
   "handoff": {
     "target_iteration": 10,
@@ -84,11 +86,20 @@
     "private_owner_connection_instructions_required": true,
     "private_owner_note": "neuro-owner-handoff-iteration06.json",
     "private_key_contents_must_be_excluded": true,
-    "executor": "minimax/minimax-m3"
+    "executor": "minimax/minimax-m3",
+    "private_owner_gpu_handoff_instructions_required": true
   },
-  "validation_report": "reports/iteration-06-validation.json",
+  "validation_report": "reports/iteration-07-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points.",
-    "executor": "Give MiniMax M3 a second bounded trial; the Sol fallback is disabled by default."
+    "executor": "Give MiniMax M3 a second bounded trial; the Sol fallback is disabled by default.",
+    "gpu_tests": "Pause the configured owner SRBMiner only around GPU work; restore the exact existing guided-setup.bat in a visible owner desktop window after the test processes release the GPU."
+  },
+  "publication": {
+    "status": "blocked_GitHub_HTTP_403_account_suspended",
+    "remote_main_last_observed": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
+    "local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
+    "recovery_checkpoint": "neuro-iteration07-checkpoint.zip",
+    "iteration7_CI_not_started": true
   }
 }

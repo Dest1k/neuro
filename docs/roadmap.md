@@ -12,8 +12,8 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 | 4 — complete within offline boundary | Real Rust PlainProof/witness, independent jackpots and official verifier | 20 Rust tests; 11 native tests; 66 cross-process checks; real winner/loser and corruption cases; GPU/network unrun |
 | 5 — complete within offline boundary | Immutable host/backend lifecycle, real TCP replay, independent verification of wire submissions and combined CUDA executable | Cancellation/ACK/reconnect scenarios; CPU execution and SM120 compile/link; GPU/Windows/live pool unrun |
 | 6 — complete within CI/local boundary | Native Windows proof/host execution, bounded SSH worker and durable local model-cost ledger | Actual Windows CPU/proof/loopback and worker gates; Linux regressions; owner SSH/GPU and real DSH/provider billing unobserved |
-| 7 | Bounded reproducible multi-attempt miner search with a preserved verified baseline | Full job/attempt identity, cancellation and independent proof gates; bind the complete candidate manifest to remote deployment/results before comparisons; no-progress and spending stops |
-| 8 | End-to-end recovery and stability work | Broken jobs, disconnects, CUDA errors; physical GPU coverage explicitly distinguished |
+| 7 — local search gates pass; Windows validation pending | Bounded 64-attempt search, complete candidate identity and exact-batch visible SRBMiner handoff implementation | 14 native tests, 19 TCP scenarios, 23 official wire proofs; new Windows scripts unrun because GitHub publication returned account-suspended HTTP 403; unpublished work preserved in an offline checkpoint |
+| 8 | Resume checkpoint, execute pending Windows gates and add durable bounded-search recovery | Persist work/seed/attempt and uncertain submissions across interruption; physical GPU coverage explicitly distinguished |
 | 9 | Fresh-directory handoff rehearsal | Rebuild from pinned sources, resolve missing dependencies, verify package contents |
 | 10 | Complete archive + DSH starting directive | Extract layout `/home/jericho/neuro/start/`; checksums, exact status, next executable step |
 
@@ -40,3 +40,9 @@ observed. Owner hardware runs, real accepted shares, DSH's
 actual usage events and reseller billing need the actual endpoints. If they are
 still unavailable by iteration10, the handoff must make the remaining tasks
 directly executable and state the untested coverage. It must not invent success.
+
+Iteration-7 GitHub publication was rejected with an account-suspended HTTP 403.
+The Windows observations above belong to iteration 6; they do not validate the
+changed iteration-7 worker or GPU handoff. Continue from
+`neuro-iteration07-checkpoint.zip` while the remote main remains at iteration 6.
+The final archive/directive still belongs to iteration 10.

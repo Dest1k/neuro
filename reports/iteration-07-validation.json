@@ -1,0 +1,234 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 7,
+  "date": "2026-11-11",
+  "generated_at": "2026-11-11T16:03:40.042055+00:00",
+  "passed": false,
+  "status": "local_gates_passed_required_Windows_validation_and_publication_blocked",
+  "local_checks_passed": true,
+  "scope": "bounded_multiattempt_search_and_candidate_identity_executed_locally_GPU_handoff_source_only",
+  "parent_main_commit": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
+  "implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
+  "implementation_tree": "d3b3174d07724b90e9728ba8d7a22b215d1e8a16",
+  "implementation_candidate": {
+    "schema": "neuro.candidate.fingerprint.v1",
+    "passed": true,
+    "candidate_sha256": "9c2a02c3f25f4d7456474d1dbdd2a98ba941d20e18d5ad9e079f3fd1e8fa28c9",
+    "files": 912,
+    "bytes": 12300206,
+    "submodules": 2
+  },
+  "candidate_scope_note": "This identity belongs to the implementation commit before this report/state publication. Reports and docs participate in the candidate. The checkpoint manifest records the later final candidate identity.",
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "linux": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "python_tests": {
+      "discovered": 140,
+      "passed": 139,
+      "skipped": 1,
+      "failed": 0
+    },
+    "native_ctest": {
+      "passed": 14,
+      "failed": 0
+    },
+    "attempt_search": {
+      "schema": "neuro.attempt_search_test.v1",
+      "status": "PASS",
+      "checks": 187,
+      "independent_full_matrix_cases": 11,
+      "genuine_proofs": 22,
+      "misses_before_later_proof": 7,
+      "maximum_attempts": 64,
+      "gpu_execution": false,
+      "live_pool": false
+    },
+    "independent_attempt_fixtures": {
+      "passed": true,
+      "seconds": 31.693,
+      "returncode": 0,
+      "output": "{\"schema\": \"neuro.attempt_fixture_check.v1\", \"passed\": true, \"mode\": \"check\", \"mismatches\": []}\n",
+      "purpose": "bounded generator wall-time for CI placement"
+    },
+    "proof_crosscheck": {
+      "passed": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "tcp_replay": {
+      "passed": 19,
+      "wire_proofs_officially_verified": 23,
+      "peer_counters": {
+        "accepted": 19,
+        "rejected": 2,
+        "pending_lost": 2,
+        "misses": 10,
+        "submissions": 23
+      },
+      "live_pool": false
+    },
+    "candidate_manifest_tests": {
+      "passed": 22,
+      "real_temporary_git_repositories": true
+    },
+    "remote_controller_tests": {
+      "passed": 26,
+      "synthetic_transports": true,
+      "actual_SSH": false
+    },
+    "cuda": {
+      "toolkit": "13.5.37",
+      "architecture": "SM120",
+      "compiled_and_linked": true,
+      "host_only_ctest_passed": 3,
+      "explicit_cpu_replay_passed": 6,
+      "explicit_cpu_wire_proofs_officially_verified": 8,
+      "physical_gpu_execution": false
+    }
+  },
+  "windows": {
+    "iteration7_execution": false,
+    "status": "not_run_external_CI_publication_blocked",
+    "PowerShell_runtime_available_locally": false,
+    "CSharp_compiler_available_locally": false,
+    "static_review_performed": true,
+    "implemented_gates": [
+      "windows/test_worker.ps1",
+      "windows/test_remote_worker.ps1",
+      "windows/test_ci_evidence.ps1",
+      "windows/test_gpu_lease.ps1 -InteractiveSmoke",
+      "windows/ci.ps1 -Action build-cpu",
+      "windows/ci.ps1 -Action run-cpu"
+    ],
+    "fixture_expected_counts_are_not_observed_results": true,
+    "TaskScheduler_executed": false,
+    "visible_console_observed": false,
+    "historical_iteration6_evidence": "reports/iteration-06-validation.json",
+    "historical_evidence_does_not_validate_changed_scripts": true
+  },
+  "owner_gpu_handoff": {
+    "implemented": true,
+    "actual_owner_connection": false,
+    "actual_owner_desktop": false,
+    "actual_SRBMiner_stop_or_restart": false,
+    "physical_gpu_execution": false,
+    "exact_existing_guided_setup_batch_required": true,
+    "visible_console_and_current_miner_required_for_restoration": true,
+    "previously_stopped_state_preserved": true,
+    "private_owner_note_updated": true,
+    "private_key_contents_in_repository": false
+  },
+  "publication": {
+    "schema": "neuro.publication_status.v1",
+    "iteration": 7,
+    "status": "blocked",
+    "operation": "create GitHub implementation tree before commit/branch publication",
+    "http_status": 403,
+    "upstream_message": "Sorry. Your account was suspended",
+    "repository": "https://github.com/alinescafs3mp-afk/neuro",
+    "parent_main_commit": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
+    "local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
+    "remote_commit_created": false,
+    "remote_branch_created": false,
+    "main_changed": false,
+    "iteration7_GitHub_CI_started": false,
+    "recovery_checkpoint": "neuro-iteration07-checkpoint.zip",
+    "credential_bypass_attempted": false
+  },
+  "boundaries": {
+    "README_bytes": 0,
+    "upstream_pins_unchanged": true,
+    "maximum_attempts_per_generation": 64,
+    "sustained_production_search": false,
+    "durable_submission_journal": false,
+    "live_pool_connection": false,
+    "live_share_acceptance": false,
+    "STARK_proof_generated": false,
+    "GPU_performance_claim": false,
+    "DSH_or_model_API_calls": false,
+    "provider_cache_billing_observed": false,
+    "driver_or_power_changes": false,
+    "final_iteration10_DSH_archive_created": false
+  },
+  "evidence_sha256": {
+    "reports/iteration-07-attempt-fixture-check.json": "cb2b4be99fe43881d141d7a0e20d15a9dcaefa8b2e3d50a7a3dea3e1ab8999ad",
+    "reports/iteration-07-attempt-search.log": "86c9092bafd3513c487a3ca5995ebfce57d0ccf7fc1def6cba94c6176e91300a",
+    "reports/iteration-07-candidate-tests.log": "7b3bec52df1d7529a104c9f70f4c5a95b069b7950cd202808f7716c1c397dda7",
+    "reports/iteration-07-ctest.log": "c1974759827ed3e61cd636120d4d65d954720b07abb9d2353648b134444c23ad",
+    "reports/iteration-07-cuda-build.log": "36f7861e7966c965c280e9a4885551adb53acc819eacacd25ab994f3eaab9696",
+    "reports/iteration-07-cuda-configure.log": "b60b7a7a82f7ea292a2b8d73d444845f4ddd6e654063d53f3d40559a10c7aee7",
+    "reports/iteration-07-cuda-ctest.log": "0503aff094b58d5af91bf0a1f3f7c0334ac91f340df9c1087a69da373efe6c7e",
+    "reports/iteration-07-cuda-linked-replay.json": "73b39846daef56615e2460d21b6802f9653ca6a5f004f1a1542a2ba367f045ee",
+    "reports/iteration-07-gpu-static-review.json": "223b9b86f0bdee704076cf2d4b7493039f7d2d0e1c6d8d9a4ca9478e8eca7856",
+    "reports/iteration-07-implementation-fingerprint.json": "54416864bb8e1a99a2f90ed5597a1f4c0fa4c0af7c153afcb3a7ae075580e313",
+    "reports/iteration-07-pool-replay.json": "98d3a19378b56da92b347f8d6db3acaa9c0da291e4e7ed9e578f959601eac46c",
+    "reports/iteration-07-proof-check.json": "3c6ae68b540ce3ee8ab5c83b904b6879323c0bab9923284451cc8ed850f5d768",
+    "reports/iteration-07-publication-block.json": "d4898ad49ca9b2ae0a256e20b546134686117a0ad0521a63251dfb198c3b178e",
+    "reports/iteration-07-python-tests.log": "9cdd5a902e836a7f48f8c03379c7211e3bc420ba3f5c75ccd6f4194199f90ef6",
+    "reports/iteration-07-remote-tests.log": "4ee1591d5b8f96e6d5b316633ed026c43c3e945db55ba9defead6373e20a61ef",
+    "reports/iteration-07-source-check.json": "12aeb3df1f2e3a0149b3a1204c364eaa55bc89d2947c0051b3945c3930f56f4d"
+  },
+  "implementation_source_sha256": {
+    ".github/workflows/offline.yml": "8d12421b096865f84200dcb26810428f8c345102068f73ef5f1941224b08d5ba",
+    ".github/workflows/windows.yml": "8f836f3337447287787441452d0f66cb7c3c99e1696443500a1810a4d48e8ad5",
+    ".gitignore": "bcf97477c92b0046c4c70b4221e2f33d5cb131fc9b7e7f8dcadd18ae1e8b0402",
+    "AGENTS.md": "099527d042d7cb88f05ba04d5c985666a9cc0f88a95f2e66448546bc5e136b70",
+    "cmake/Host.cmake": "bee3a9e4970097020d4acd9bf6a6acb0c0a742b97bee2d1f618101000630aca8",
+    "configs/gpu-owner.example.json": "d00f11cfe37360e65f2ac8d83967ed273a9faa5aef851b27d48ea8211289e9bf",
+    "configs/remote.example.json": "63ef386e6913b841aca5dd0222fdb2ff483c230075c7de151891ad8cbe69f8db",
+    "docs/architecture.md": "bad8ff7920a9cebfba23628c73f853ba86617ad20736090e07f4197f8b852425",
+    "docs/attempt-search.md": "7aac5d7cec87672f1743dccba10590102ecae07b7574fbbd737106dff081da83",
+    "docs/candidate-identity.md": "2478d7cffd31d955b3926812181603b5348d14052d7a8365ee3b99267f83d08c",
+    "docs/development.md": "99e5b32e24cb1f60192bb840b9028446f20c438cd469f928c5de337012e28d4d",
+    "docs/gpu-miner-handoff.md": "539483d1e51c57b9160f9588e9be654a0f18d6d6708dedd04b86f08c7756d52f",
+    "docs/host-replay.md": "1e168965310852b17772f26e817fc7725b7ef35c83c234f370dd00317e8d6441",
+    "docs/iterations/07.md": "b4de93aa94c7d522165022788f51a7cdc3b7fcc06cb08800a42e5ce7d9c011e3",
+    "docs/windows-worker.md": "52f7d0f41804c3b10154db22ba6162df85f530ad875a82cb280ebcfb81bb993d",
+    "native/fixtures/attempt_golden.hpp": "94ca14b708c98def620348363df55c6b048e419e0b3618920c66f5545adc3c0a",
+    "native/fixtures/attempt_manifest.json": "c8d6b6e6e1bb39600b5cf9d818d9ee263e42caca36615b7b36e68a01389bac68",
+    "native/host/mining_job.cpp": "ce9cae93ead38e6fb789abc1e723dccfbe0dbda2acde529d1a24d7a1832b7571",
+    "native/host/pool_replay_client.cpp": "0564e0dafaa5f04652b0e00645dcd1a9f4ea9042a238bebcdf4577f946284849",
+    "native/include/neuro/mining_job.hpp": "38065976504f32c47ef403ac68a53a5bc1e45e4b4013f610ba89828fd2731e22",
+    "native/include/neuro/pearl_input.hpp": "18b340c1d637d8f27418b58df2d65ea4ab893449a58e38a615ee804690aee28b",
+    "native/pearl/pearl_input.cpp": "35fcb1ced7874913d441cde1a0d8e9d55fee5151a43ddb6c34a6821c3be2367b",
+    "native/proof/pearl_proof.cpp": "1dc1b72517ba14ba60021bdb2ab52231e3f70556598d796c0040c2e50fb726e6",
+    "native/tests/attempt_search_test.cpp": "73419837a9be0e6441fe7859294d6e7496d2039f6eb745cb4fa1014561b29fe8",
+    "tests/test_candidate_manifest.py": "d19209b7ee3da0e9766f3247935b38c384b9747f9eece0231dd0a6da143c1ee8",
+    "tests/test_pool_replay.py": "7fc315d76f6d54b9a7bfff4cf5558ae49429afa386c4421fb842bf6b639f72c1",
+    "tests/test_remote_worker.py": "b886a726c7b27cd6a7092b41412f00b284bb5e4eccf366c96262022826bc2c55",
+    "tools/candidate_manifest.py": "d2a2216b8eb0cd80e6b51cedf1d97e023e43b757bc6dfb541e4ec794e6ee6f12",
+    "tools/generate_attempt_fixtures.py": "e9c91d46d03a29bd106e3d9db9cb1a0cff90e1baf4b9e131a262bdef2f9251d9",
+    "tools/remote_worker.py": "2960fe0834e91add78348e3fb4ea6908c0a504ffc458924b8dc78b298af5b54c",
+    "tools/replay_pool.py": "c6b6b0334a752af2ceab55deb71e5481660e1eedb669b2fc56f1aa0813e5d987",
+    "windows/GpuLeaseNative.cs": "9d4a21bfe1147f6f51812d26db68774723eca2b7781c2c1bd6c2e6e3e834659e",
+    "windows/ci.ps1": "550bdba3fa1375318b4eeb47e3d703a4621e946fa377cbb94532d057408937d5",
+    "windows/gpu_lease.ps1": "8ddc5f05c201ee508314d6964da7fa28db15844ab0211713088cdfd4ec7478b1",
+    "windows/test_ci_evidence.ps1": "74101d4e325062840868d4729d00c64efc26d22264c4767eb4dc46cd8f384afb",
+    "windows/test_gpu_lease.ps1": "769293692edb511071a5118f6cff91d055c1660e098680dfe0cd5742f91500e2",
+    "windows/test_remote_worker.ps1": "0732d3e70c0bfd1cce02dcf2e2b0c0051ffacbba72159b7c510f1b18382c58af",
+    "windows/worker.ps1": "4ff8a95ec80d3a9a3c9ab92f2c1b1c8f2c010ea5bf0bdc543967865d0538353b"
+  }
+}

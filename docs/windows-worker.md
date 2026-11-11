@@ -6,6 +6,13 @@ dispatcher. GitHub's Windows job validates CPU/proof/loopback and worker behavio
 on its Windows runner. The owner's laptop connection and physical GPU execution
 require separate observed results; a Windows CI pass does not establish either.
 
+The recorded successful Windows runs currently belong to iteration 6.
+Iteration-7 v2 candidate binding, prerequisite checks and GPU handoff scripts
+are implemented but **not executed under Windows**: GitHub rejected publication
+with an account-suspended HTTP 403. See `docs/iterations/07.md` and its validation
+report. Run the updated fixtures and native gates before treating this revision
+as a validated remote Windows worker.
+
 ## Native proof build
 
 `configs/proof-build.json` pins Rust 1.99.1, its compiler commit, both lockfiles

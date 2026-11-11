@@ -1,0 +1,17 @@
+{
+  "schema": "neuro.publication_status.v1",
+  "iteration": 7,
+  "status": "blocked",
+  "operation": "create GitHub implementation tree before commit/branch publication",
+  "http_status": 403,
+  "upstream_message": "Sorry. Your account was suspended",
+  "repository": "https://github.com/alinescafs3mp-afk/neuro",
+  "parent_main_commit": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
+  "local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
+  "remote_commit_created": false,
+  "remote_branch_created": false,
+  "main_changed": false,
+  "iteration7_GitHub_CI_started": false,
+  "recovery_checkpoint": "neuro-iteration07-checkpoint.zip",
+  "credential_bypass_attempted": false
+}

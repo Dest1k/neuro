@@ -1,0 +1,31 @@
+{
+  "schema": "neuro.gpu_handoff.static_review.v1",
+  "iteration": 7,
+  "method": "focused_source_review_and_static_invariants_not_compilation",
+  "static_checks_passed": true,
+  "PowerShell_runtime_available": false,
+  "CSharp_compiler_available": false,
+  "Windows_execution": false,
+  "TaskScheduler_execution": false,
+  "owner_desktop_observed": false,
+  "physical_GPU_execution": false,
+  "implemented_tests": "windows/test_gpu_lease.ps1 -InteractiveSmoke",
+  "Windows_test_result": "not_run_external_CI_unavailable",
+  "reviewed_boundaries": [
+    "PowerShell 5 syntax and supported .NET Framework/C# features reviewed; not parsed or compiled",
+    "Exact handle-based PID/creation/path/SID termination",
+    "Interactive-token session and visible inbox-conhost preflight before stop",
+    "Separate unbounded owner-miner restart task; bounded watchdog lifetime",
+    "Bounded recovery mutex wait after owner death",
+    "Current-poll miner/window observation; no stale success latch",
+    "Copied module and helper hashes checked and bound to request",
+    "Originally stopped miner remains stopped; uncertain restarts not repeated"
+  ],
+  "source_sha256": {
+    "windows/GpuLeaseNative.cs": "9d4a21bfe1147f6f51812d26db68774723eca2b7781c2c1bd6c2e6e3e834659e",
+    "windows/gpu_lease.ps1": "8ddc5f05c201ee508314d6964da7fa28db15844ab0211713088cdfd4ec7478b1",
+    "windows/test_gpu_lease.ps1": "769293692edb511071a5118f6cff91d055c1660e098680dfe0cd5742f91500e2",
+    "configs/gpu-owner.example.json": "d00f11cfe37360e65f2ac8d83967ed273a9faa5aef851b27d48ea8211289e9bf",
+    "docs/gpu-miner-handoff.md": "539483d1e51c57b9160f9588e9be654a0f18d6d6708dedd04b86f08c7756d52f"
+  }
+}

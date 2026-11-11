@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "seconds": 31.693,
+  "returncode": 0,
+  "output": "{\"schema\": \"neuro.attempt_fixture_check.v1\", \"passed\": true, \"mode\": \"check\", \"mismatches\": []}\n",
+  "purpose": "bounded generator wall-time for CI placement"
+}
