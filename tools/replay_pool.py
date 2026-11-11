@@ -288,8 +288,23 @@ def encode_message(message: dict) -> bytes:
 
 
 def stop_child(process: subprocess.Popen, *, grace: float = 1.0) -> None:
-    """Stop only the session created for this native client, with two bounds."""
+    """Stop the owned client, with bounded platform-specific escalation.
+
+    Windows hardware runs additionally live inside the outer worker's Job
+    Object. taskkill alone cannot contain descendants after their leader exits.
+    """
     if process.poll() is not None:
+        return
+    if os.name == "nt":
+        try:
+            subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                           timeout=max(grace, 1.0), check=False, shell=False)
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=max(grace, 1.0))
         return
     try:
         os.killpg(process.pid, signal.SIGTERM)
@@ -626,9 +641,11 @@ class ReplayCase:
         env = os.environ.copy()
         env["RAYON_NUM_THREADS"] = "2"
         try:
+            flags = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+                     if os.name == "nt" else {"start_new_session": True})
             self.process = subprocess.Popen(argv, cwd=ROOT, env=env, stdout=subprocess.PIPE,
                                             stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL,
-                                            start_new_session=True)
+                                            **flags)
             self.event_thread = threading.Thread(target=self.capture_output, daemon=True)
             self.event_thread.start()
             deadline = started + self.deadline_ms / 1000 + 6
@@ -751,14 +768,17 @@ def replay(args) -> dict:
             "model_api_calls": False,
             "cpu_execution": any(item.get("native_report", {}).get("cpu_execution") is True for item in results),
             "gpu_execution": any(item.get("native_report", {}).get("gpu_execution") is True for item in results),
-            "windows_execution": False}
+            "windows_execution": os.name == "nt" and any("native_report" in item for item in results)}
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--native", type=Path, default=ROOT / "build/proof-cmake/neuro_pool_replay_client")
+    native_dir = "build/windows" if os.name == "nt" else "build/proof-cmake"
+    target = "x86_64-pc-windows-msvc" if os.name == "nt" else "x86_64-unknown-linux-gnu"
+    suffix = ".exe" if os.name == "nt" else ""
+    parser.add_argument("--native", type=Path, default=ROOT / native_dir / ("neuro_pool_replay_client" + suffix))
     parser.add_argument("--reference", type=Path, default=ROOT /
-                        "build/proof-target/x86_64-unknown-linux-gnu/release/pearl-proof-check")
+                        "build/proof-target" / target / "release" / ("pearl-proof-check" + suffix))
     parser.add_argument("--work-dir", type=Path, default=ROOT / "artifacts/pool-replay")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/pool-replay.json")
     parser.add_argument("--scenario", action="append", choices=[item.name for item in SCENARIOS])

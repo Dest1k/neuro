@@ -3,6 +3,10 @@
 #include "cp_json_text.hpp"
 #include "cp_proof.h"
 #include "cp_util.h"
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include "cp_platform.h"
 
 #include <algorithm>
 #include <array>
@@ -17,11 +21,9 @@
 #include <utility>
 #include <vector>
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <poll.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#ifndef _WIN32
+#include <sys/select.h>
+#endif
 
 namespace {
 using namespace neuro::wire;
@@ -140,31 +142,47 @@ void parser_cases() {
 
 class Socket {
 public:
-    explicit Socket(int value = -1) : value_(value) {}
+    explicit Socket(cp_sock_t value = CP_INVALID_SOCK) : value_(value) {}
     ~Socket() { close(); }
     Socket(const Socket&) = delete;
     Socket& operator=(const Socket&) = delete;
-    Socket(Socket&& other) noexcept : value_(std::exchange(other.value_, -1)) {}
-    int get() const { return value_; }
-    void close() { if (value_ >= 0) { ::close(value_); value_ = -1; } }
+    Socket(Socket&& other) noexcept : value_(std::exchange(other.value_, CP_INVALID_SOCK)) {}
+    cp_sock_t get() const { return value_; }
+    void close() { if (value_ != CP_INVALID_SOCK) { ::CP_SOCK_CLOSE(value_); value_ = CP_INVALID_SOCK; } }
 private:
-    int value_;
+    cp_sock_t value_;
 };
 
-void readable(int socket, int milliseconds = 2000) {
-    pollfd item{socket, POLLIN, 0};
-    if (::poll(&item, 1, milliseconds) <= 0) throw std::runtime_error("test loopback peer timed out");
+void readable(cp_sock_t socket, int milliseconds = 2000) {
+    fd_set ready;
+    FD_ZERO(&ready);
+#ifndef _WIN32
+    if (socket < 0 || socket >= FD_SETSIZE) throw std::runtime_error("test socket exceeds select bound");
+#endif
+    FD_SET(socket, &ready);
+    timeval timeout{milliseconds / 1000, (milliseconds % 1000) * 1000};
+#ifdef _WIN32
+    const int count = ::select(0, &ready, nullptr, nullptr, &timeout);
+#else
+    const int count = ::select(socket + 1, &ready, nullptr, nullptr, &timeout);
+#endif
+    if (count <= 0) throw std::runtime_error("test loopback peer timed out");
 }
 
-void send_text(int socket, std::string_view text) {
+void send_text(cp_sock_t socket, std::string_view text) {
     while (!text.empty()) {
-        const auto sent = ::send(socket, text.data(), text.size(), MSG_NOSIGNAL);
+        const auto length = static_cast<int>((std::min)(text.size(), std::size_t(65536)));
+#ifdef MSG_NOSIGNAL
+        const auto sent = ::send(socket, text.data(), length, MSG_NOSIGNAL);
+#else
+        const auto sent = ::send(socket, text.data(), length, 0);
+#endif
         if (sent <= 0) throw std::runtime_error("test peer send failed");
         text.remove_prefix(static_cast<std::size_t>(sent));
     }
 }
 
-std::string read_line(int socket) {
+std::string read_line(cp_sock_t socket) {
     const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
     std::string text;
     for (;;) {
@@ -182,14 +200,18 @@ std::string read_line(int socket) {
 class Listener {
 public:
     Listener() : socket_(::socket(AF_INET, SOCK_STREAM, 0)) {
-        if (socket_.get() < 0) throw std::runtime_error("cannot create test loopback socket");
+        if (socket_.get() == CP_INVALID_SOCK) throw std::runtime_error("cannot create test loopback socket");
         sockaddr_in address{};
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         address.sin_port = 0;
         if (::bind(socket_.get(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) != 0 ||
             ::listen(socket_.get(), 4) != 0) throw std::runtime_error("cannot bind/listen on loopback");
+#ifdef _WIN32
+        int length = sizeof(address);
+#else
         socklen_t length = sizeof(address);
+#endif
         if (::getsockname(socket_.get(), reinterpret_cast<sockaddr*>(&address), &length) != 0)
             throw std::runtime_error("cannot discover test port");
         port = ntohs(address.sin_port);
@@ -197,9 +219,15 @@ public:
     Socket accept_peer() {
         readable(socket_.get());
         Socket peer(::accept(socket_.get(), nullptr, nullptr));
-        if (peer.get() < 0) throw std::runtime_error("test peer accept failed");
+        if (peer.get() == CP_INVALID_SOCK) throw std::runtime_error("test peer accept failed");
+#ifdef _WIN32
+        const DWORD timeout = 1000;
+        if (::setsockopt(peer.get(), SOL_SOCKET, SO_SNDTIMEO,
+                         reinterpret_cast<const char*>(&timeout), sizeof(timeout)) != 0)
+#else
         const timeval timeout{1, 0};
         if (::setsockopt(peer.get(), SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout)) != 0)
+#endif
             throw std::runtime_error("cannot bound test peer sends");
         return peer;
     }
@@ -312,6 +340,7 @@ void socket_cases() {
 
 int main() {
     try {
+        if (cp_net_init() != 0) throw std::runtime_error("cannot initialize test socket platform");
         parser_cases();
         socket_cases();
         std::cout << "PASS bounded pool wire: positive_checks=" << checks << " rejected_cases=" << rejections

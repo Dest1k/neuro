@@ -159,7 +159,7 @@ class OfficialResponseTests(unittest.TestCase):
 
 
 class CleanupTests(unittest.TestCase):
-    @unittest.skipUnless(os.name == "posix", "The observed replay profile is Linux")
+    @unittest.skipUnless(os.name == "posix", "SIGTERM escalation is specific to POSIX")
     def test_ignored_termination_escalates_and_reaps_owned_child(self):
         code = "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); print('ready',flush=True); time.sleep(10)"
         child = subprocess.Popen([sys.executable, "-c", code], stdout=subprocess.PIPE,
@@ -169,6 +169,21 @@ class CleanupTests(unittest.TestCase):
             stop_child(child, grace=0.1)
             self.assertIsNotNone(child.returncode)
             stop_child(child, grace=0.1)  # An already reaped child is harmless.
+        finally:
+            if child.poll() is None:
+                child.kill()
+                child.wait(timeout=1)
+            child.stdout.close()
+
+    @unittest.skipUnless(os.name == "nt", "Windows process termination")
+    def test_windows_owned_child_terminates_and_is_reaped(self):
+        child = subprocess.Popen([sys.executable, "-c", "import time; print('ready',flush=True); time.sleep(10)"],
+                                 stdout=subprocess.PIPE, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        try:
+            self.assertEqual(child.stdout.readline().strip(), b"ready")
+            stop_child(child, grace=1.0)
+            self.assertIsNotNone(child.returncode)
+            stop_child(child, grace=1.0)
         finally:
             if child.poll() is None:
                 child.kill()

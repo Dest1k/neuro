@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Build the pinned real Rust proof library and official reference checker.
 
-Linux x86_64 recipe; no pool, GPU, credentials, or proof stub. Requires the
-specific rustup toolchain from configs/proof-build.json. Writes only generated
+Native Linux x86_64 or Windows x64 MSVC release build; no pool, GPU, credentials,
+or proof stub. Requires the specific rustup toolchain from configs/proof-build.json
+and, on Windows, an x64 MSVC/SDK developer environment. Writes only generated
 build/artifacts paths. Reference checkouts remain untouched.
 """
 from __future__ import annotations
@@ -14,9 +15,12 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
+import shlex
 import shutil
 import subprocess
 import tarfile
+import tempfile
 import time
 
 from neuroctl.workspace import source_check
@@ -35,18 +39,25 @@ def run(argv: list[str], *, cwd: Path, env: dict, log: Path, timeout: int) -> di
     timed_out = False
     with log.open("wb") as stream:
         # A distinct group lets timeout stop Cargo and its compiler children.
+        grouping = ({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+                    if os.name == "nt" else {"start_new_session": True})
         process = subprocess.Popen(argv, cwd=cwd, env=env, stdout=stream,
-                                   stderr=subprocess.STDOUT, start_new_session=True)
+                                   stderr=subprocess.STDOUT, **grouping)
         try:
             code = process.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
-            import signal
             timed_out = True
-            os.killpg(process.pid, signal.SIGKILL)
+            if os.name == "nt":
+                subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                               stdout=stream, stderr=subprocess.STDOUT, timeout=30,
+                               check=False)
+            else:
+                import signal
+                os.killpg(process.pid, signal.SIGKILL)
             code = process.wait(timeout=30)
     return {"command": argv, "returncode": code, "timed_out": timed_out,
             "elapsed_seconds": round(time.monotonic() - start, 3),
-            "log": str(log.relative_to(ROOT)), "log_sha256": sha256(log),
+            "log": log.relative_to(ROOT).as_posix(), "log_sha256": sha256(log),
             "passed": code == 0 and not timed_out}
 
 
@@ -81,23 +92,51 @@ def prepare_source(config: dict, env: dict) -> dict:
     for path in source.rglob("*"):
         if path.is_file():
             os.utime(path, None)
-    files = {str(path.relative_to(source)): sha256(path) for path in sorted(source.rglob("*"))
+    files = {path.relative_to(source).as_posix(): sha256(path) for path in sorted(source.rglob("*"))
              if path.is_file()}
-    return {"directory": str(source.relative_to(ROOT)), "file_count": len(files),
+    return {"directory": source.relative_to(ROOT).as_posix(), "file_count": len(files),
             "files_sha256": files,
             "inventory_sha256": hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest()}
 
 
+def select_target(config: dict, requested: str | None) -> tuple[str, dict]:
+    if platform.machine().lower() not in {"x86_64", "amd64"}:
+        raise ValueError("The recorded proof profiles require native x86_64")
+    host_system = platform.system()
+    native = {"Linux": "x86_64-unknown-linux-gnu", "Windows": "x86_64-pc-windows-msvc"}.get(host_system)
+    target = requested or native
+    if target not in config["platforms"] or target != native:
+        raise ValueError("Choose the native Linux x86_64 or Windows x64 MSVC target; tests must run locally")
+    profile = config["platforms"][target]
+    if profile["system"] != host_system:
+        raise ValueError("Target profile does not match this operating system")
+    return target, profile
+
+
+def native_libraries(log: Path, target: str) -> list[str]:
+    entries = re.findall(r"native-static-libs:\s*([^\r\n]+)", log.read_text(encoding="utf-8", errors="replace"))
+    if not entries:
+        raise ValueError("rustc did not report the real static library's native link dependencies")
+    parsed = [shlex.split(entry) for entry in entries]
+    if not parsed[0] or any(row != parsed[0] for row in parsed[1:]):
+        raise ValueError("rustc reported missing or conflicting native link dependencies")
+    pattern = r"[A-Za-z0-9_.+-]+\.lib" if target.endswith("-msvc") else r"-l[A-Za-z0-9_.+-]+"
+    if any(not re.fullmatch(pattern, value) for value in parsed[0]):
+        raise ValueError("Unexpected native library format; record and review the actual rustc output")
+    return parsed[0]
+
+
 def build(args) -> dict:
     config = json.loads(CONFIG.read_text())
-    report = {"schema": "neuro.proof_build.v1", "passed": False,
+    target, profile = select_target(config, args.target)
+    report = {"schema": "neuro.proof_build.v2", "passed": False,
               "config": config, "config_sha256": sha256(CONFIG), "commands": [],
+              "target": target, "profile": "release", "crt": profile["crt"],
+              "rustflags": profile["rustflags"],
               "stub_used": False, "gpu_execution": False, "network_pool_connection": False,
               "source_check": source_check(ROOT)}
     if not report["source_check"]["passed"]:
         raise ValueError("Pinned source check failed")
-    if platform.system() != "Linux" or platform.machine() not in {"x86_64", "AMD64"}:
-        raise ValueError("This observed proof build recipe requires Linux x86_64; Windows remains unverified")
     donor_lock = ROOT / "upstream/cppminer/rust/cp-proof-ffi/Cargo.lock"
     reference_lock = ROOT / "rust/pearl-proof-check/Cargo.lock"
     for path, key in ((donor_lock, "donor_lock_sha256"), (reference_lock, "reference_lock_sha256")):
@@ -107,7 +146,8 @@ def build(args) -> dict:
     if not cargo_path:
         raise ValueError(f"Install rustup minimal toolchain {config['rust_toolchain']} and put cargo on PATH")
     cargo = str(Path(cargo_path).absolute())
-    rustc = str(Path(args.rustc).absolute()) if args.rustc else str(Path(cargo).with_name("rustc"))
+    rustc = (str(Path(args.rustc).absolute()) if args.rustc else
+             str(Path(cargo).with_name("rustc.exe" if os.name == "nt" else "rustc")))
     env = os.environ.copy()
     for key in ("RUSTFLAGS", "CARGO_ENCODED_RUSTFLAGS", "RUSTC_WRAPPER", "RUSTC_WORKSPACE_WRAPPER"):
         if env.get(key):
@@ -115,43 +155,49 @@ def build(args) -> dict:
     env.update({"RUSTUP_TOOLCHAIN": config["rust_toolchain"], "RUSTC": rustc,
                 "CARGO_TARGET_DIR": str(ROOT / "build/proof-target"),
                 "CARGO_BUILD_JOBS": str(config["jobs"]), "RUST_BACKTRACE": "0",
-                "RAYON_NUM_THREADS": "2"})
+                "RAYON_NUM_THREADS": "2", "RUSTFLAGS": " ".join(profile["rustflags"])})
     env["PATH"] = str(Path(cargo).parent) + os.pathsep + env.get("PATH", "")
     rust_version = checked_output([rustc, "-Vv"], env)
     cargo_version = checked_output([cargo, "--version"], env)
     metadata = dict(line.split(": ", 1) for line in rust_version.splitlines() if ": " in line)
     if (metadata.get("release") != config["rust_toolchain"] or
             metadata.get("commit-hash") != config["rustc_commit"] or
-            metadata.get("host") != config["platform"] or
+            metadata.get("host") != target or
             not cargo_version.startswith(f"cargo {config['cargo_version']} ")):
         raise ValueError("Compiler does not match the recorded toolchain and host pin")
     report["toolchain"] = {"rustc": metadata, "cargo": cargo_version}
+    target_cfg = checked_output([rustc, "--print", "cfg", "--target", target, *profile["rustflags"]], env)
+    report["toolchain"]["target_cfg"] = target_cfg.splitlines()
+    if profile["crt"] == "dynamic" and 'target_feature="crt-static"' in target_cfg.splitlines():
+        raise ValueError("The Windows proof recipe requires the dynamic release CRT")
     report["source_copy"] = prepare_source(config, env)
     manifest = ROOT / "build/proof-source/rust/cp-proof-ffi/Cargo.toml"
     reference = ROOT / "rust/pearl-proof-check/Cargo.toml"
     # Explicit target also overrides CARGO_BUILD_TARGET / Cargo config. The
     # report must describe these artifacts, never stale host-default outputs.
-    common = ["--locked", "--release", "--target", config["platform"],
+    common = ["--locked", "--release", "--target", target,
               "--jobs", str(config["jobs"])]
     recipes = [
         ("donor-build", [cargo, "build", "--manifest-path", str(manifest), *common]),
-        ("donor-tests", [cargo, "test", "--manifest-path", str(manifest), "--lib", *common]),
+        ("donor-tests", [cargo, "test", "--manifest-path", str(manifest), "--lib", *common,
+                         "--", "--test-threads=2"]),
         ("reference-build", [cargo, "build", "--manifest-path", str(reference), *common]),
         ("native-libs", [cargo, "rustc", "--manifest-path", str(manifest), "--lib", *common,
                          "--", "--print", "native-static-libs"]),
     ]
     for name, command in recipes:
-        row = run(command, cwd=ROOT, env=env, log=ROOT / f"artifacts/proof-build/{name}.log",
+        row = run(command, cwd=ROOT, env=env, log=ROOT / f"artifacts/proof-build/{target}/{name}.log",
                   timeout=config["command_timeout_seconds"])
         report["commands"].append({"name": name, **row})
         if not row["passed"]:
             report["failure"] = name
             return report
-    release = ROOT / "build/proof-target" / config["platform"] / "release"
-    library = release / "libcp_proof_ffi.a"
-    checker = release / "pearl-proof-check"
+    report["native_static_libs"] = native_libraries(ROOT / report["commands"][-1]["log"], target)
+    release = ROOT / "build/proof-target" / target / "release"
+    library = release / profile["proof_library"]
+    checker = release / profile["reference_checker"]
     report["artifacts"] = {
-        name: {"path": str(path.relative_to(ROOT)), "bytes": path.stat().st_size,
+        name: {"path": path.relative_to(ROOT).as_posix(), "bytes": path.stat().st_size,
                "sha256": sha256(path)} for name, path in (("proof_library", library), ("reference_checker", checker))}
     report["source_check_after"] = source_check(ROOT)
     report["locks_unchanged"] = (sha256(donor_lock) == config["donor_lock_sha256"] and
@@ -161,19 +207,33 @@ def build(args) -> dict:
     return report
 
 
+def save_report(path: Path, report: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent,
+                                     prefix=path.name + ".", suffix=".tmp", delete=False) as stream:
+        temporary = Path(stream.name)
+        stream.write(json.dumps(report, indent=2) + "\n")
+    os.replace(temporary, path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cargo", help="Path to the cargo/rustup executable")
     parser.add_argument("--rustc", help="Defaults to rustc next to cargo")
+    parser.add_argument("--target", choices=["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"],
+                        help="Defaults to this host's native target; cross-compiling cannot pass runtime tests")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/proof-build.json")
     args = parser.parse_args()
+    # An interrupted rebuild must not leave an older successful report standing
+    # in for the current attempt. Final results replace this marker atomically.
+    save_report(args.output, {"schema": "neuro.proof_build.v2", "passed": False,
+                              "status": "building", "target": args.target, "stub_used": False})
     try:
         report = build(args)
     except (OSError, ValueError, subprocess.SubprocessError, KeyError) as error:
-        report = {"schema": "neuro.proof_build.v1", "passed": False,
+        report = {"schema": "neuro.proof_build.v2", "passed": False,
                   "error": str(error), "stub_used": False}
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2) + "\n")
+    save_report(args.output, report)
     print(json.dumps({"schema": report["schema"], "passed": report["passed"],
                       "report": str(args.output), "error": report.get("error"),
                       "failed_stage": report.get("failure")}))

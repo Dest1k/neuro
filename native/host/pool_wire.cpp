@@ -7,6 +7,9 @@
 #include "cp_util.h"
 
 #ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <winsock2.h>
 #else
 #include <sys/select.h>
@@ -324,12 +327,13 @@ LoopbackPool::LoopbackPool(int port, int io_timeout_ms) {
         cp_pool_disconnect();
         if (!cp_pool_connect("127.0.0.1", port)) throw std::runtime_error("loopback pool connection failed");
         connected_ = true;
-        const int socket = cp_pool_socket();
 #ifdef _WIN32
+        const SOCKET socket = static_cast<SOCKET>(cp_pool_socket());
         const DWORD timeout = static_cast<DWORD>(io_timeout_ms);
         if (setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout)) != 0 ||
             setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout)) != 0)
 #else
+        const int socket = cp_pool_socket();
         if (socket >= FD_SETSIZE) throw std::runtime_error("donor socket exceeds select descriptor bound");
         const timeval timeout{io_timeout_ms / 1000, (io_timeout_ms % 1000) * 1000};
         if (setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout)) != 0 ||

@@ -232,15 +232,18 @@ def check(args) -> dict:
         "binaries": {"native_sha256": digest(native.read_bytes()), "official_sha256": digest(reference.read_bytes())},
         "gzip_checks": compression, "proof_inventory": proof_inventory, "checks": checks,
         "stark_generated": False, "network_work": False, "pool_acceptance": False,
-        "gpu_execution": False, "windows_execution": False,
+        "gpu_execution": False, "windows_execution": os.name == "nt",
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--native", type=Path, default=ROOT / "build/proof-cmake/neuro_pearl_proof")
+    native_dir = "build/windows" if os.name == "nt" else "build/proof-cmake"
+    target = "x86_64-pc-windows-msvc" if os.name == "nt" else "x86_64-unknown-linux-gnu"
+    suffix = ".exe" if os.name == "nt" else ""
+    parser.add_argument("--native", type=Path, default=ROOT / native_dir / ("neuro_pearl_proof" + suffix))
     parser.add_argument("--reference", type=Path,
-                        default=ROOT / "build/proof-target/x86_64-unknown-linux-gnu/release/pearl-proof-check")
+                        default=ROOT / "build/proof-target" / target / "release" / ("pearl-proof-check" + suffix))
     parser.add_argument("--work-dir", type=Path, default=ROOT / "artifacts/proof-corpus")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/proof-check.json")
     args = parser.parse_args()

@@ -1,6 +1,21 @@
 {
-  "schema": "neuro.proof_build_config.v1",
-  "platform": "x86_64-unknown-linux-gnu",
+  "schema": "neuro.proof_build_config.v2",
+  "platforms": {
+    "x86_64-unknown-linux-gnu": {
+      "system": "Linux",
+      "crt": "system",
+      "rustflags": [],
+      "proof_library": "libcp_proof_ffi.a",
+      "reference_checker": "pearl-proof-check"
+    },
+    "x86_64-pc-windows-msvc": {
+      "system": "Windows",
+      "crt": "dynamic",
+      "rustflags": ["-Ctarget-feature=-crt-static"],
+      "proof_library": "cp_proof_ffi.lib",
+      "reference_checker": "pearl-proof-check.exe"
+    }
+  },
   "rust_toolchain": "1.99.1",
   "rustc_commit": "58cf8f9c35b355199727627d07ae34a4e2846d67",
   "cargo_version": "1.99.1",

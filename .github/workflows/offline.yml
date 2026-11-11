@@ -81,7 +81,7 @@ jobs:
           name: offline-proof-evidence
           path: |
             artifacts/proof-build.json
-            artifacts/proof-build/*.log
+            artifacts/proof-build/**/*.log
             artifacts/proof-check.json
             artifacts/pool-replay.json
             artifacts/pool-replay/
