@@ -1,0 +1,82 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 1,
+  "observed_at_utc": "2026-11-11T12:14:54.145461+00:00",
+  "upstream_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+  "upstream_clean": true,
+  "python": {
+    "command": "python3 -m unittest discover -s tests -v",
+    "exit_code": 0,
+    "tests_passed": 45,
+    "log": "reports/python-tests.log"
+  },
+  "cpu": {
+    "command": "python3 tools/neuroctl.py cpu-check --output artifacts/cpu-check.json",
+    "passed": true,
+    "checks": [
+      {
+        "name": "cppminer_cli",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": ""
+      },
+      {
+        "name": "cppminer_pool_protocol",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: missing, empty or over-long job_id\n"
+      },
+      {
+        "name": "cppminer_math_probe",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "PASS zero M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=0\nPASS signed-int7-boundaries M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS signed-int8-extremes M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS rank-boundaries-cumulative M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=32\nPASS rectangular-two-macros M=128 N=256 K=4096 milestones=32 compared=8192 nonzero=8192\nAll scalar GEMM/milestone-XOR component checks passed. No proof, GPU, pool, or hashrate validation performed.\n"
+      },
+      {
+        "name": "mma_layout",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.mma_layout_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_layout_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"checked_values\":1024}\n"
+      }
+    ],
+    "gemm_xor_exact_comparisons": 24576,
+    "mma_layout_exact_comparisons": 1024
+  },
+  "cmake_cpu": {
+    "configure_build_exit_code": 0,
+    "ctest_tests_passed": 4,
+    "ctest_tests_failed": 0,
+    "version": "3.31.6",
+    "host_compiler": "GNU 14.2.0"
+  },
+  "cuda": {
+    "status": "PASS_COMPILE_ONLY",
+    "target": "sm_120",
+    "compiler": "13.5.37",
+    "full_linux_link": true,
+    "receipt": "reports/cuda-sm120-compile.json"
+  },
+  "coverage_limits": {
+    "gpu_execution": false,
+    "windows_build": false,
+    "windows_execution": false,
+    "full_pearl_proof": false,
+    "pool_shares": false,
+    "miner_hashrate_measured": false,
+    "reseller_api_calls": 0,
+    "cache_billing_verified": false,
+    "dsh_budget_enforced": false
+  },
+  "source_hashes": {
+    "native/tests/cppminer_math_probe.cpp": "597e8e241d2513c7efeae8f2ec16658b187c9185b3a4610cf6ddcf4e908928ed",
+    "native/tests/mma_layout_test.cpp": "fcd221929755fc8ce080c30a96246e7c017e7ac9a9075941dd72759e0ca87e38",
+    "native/cuda/mma_probe.cu": "6172c20044e9f35b5be5e2f527d3887a41ffcb647066301b4c76bf404acd6b4c",
+    "native/include/neuro/mma_layout.hpp": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540",
+    "tools/neuroctl/cost.py": "96a22a3c82a5d50801995f1e91672d3539ee696daf2c1b95e65004ee46466655",
+    "tools/neuroctl/experiments.py": "1c6498a0a8a3ac2329356515609ee2064ee14ed7582c66f0fa631f02d74168b2",
+    "tools/neuroctl/workspace.py": "bd1592ba5d445c7a9bdf701b54cb58d2ab8817a2f8b15a42145240b114064b4c",
+    "tools/neuroctl/cli.py": "bdceaf2052542757513fef3a82b146a13937558f184574fc454dd574e2dfeade",
+    "configs/model-prices.json": "3fe33933c2dc02a440a1b6957d80f0d5484afdd8d7c9392d011aff0288ec0832",
+    "CMakeLists.txt": "67e91f57847c8714290d1edabde4c0f7b4db26a619522ccc9be8f2b9c3ccb486"
+  }
+}

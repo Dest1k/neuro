@@ -1,0 +1,29 @@
+name: Offline checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  cpu:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify pinned upstream
+        run: python tools/neuroctl.py source-check
+      - name: Test cost and experiment controls
+        run: python -m unittest discover -s tests -v
+      - name: Compile and run CPU component checks
+        run: python tools/neuroctl.py cpu-check --output artifacts/cpu-check.json
+      - name: Exercise CMake build definition
+        run: |
+          cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release
+          cmake --build build/cmake -j 2
+          ctest --test-dir build/cmake --output-on-failure

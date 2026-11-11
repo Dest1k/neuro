@@ -1,0 +1,129 @@
+{
+  "schema": "neuro.cuda_compile_only.v1",
+  "kind": "cuda_compile_only",
+  "status": "PASS_COMPILE_ONLY",
+  "created_at_utc": "2026-11-11T12:13:20.768877+00:00",
+  "platform": {
+    "system": "Linux",
+    "machine": "x86_64"
+  },
+  "target": "sm_120",
+  "gpu_execution_observed": false,
+  "windows_build_verified": false,
+  "windows_execution_observed": false,
+  "mining_evidence": false,
+  "hashrate": null,
+  "compiler_info": {
+    "nvcc": {
+      "exit_code": 0,
+      "output": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Mon_Oct_12_19:25:48_PDT_2026\nCuda compilation tools, release 13.5, V13.5.37\nBuild cuda_13.5.r13.5/compiler.39125733_0"
+    },
+    "ptxas": {
+      "exit_code": 0,
+      "output": "ptxas: NVIDIA (R) Ptx optimizing assembler\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Mon_Oct_12_19:25:48_PDT_2026\nCuda compilation tools, release 13.5, V13.5.37\nBuild cuda_13.5.r13.5/compiler.39125733_0"
+    },
+    "cmake": {
+      "exit_code": 0,
+      "output": "cmake version 3.31.6\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake)."
+    },
+    "host_cxx": {
+      "exit_code": 0,
+      "output": "c++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+    }
+  },
+  "input_files": [
+    {
+      "path": "native/cuda/mma_probe.cu",
+      "sha256": "6172c20044e9f35b5be5e2f527d3887a41ffcb647066301b4c76bf404acd6b4c"
+    },
+    {
+      "path": "native/include/neuro/mma_layout.hpp",
+      "sha256": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "sha256": "67e91f57847c8714290d1edabde4c0f7b4db26a619522ccc9be8f2b9c3ccb486"
+    }
+  ],
+  "commands": {
+    "direct_object_compile": {
+      "command": [
+        "${CUDA_ROOT}/bin/nvcc",
+        "-std=c++17",
+        "-arch=sm_120",
+        "-O2",
+        "-lineinfo",
+        "-Xptxas=-v",
+        "-I",
+        "${PROJECT_ROOT}/native/include",
+        "-c",
+        "${PROJECT_ROOT}/native/cuda/mma_probe.cu",
+        "-o",
+        "${TOOLS_ROOT}/mma_probe_sm120.o"
+      ],
+      "exit_code": 0
+    },
+    "cmake_configure": {
+      "command": [
+        "${CMAKE}",
+        "-S",
+        "${PROJECT_ROOT}",
+        "-B",
+        "${PROJECT_ROOT}/build/cuda",
+        "-DNEURO_ENABLE_CUDA=ON",
+        "-DNEURO_BUILD_CPU_CHECKS=OFF",
+        "-DCMAKE_CUDA_ARCHITECTURES=120",
+        "-DCMAKE_CUDA_COMPILER=${CUDA_ROOT}/bin/nvcc",
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "exit_code": 0
+    },
+    "cmake_build_and_link": {
+      "command": [
+        "${CMAKE}",
+        "--build",
+        "${PROJECT_ROOT}/build/cuda",
+        "--target",
+        "neuro_mma_probe",
+        "--verbose",
+        "--parallel",
+        "2"
+      ],
+      "exit_code": 0
+    }
+  },
+  "outputs": {
+    "object": {
+      "path": "${TOOLS_ROOT}/mma_probe_sm120.o",
+      "bytes": 45016,
+      "sha256": "024b221e1ee7f1877ae90725f3c2f7b7042e96adc8fdd87d3028605424f49264"
+    },
+    "linux_executable": {
+      "path": "build/cuda/neuro_mma_probe",
+      "bytes": 1143928,
+      "sha256": "53b494d41a117a154fce8d329ab25d0ad598414530f529ca514146d33958c19a"
+    }
+  },
+  "ptxas_object_compile": {
+    "registers": 44,
+    "stack_bytes": 0,
+    "spill_store_bytes": 0,
+    "spill_load_bytes": 0
+  },
+  "log": {
+    "path": "reports/cuda-sm120-compile.log",
+    "sha256": "942adff11b53c1d47b0e04560c8ee647579ab36a906f98bc942750d19e2109b0"
+  },
+  "limitations": [
+    "Compile/link evidence only; no CUDA kernel or probe executable was run.",
+    "The 44-register ptxas record belongs to the direct -O2 object compile, not a measured GPU run.",
+    "CMake Release uses its actual verbose flags recorded in the log.",
+    "No Windows build or execution was verified.",
+    "The toolkit and build outputs are local ignored dependencies/artifacts, not committed binaries."
+  ],
+  "cmake_response_files": {
+    "includes_CUDA.rsp": "-I${PROJECT_ROOT}/native/include",
+    "objects1.rsp": "CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o",
+    "linkLibs.rsp": "-lcudadevrt -lcudart_static -lrt -lpthread -ldl"
+  }
+}

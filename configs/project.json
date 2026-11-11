@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "project": "neuro",
+  "coin": "Pearl",
+  "preparation_iterations": 10,
+  "owner_workspace": "/home/jericho/neuro",
+  "handoff_extract_path": "/home/jericho/neuro/start",
+  "primary_gpu": {
+    "expected_name": "NVIDIA GeForce RTX 5080 Laptop GPU",
+    "compute_capability": "12.0",
+    "cuda_architecture": "120",
+    "memory_gib": 16,
+    "operating_system": "Windows",
+    "preserve_existing_power_profile": true
+  },
+  "development": {
+    "gpu_language": "CUDA C++17",
+    "inline_ptx": "allowed_when_justified",
+    "host": "reuse_CPPminer",
+    "proof": "reuse_Rust",
+    "orchestration": "Python_stdlib_plus_existing_DSH"
+  },
+  "model_policy": {
+    "executor": "openai/gpt-6.1-sol",
+    "challenger": "minimax/minimax-m3",
+    "selection_status": "provisional_no_provider_trial",
+    "input_budget_tokens": 64000,
+    "output_budget_tokens": 8000,
+    "maximum_calls_per_work_session": 200,
+    "work_session_budget_usd": "5.00",
+    "initial_campaign_budget_usd": "25.00",
+    "unknown_cache_discount": "none",
+    "budget_enforcement": "not_integrated_with_DSH_yet"
+  },
+  "experiments": {
+    "parallel_gpu_workers": 1,
+    "verification_before_benchmark": true,
+    "minimum_comparable_repetitions": 3,
+    "max_failures_per_unchanged_candidate": 2,
+    "remote_connection_configured": false,
+    "pool_connection_configured": false
+  }
+}

@@ -1,0 +1,57 @@
+CUDA compile and Linux link verification only. The probe executable was not run.
+
+DIRECT OBJECT COMPILE
+'${CUDA_ROOT}/bin/nvcc' -std=c++17 -arch=sm_120 -O2 -lineinfo -Xptxas=-v -I '${PROJECT_ROOT}/native/include' -c '${PROJECT_ROOT}/native/cuda/mma_probe.cu' -o '${TOOLS_ROOT}/mma_probe_sm120.o'
+exit_code=0
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function '_Z15mma_checkpointsPKaS0_Pi' for 'sm_120'
+ptxas info    : Function properties for _Z15mma_checkpointsPKaS0_Pi
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 44 registers, used 0 barriers
+ptxas info    : Compile time = 4.078 ms
+
+CMAKE CONFIGURE
+'${CMAKE}' -S '${PROJECT_ROOT}' -B '${PROJECT_ROOT}/build/cuda' -DNEURO_ENABLE_CUDA=ON -DNEURO_BUILD_CPU_CHECKS=OFF -DCMAKE_CUDA_ARCHITECTURES=120 '-DCMAKE_CUDA_COMPILER=${CUDA_ROOT}/bin/nvcc' -DCMAKE_BUILD_TYPE=Release
+exit_code=0
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: ${PROJECT_ROOT}/build/cuda
+
+CMAKE BUILD AND LINK
+'${CMAKE}' --build '${PROJECT_ROOT}/build/cuda' --target neuro_mma_probe --verbose --parallel 2
+exit_code=0
+Change Dir: '${PROJECT_ROOT}/build/cuda'
+
+Run Build Command(s): ${CMAKE} -E env VERBOSE=1 /usr/bin/gmake -f Makefile -j2 neuro_mma_probe
+${CMAKE} -S${PROJECT_ROOT} -B${PROJECT_ROOT}/build/cuda --check-build-system CMakeFiles/Makefile.cmake 0
+/usr/bin/gmake  -f CMakeFiles/Makefile2 neuro_mma_probe
+gmake[1]: Entering directory '${PROJECT_ROOT}/build/cuda'
+${CMAKE} -S${PROJECT_ROOT} -B${PROJECT_ROOT}/build/cuda --check-build-system CMakeFiles/Makefile.cmake 0
+${CMAKE} -E cmake_progress_start ${PROJECT_ROOT}/build/cuda/CMakeFiles 2
+/usr/bin/gmake  -f CMakeFiles/Makefile2 CMakeFiles/neuro_mma_probe.dir/all
+gmake[2]: Entering directory '${PROJECT_ROOT}/build/cuda'
+/usr/bin/gmake  -f CMakeFiles/neuro_mma_probe.dir/build.make CMakeFiles/neuro_mma_probe.dir/depend
+gmake[3]: Entering directory '${PROJECT_ROOT}/build/cuda'
+cd ${PROJECT_ROOT}/build/cuda && ${CMAKE} -E cmake_depends "Unix Makefiles" ${PROJECT_ROOT} ${PROJECT_ROOT} ${PROJECT_ROOT}/build/cuda ${PROJECT_ROOT}/build/cuda ${PROJECT_ROOT}/build/cuda/CMakeFiles/neuro_mma_probe.dir/DependInfo.cmake "--color="
+gmake[3]: Leaving directory '${PROJECT_ROOT}/build/cuda'
+/usr/bin/gmake  -f CMakeFiles/neuro_mma_probe.dir/build.make CMakeFiles/neuro_mma_probe.dir/build
+gmake[3]: Entering directory '${PROJECT_ROOT}/build/cuda'
+[ 50%] Building CUDA object CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o
+${CUDA_ROOT}/bin/nvcc -forward-unknown-to-host-compiler  --options-file CMakeFiles/neuro_mma_probe.dir/includes_CUDA.rsp -O3 -DNDEBUG -std=c++17 "--generate-code=arch=compute_120,code=[compute_120,sm_120]" -MD -MT CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o -MF CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o.d -x cu -c ${PROJECT_ROOT}/native/cuda/mma_probe.cu -o CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o
+[100%] Linking CUDA executable neuro_mma_probe
+${CMAKE} -E cmake_link_script CMakeFiles/neuro_mma_probe.dir/link.txt --verbose=1
+/usr/bin/g++ -Wl,--dependency-file=CMakeFiles/neuro_mma_probe.dir/link.d @CMakeFiles/neuro_mma_probe.dir/objects1.rsp -o neuro_mma_probe @CMakeFiles/neuro_mma_probe.dir/linkLibs.rsp -L"${CUDA_ROOT}/lib/stubs" -L"${CUDA_ROOT}/lib"
+gmake[3]: Leaving directory '${PROJECT_ROOT}/build/cuda'
+[100%] Built target neuro_mma_probe
+gmake[2]: Leaving directory '${PROJECT_ROOT}/build/cuda'
+${CMAKE} -E cmake_progress_start ${PROJECT_ROOT}/build/cuda/CMakeFiles 0
+gmake[1]: Leaving directory '${PROJECT_ROOT}/build/cuda'
+
+
+CMAKE RESPONSE FILES (expanded for audit)
+includes_CUDA.rsp
+-I${PROJECT_ROOT}/native/include
+objects1.rsp
+CMakeFiles/neuro_mma_probe.dir/native/cuda/mma_probe.cu.o
+linkLibs.rsp
+-lcudadevrt -lcudart_static -lrt -lpthread -ldl

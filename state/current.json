@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "project": "neuro",
+  "preparation_iteration": 1,
+  "preparation_total": 10,
+  "status": "iteration_1_complete_ready_for_iteration_2",
+  "updated_moscow_date": "2026-11-11",
+  "entry_points": [
+    "README.md",
+    "docs/iterations/01.md"
+  ],
+  "decisions": {
+    "base": "CPPminer_pinned_submodule",
+    "gpu": "CUDA_C++17_inline_PTX_as_needed",
+    "host": "reuse_CPPminer",
+    "proof": "reuse_existing_Rust",
+    "executor": "openai/gpt-6.1-sol",
+    "executor_selection": "provisional",
+    "challenger": "minimax/minimax-m3"
+  },
+  "coverage": {
+    "python_controls": "passed_45_tests",
+    "cpu_protocol": "passed",
+    "cpu_milestone_math": "passed",
+    "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
+    "cuda_compilation": "passed_sm120_linux_compile_and_link",
+    "gpu_execution": "not_run_no_gpu",
+    "windows_execution": "not_run",
+    "full_proof": "not_built",
+    "pool_shares": "not_run",
+    "dsh_api_integration": "not_implemented",
+    "provider_cache_billing": "not_verified"
+  },
+  "next_iteration": {
+    "number": 2,
+    "goal": "Build a standalone full-K INT8 CUDA kernel preserving milestone transcript",
+    "first_step": "Read iteration1 evidence, confirm pinned sources, extend the bounded MMA probe toward K=4096 and compare its transcript against the independent CPU oracle",
+    "avoid": "Do not replace miner work with another general agent framework"
+  },
+  "handoff": {
+    "target_iteration": 10,
+    "extract_path": "/home/jericho/neuro/start",
+    "archive_created": false,
+    "must_include_submodule_contents": true
+  },
+  "validation_report": "reports/iteration-01-validation.json"
+}

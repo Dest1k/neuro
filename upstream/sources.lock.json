@@ -1,0 +1,513 @@
+{
+  "schema_version": 1,
+  "audit_date_utc": "2026-11-11",
+  "project": "https://github.com/alinescafs3mp-afk/neuro",
+  "purpose": "Provenance for the pinned upstream checkout, inspected source subsets, and staged integration. Only the documented CPU tests have been built.",
+  "hash_algorithm": "git-sha1 (Git object IDs, not plain-file SHA-1)",
+  "sources": [
+    {
+      "id": "cppminer",
+      "repository": "https://github.com/1640675651/CPPminer.git",
+      "repository_url": "https://github.com/1640675651/CPPminer",
+      "inspected_ref": "main",
+      "commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "commit_date_utc": "2026-11-07T04:55:41Z",
+      "tree": "751efc5e67570b7f088c581946c22e4a2628aa00",
+      "tree_truncated": false,
+      "commit_url": "https://github.com/1640675651/CPPminer/commit/5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "license": {
+        "identifier": "MIT",
+        "copyright": "Copyright (c) 2026 foolzhz",
+        "scope": "Repository-authored files; separately licensed third-party dependencies require their own notices and provenance.",
+        "file": {
+          "path": "LICENSE",
+          "git_object_sha": "9fb5928fb25de634587aee990cd79a9b6b61793d",
+          "git_object_type": "blob",
+          "size_bytes": 1064,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/LICENSE"
+        }
+      },
+      "decision": "Select as a pinned read-only submodule and permissive host/protocol donor; compile only scoped CPU test files initially. The Pascal-oriented GPU backend is not the target SM120 backend.",
+      "import_status": "full_pinned_git_submodule_checkout_read_only",
+      "ready_cpu_test_subset": [
+        {
+          "path": "LICENSE",
+          "git_object_sha": "9fb5928fb25de634587aee990cd79a9b6b61793d",
+          "git_object_type": "blob",
+          "size_bytes": 1064,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/LICENSE"
+        },
+        {
+          "path": "include/cp_cli.h",
+          "git_object_sha": "6e5cceccface18957599d1505f7c5518e73338ca",
+          "git_object_type": "blob",
+          "size_bytes": 7617,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_cli.h"
+        },
+        {
+          "path": "tests/cp_cli_test.cpp",
+          "git_object_sha": "50bea2f3a6276a3a7a90ea5c57780c8d98fd35c9",
+          "git_object_type": "blob",
+          "size_bytes": 6231,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/tests/cp_cli_test.cpp"
+        },
+        {
+          "path": "tests/cp_pool_protocol_test.cpp",
+          "git_object_sha": "01c768d10197bfdee3da0691a97a0553a42081b1",
+          "git_object_type": "blob",
+          "size_bytes": 8255,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/tests/cp_pool_protocol_test.cpp"
+        },
+        {
+          "path": "include/cp_json_frame.h",
+          "git_object_sha": "6a5298a0365925d235ab8f1126f4d38b1429f55b",
+          "git_object_type": "blob",
+          "size_bytes": 302,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_json_frame.h"
+        },
+        {
+          "path": "include/cp_json_text.hpp",
+          "git_object_sha": "ef7e45631344d2ca71f436732c04d07ed53aab9d",
+          "git_object_type": "blob",
+          "size_bytes": 697,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_json_text.hpp"
+        },
+        {
+          "path": "include/cp_pool.h",
+          "git_object_sha": "23eb7f5194b6582c554ac2300259aafb242bb55a",
+          "git_object_type": "blob",
+          "size_bytes": 3277,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_pool.h"
+        },
+        {
+          "path": "include/cp_state.h",
+          "git_object_sha": "1dbb8ed6288f70f4e4cee49738a0b28905b3c07e",
+          "git_object_type": "blob",
+          "size_bytes": 1724,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_state.h"
+        },
+        {
+          "path": "include/cp_submit_table.hpp",
+          "git_object_sha": "a2aa89c3a81c5072955cdafa9c12703685dcb452",
+          "git_object_type": "blob",
+          "size_bytes": 1462,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_submit_table.hpp"
+        },
+        {
+          "path": "include/cp_util.h",
+          "git_object_sha": "e472c6dfaff002adaa4981fa01fbcb760ca46f93",
+          "git_object_type": "blob",
+          "size_bytes": 3346,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_util.h"
+        },
+        {
+          "path": "include/cp_config.h",
+          "git_object_sha": "d1699caf83a792c8a5cc96bc6a1ffd4ac0fe01e1",
+          "git_object_type": "blob",
+          "size_bytes": 3875,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_config.h"
+        },
+        {
+          "path": "include/cp_platform.h",
+          "git_object_sha": "36e9a9d3ea9844dd27cd6b365b47d95da01b81d6",
+          "git_object_type": "blob",
+          "size_bytes": 1385,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_platform.h"
+        },
+        {
+          "path": "src/common/cp_json_frame.cpp",
+          "git_object_sha": "f9c26951a8d4c75e0abd21296c264d19a59c1c45",
+          "git_object_type": "blob",
+          "size_bytes": 938,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_json_frame.cpp"
+        },
+        {
+          "path": "src/common/cp_pool_notify.cpp",
+          "git_object_sha": "a2feb6e1269e5dd7aa44a43dfb153c8402b467b7",
+          "git_object_type": "blob",
+          "size_bytes": 3201,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_pool_notify.cpp"
+        },
+        {
+          "path": "src/common/cp_util.cpp",
+          "git_object_sha": "71b867ae9ca3cc71b379b3a0e973db40f3ac9c10",
+          "git_object_type": "blob",
+          "size_bytes": 17081,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_util.cpp"
+        },
+        {
+          "path": "src/common/cp_state.cpp",
+          "git_object_sha": "435779b5f66c2e908a5fc0aa084dc21e7beafcfc",
+          "git_object_type": "blob",
+          "size_bytes": 1160,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_state.cpp"
+        }
+      ],
+      "later_candidates": {
+        "status": "deferred_dependency_and_license_closure_required",
+        "files": [
+          {
+            "path": "include/cp_tcp.h",
+            "git_object_sha": "0d47aec1ec4ba53d4b444d986b8d88d48f2db63c",
+            "git_object_type": "blob",
+            "size_bytes": 542,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_tcp.h"
+          },
+          {
+            "path": "src/common/cp_tcp.cpp",
+            "git_object_sha": "4937edc2618ec28ac1db3ed9e7abb3e286dd1d7f",
+            "git_object_type": "blob",
+            "size_bytes": 4574,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_tcp.cpp"
+          },
+          {
+            "path": "tests/cp_tcp_test.cpp",
+            "git_object_sha": "912590d90e4c9ba3641b6cf7e1a502e0abdffd39",
+            "git_object_type": "blob",
+            "size_bytes": 4620,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/tests/cp_tcp_test.cpp"
+          },
+          {
+            "path": "include/cp_proof.h",
+            "git_object_sha": "3048b4328e5bfa9072f186113847d251bf2256a8",
+            "git_object_type": "blob",
+            "size_bytes": 3982,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_proof.h"
+          },
+          {
+            "path": "rust/cp-proof-ffi/Cargo.toml",
+            "git_object_sha": "bf9b834eb89b250be0105de19839fde4f8fe439b",
+            "git_object_type": "blob",
+            "size_bytes": 624,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/Cargo.toml"
+          },
+          {
+            "path": "rust/cp-proof-ffi/Cargo.lock",
+            "git_object_sha": "ee2a200434a46bb6a3045907c6dfbb2116246aed",
+            "git_object_type": "blob",
+            "size_bytes": 46162,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/Cargo.lock"
+          },
+          {
+            "path": "rust/cp-proof-ffi/src/lib.rs",
+            "git_object_sha": "884a2074e661ec7c40e678e0b697d3610e8f9a56",
+            "git_object_type": "blob",
+            "size_bytes": 39604,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/src/lib.rs"
+          },
+          {
+            "path": "rust/cp-proof-ffi/src/mining_config.rs",
+            "git_object_sha": "4bcbae63dd0b3641e65e7047c94d7a581f05caf6",
+            "git_object_type": "blob",
+            "size_bytes": 8837,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/src/mining_config.rs"
+          },
+          {
+            "path": "rust/cp-proof-ffi/src/verify.rs",
+            "git_object_sha": "015c520d11b7b2130386dd80ab4bac707caba5a7",
+            "git_object_type": "blob",
+            "size_bytes": 5196,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/src/verify.rs"
+          },
+          {
+            "path": "rust/cp-proof-ffi/src/witness.rs",
+            "git_object_sha": "1740c4df0730cf3ef744a45f14a1188d85b8495f",
+            "git_object_type": "blob",
+            "size_bytes": 11425,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/rust/cp-proof-ffi/src/witness.rs"
+          },
+          {
+            "path": "src/cpu/gemm/case33_gemm_xor.cpp",
+            "git_object_sha": "3b6667788fd341aed5cfe94a6cb7bcdc14c30a11",
+            "git_object_type": "blob",
+            "size_bytes": 47874,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case33_gemm_xor.cpp"
+          },
+          {
+            "path": "src/cpu/gemm/case33_gemm_xor.hpp",
+            "git_object_sha": "7f3a7e5f289fccfda51e02e8d8259ddb5aa2462b",
+            "git_object_type": "blob",
+            "size_bytes": 6389,
+            "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case33_gemm_xor.hpp"
+          }
+        ]
+      },
+      "inspected_build_and_gpu_evidence": [
+        {
+          "path": "CMakeLists.txt",
+          "git_object_sha": "5ebcc1921cd4c23445ea9f58d5449b0d37e05bc6",
+          "git_object_type": "blob",
+          "size_bytes": 54111,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/CMakeLists.txt"
+        },
+        {
+          "path": "build.sh",
+          "git_object_sha": "c7da4a49ea0b7a754ab698f45f9f79b48ca43eba",
+          "git_object_type": "blob",
+          "size_bytes": 18167,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/build.sh"
+        },
+        {
+          "path": "README.md",
+          "git_object_sha": "293db6004e7fae19fe19143c38e93c6e56fd2034",
+          "git_object_type": "blob",
+          "size_bytes": 29051,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/README.md"
+        },
+        {
+          "path": "src/common/cp_diagnostics.cpp",
+          "git_object_sha": "9b3d1f065294c7daed5f66829ec8c276a819c754",
+          "git_object_type": "blob",
+          "size_bytes": 9616,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_diagnostics.cpp"
+        },
+        {
+          "path": "src/common/cp_proof_stub.cpp",
+          "git_object_sha": "36d3e0fa2a18bcb6ad9b2632ffc005f721ca9e9d",
+          "git_object_type": "blob",
+          "size_bytes": 2555,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_proof_stub.cpp"
+        },
+        {
+          "path": "src/common/cp_pool.cpp",
+          "git_object_sha": "ccee1ea469a92200dbea9fdacee8d6f3ce720a74",
+          "git_object_type": "blob",
+          "size_bytes": 21558,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/common/cp_pool.cpp"
+        },
+        {
+          "path": "src/cuda/cp_cutlass_gemm.cu",
+          "git_object_sha": "6aa164a038149035f1efb9d51510e7ebe4f1356d",
+          "git_object_type": "blob",
+          "size_bytes": 3422,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cuda/cp_cutlass_gemm.cu"
+        },
+        {
+          "path": "src/cuda/cutlass/cp_cutlass_gemm_types.h",
+          "git_object_sha": "724ac2ad3150933ddd2682af5e9c4c1265fbab4a",
+          "git_object_type": "blob",
+          "size_bytes": 7965,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cuda/cutlass/cp_cutlass_gemm_types.h"
+        }
+      ],
+      "deferred_in_tree_dependencies": [
+        {
+          "id": "pearl-blake3",
+          "tree": {
+            "path": "third_party/pearl-blake3",
+            "git_object_sha": "b90561115b0605f8146a450955a01edf43d2abab",
+            "git_object_type": "tree",
+            "url": "https://github.com/1640675651/CPPminer/tree/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/pearl-blake3"
+          },
+          "license_status": "No dedicated LICENSE file in this vendored directory at the inspected tree; reconcile origin and license before importing."
+        },
+        {
+          "id": "zk-pow",
+          "tree": {
+            "path": "third_party/zk-pow",
+            "git_object_sha": "3816e0343342bf4c9d763e4696a42c04c29834d5",
+            "git_object_type": "tree",
+            "url": "https://github.com/1640675651/CPPminer/tree/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/zk-pow"
+          },
+          "license_status": "No dedicated LICENSE file in this vendored directory at the inspected tree; reconcile origin and license before importing."
+        },
+        {
+          "id": "plonky2",
+          "tree": {
+            "path": "third_party/plonky2",
+            "git_object_sha": "f98c91acba466b051c3e56c44bd2e7c72e15f809",
+            "git_object_type": "tree",
+            "url": "https://github.com/1640675651/CPPminer/tree/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/plonky2"
+          },
+          "license_status": "MIT/Apache license files present; dependency closure and notices not yet imported.",
+          "license_files": [
+            {
+              "path": "third_party/plonky2/LICENSE-MIT",
+              "git_object_sha": "49f09ad120f01e2aa3bf0fd029f73c6f34b0e888",
+              "git_object_type": "blob",
+              "size_bytes": 1135,
+              "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/plonky2/LICENSE-MIT"
+            },
+            {
+              "path": "third_party/plonky2/LICENSE-APACHE",
+              "git_object_sha": "ee38cc103d60f2d3c79c5f490a6ce6c68940b92a",
+              "git_object_type": "blob",
+              "size_bytes": 10889,
+              "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/plonky2/LICENSE-APACHE"
+            },
+            {
+              "path": "third_party/plonky2/util/LICENSE-MIT",
+              "git_object_sha": "8ea782fe4e115abd6e2e7f28beb5304bdad0c778",
+              "git_object_type": "blob",
+              "size_bytes": 1130,
+              "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/plonky2/util/LICENSE-MIT"
+            },
+            {
+              "path": "third_party/plonky2/util/LICENSE-APACHE",
+              "git_object_sha": "3a27c73fb6a8ef34407f9f0ff0314ee4e076ffaf",
+              "git_object_type": "blob",
+              "size_bytes": 10884,
+              "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/third_party/plonky2/util/LICENSE-APACHE"
+            }
+          ]
+        }
+      ],
+      "build_declared_external_dependencies": [
+        {
+          "id": "blake3-c",
+          "repository": "BLAKE3-team/BLAKE3",
+          "configured_ref": "1.8.5",
+          "needed_for": "Full upstream CPU miner",
+          "status": "declared_by_pinned_build_sh_not_fetched_or_independently_pinned"
+        },
+        {
+          "id": "cutlass",
+          "repository": "NVIDIA/cutlass",
+          "configured_ref": "v2.11.0",
+          "needed_for": "Upstream CUDA backend",
+          "status": "declared_by_pinned_build_sh_not_fetched_or_independently_pinned"
+        }
+      ],
+      "repository_full_name": "1640675651/CPPminer",
+      "path": "upstream/cppminer",
+      "role": "baseline",
+      "imported": true,
+      "math_probe_source_paths": [
+        {
+          "path": "src/cpu/gemm/case33_gemm_xor.cpp",
+          "git_object_sha": "3b6667788fd341aed5cfe94a6cb7bcdc14c30a11",
+          "git_object_type": "blob",
+          "size_bytes": 47874,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case33_gemm_xor.cpp"
+        },
+        {
+          "path": "src/cpu/gemm/case33_cpu_features.cpp",
+          "git_object_sha": "30622117ed152c8a2e0278c1caef732ab5c86f23",
+          "git_object_type": "blob",
+          "size_bytes": 4474,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case33_cpu_features.cpp"
+        },
+        {
+          "path": "src/cpu/gemm/case33_gemm_xor.hpp",
+          "git_object_sha": "7f3a7e5f289fccfda51e02e8d8259ddb5aa2462b",
+          "git_object_type": "blob",
+          "size_bytes": 6389,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case33_gemm_xor.hpp"
+        },
+        {
+          "path": "src/cpu/gemm/case32_gemm.hpp",
+          "git_object_sha": "cbd97f8b6c78aead831692e2ec5c01d282309a09",
+          "git_object_type": "blob",
+          "size_bytes": 1992,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/src/cpu/gemm/case32_gemm.hpp"
+        },
+        {
+          "path": "include/cp_config.h",
+          "git_object_sha": "d1699caf83a792c8a5cc96bc6a1ffd4ac0fe01e1",
+          "git_object_type": "blob",
+          "size_bytes": 3875,
+          "url": "https://github.com/1640675651/CPPminer/blob/5b68506af5e6433ee5c25aa9e6fbb00b537590aa/include/cp_config.h"
+        }
+      ]
+    },
+    {
+      "id": "open-pearl-miner",
+      "repository": "https://github.com/Muskwak/Open-Pearl-Miner.git",
+      "repository_url": "https://github.com/Muskwak/Open-Pearl-Miner",
+      "inspected_ref": "main",
+      "commit": "ac3d992d7eb6ca1bb344d5d3ee125eecb182248d",
+      "commit_date_utc": "2026-06-19T06:03:29Z",
+      "tree": "017c15d1e5d123bb0110ce949302978986245f33",
+      "tree_truncated": false,
+      "commit_url": "https://github.com/Muskwak/Open-Pearl-Miner/commit/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d",
+      "license": {
+        "identifier": "LicenseRef-Pascal-Pearl-Miner",
+        "name": "Pascal Pearl Miner License",
+        "file": {
+          "path": "LICENSE",
+          "git_object_sha": "9cb97967a2d58ea5e66af86059cb9d7ff3945e08",
+          "git_object_type": "blob",
+          "size_bytes": 2255,
+          "url": "https://github.com/Muskwak/Open-Pearl-Miner/blob/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d/LICENSE"
+        },
+        "distribution_condition": "Retain the original 2% developer fee in any distributed derivative. Personal-use/self-mining exemption expressly excludes publication and distribution."
+      },
+      "decision": "Do not import code into the public neuro baseline.",
+      "import_status": "excluded",
+      "inspected_evidence": [
+        {
+          "path": "LICENSE",
+          "git_object_sha": "9cb97967a2d58ea5e66af86059cb9d7ff3945e08",
+          "git_object_type": "blob",
+          "size_bytes": 2255,
+          "url": "https://github.com/Muskwak/Open-Pearl-Miner/blob/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d/LICENSE"
+        },
+        {
+          "path": "README.md",
+          "git_object_sha": "8676b77d6f2dedb145cce61f46a8789a1be6bfc2",
+          "git_object_type": "blob",
+          "size_bytes": 8403,
+          "url": "https://github.com/Muskwak/Open-Pearl-Miner/blob/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d/README.md"
+        },
+        {
+          "path": "packaging/build_capi.sh",
+          "git_object_sha": "39de201f63b09b3a8e854889e1dd1aa22d7af4cf",
+          "git_object_type": "blob",
+          "size_bytes": 1844,
+          "url": "https://github.com/Muskwak/Open-Pearl-Miner/blob/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d/packaging/build_capi.sh"
+        },
+        {
+          "path": "csrc/gemm/pearl_ampere_tc.cu",
+          "git_object_sha": "f52cf582d2078d48a8e327ebadad365d49e7abd8",
+          "git_object_type": "blob",
+          "size_bytes": 62262,
+          "url": "https://github.com/Muskwak/Open-Pearl-Miner/blob/ac3d992d7eb6ca1bb344d5d3ee125eecb182248d/csrc/gemm/pearl_ampere_tc.cu"
+        }
+      ],
+      "limitations": [
+        "Default CUDA architectures in packaging/build_capi.sh are sm_61, sm_80, sm_86, sm_89.",
+        "SM120 correctness and performance were not verified."
+      ],
+      "repository_full_name": "Muskwak/Open-Pearl-Miner",
+      "path": null,
+      "role": "reviewed-only",
+      "imported": false
+    }
+  ],
+  "verification": {
+    "retrieval": "Pinned commit metadata and non-truncated recursive Git trees read through GitHub connector; inspected file contents taken from structuredContent.",
+    "source_compilation_by_this_audit": true,
+    "gpu_execution": false,
+    "network_pool_connections": false,
+    "toolchain_limitations": [
+      "Initial audit had no system CMake or NVCC; isolated CMake 3.31.6 and CUDA 13.5.37 were subsequently used successfully.",
+      "Cargo remains unavailable; full Rust proof is not built.",
+      "No physical NVIDIA GPU or Windows execution was available."
+    ],
+    "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+    "tests": [
+      {
+        "name": "upstream cp_cli_test",
+        "result": "passed",
+        "exit_code": 0
+      },
+      {
+        "name": "upstream cp_pool_protocol_test",
+        "result": "passed",
+        "exit_code": 0,
+        "compile_warnings": "cp_net_init defined but not used in upstream cp_platform.h"
+      },
+      {
+        "name": "neuro scalar GEMM/XOR probe",
+        "path": "native/tests/cppminer_math_probe.cpp",
+        "result": "passed",
+        "exit_code": 0,
+        "cases": 5,
+        "exact_uint32_comparisons": 24576,
+        "scope": "Only signed-int8 cumulative GEMM and 8x16 milestone XOR against upstream scalar; no noise/hash/proof/GPU/pool validation."
+      }
+    ],
+    "math_probe_build_constraints": "Verified with GCC 14.2.0 on Linux using -O2 -flto -ffunction-sections -fdata-sections and --gc-sections. LTO removes unused SIMD/noise branches; no stubs, BLAKE3, Cargo, or CUDA linked.",
+    "subsequent_project_validation": "reports/iteration-01-validation.json"
+  }
+}

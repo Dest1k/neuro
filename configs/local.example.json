@@ -1,0 +1,21 @@
+{
+  "api": {
+    "base_url_env": "NEURO_API_BASE_URL",
+    "key_env": "NEURO_API_KEY",
+    "api_format": null,
+    "model": "openai/gpt-6.1-sol",
+    "cache_usage_verified": false,
+    "billing_verified": false
+  },
+  "ssh": {
+    "host_alias": null,
+    "project_directory": null,
+    "host_key_verification": "required",
+    "private_key": "use_existing_ssh_config"
+  },
+  "pool": {
+    "url": null,
+    "wallet_env": "NEURO_WALLET",
+    "worker": "neuro-test"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "usage": {
+    "prompt_tokens": 64000,
+    "completion_tokens": 2000,
+    "total_tokens": 66000,
+    "prompt_tokens_details": {"cached_tokens": 57600}
+  }
+}

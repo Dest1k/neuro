@@ -1,0 +1,20 @@
+{
+  "schema": "neuro.experiment.v1",
+  "kind": "cpu_smoke",
+  "synthetic": true,
+  "description": "Schema illustration only. These are not measured results and evaluation must reject this example.",
+  "identity": {
+    "hardware": "example-cpu",
+    "workload": "example-cpu-checksum",
+    "profile": "example-default",
+    "environment": "example-python-version-and-os",
+    "device_kind": "cpu",
+    "power_limit_w": null
+  },
+  "correctness": {
+    "exact": false,
+    "verifier_id": "replace-with-independent-verifier-version",
+    "verification": null
+  },
+  "samples": []
+}
