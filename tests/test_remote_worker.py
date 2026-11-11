@@ -4,6 +4,7 @@ import contextlib
 import copy
 import io
 import json
+import shlex
 import os
 from pathlib import Path
 import sys
@@ -158,7 +159,8 @@ class RemoteWorkerTest(unittest.TestCase):
             self.assertIn(required, options)
         self.assertEqual(options[:2], ["-F", "/dev/null"])
         self.assertIn(str(self.key), options)
-        self.assertIn('UserKnownHostsFile="' + str(self.known_hosts) + '"', options)
+        host_key_option = next(value for value in options if value.startswith('UserKnownHostsFile='))
+        self.assertEqual(shlex.split(host_key_option), ['UserKnownHostsFile=' + str(self.known_hosts)])
         self.assertNotIn("StrictHostKeyChecking=no", options)
 
     def test_request_has_no_private_connection_fields(self):

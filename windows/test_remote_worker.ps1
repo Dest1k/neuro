@@ -15,6 +15,8 @@ $temporary = Join-Path ([IO.Path]::GetTempPath()) ('neuro remote worker ' + [gui
 $fakeRepo = Join-Path $temporary "repo with spaces ' and `$literal"
 $fakeWindows = Join-Path $fakeRepo 'windows'
 [IO.Directory]::CreateDirectory($fakeWindows) | Out-Null
+$evidence = Join-Path (Split-Path $PSScriptRoot -Parent) 'artifacts/windows'
+[IO.Directory]::CreateDirectory($evidence) | Out-Null
 $fixtureRunner = Join-Path $fakeWindows 'BoundedProcess.cs'
 Copy-Item -LiteralPath $runner -Destination $fixtureRunner
 $checks = 0
@@ -58,6 +60,17 @@ function Invoke-Worker([string]$Action, [int]$Timeout = 10, [int]$Cap = 4096,
         @('-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
           '-File', $worker, '-RequestPath', $requestFile, '-ReportPath', $reportFile),
         $temporary, (($Timeout + 20) * 1000), 1048576)
+    $attempt = [ordered]@{
+        schema = 'neuro.windows.remote_worker.attempt.v1'; request_id = $id; action = $Action
+        process = $process; miner_validation = $false
+    }
+    [IO.File]::WriteAllText((Join-Path $evidence ('worker-attempt-' + $id + '.json')),
+        ($attempt | ConvertTo-Json -Depth 8), (New-Object Text.UTF8Encoding($false)))
+    if (-not (Test-Path -LiteralPath $reportFile) -and -not $BadHash) {
+        Write-Host ('[worker fixture] missing report; outer exit=' + $process.ExitCode + '; error=' + $process.Error)
+        if ($process.Stderr) { Write-Host $process.Stderr.Substring(0, [Math]::Min(8192, $process.Stderr.Length)) }
+        if ($process.Stdout) { Write-Host $process.Stdout.Substring(0, [Math]::Min(8192, $process.Stdout.Length)) }
+    }
     Check ($process.Error -eq '' -and -not $process.TimedOut -and $process.OutputComplete) 'outer worker process completed within bound'
     if ($BadHash) {
         Check ($process.ExitCode -eq 2 -and -not (Test-Path -LiteralPath $reportFile)) 'changed worker code is rejected before execution'
@@ -130,8 +143,6 @@ try {
         actual_windows_worker_execution = $true; actual_ssh_execution = $false
         gpu_execution = $false; miner_validation = $false; cases = @($cases.ToArray())
     }
-    $evidence = Join-Path (Split-Path $PSScriptRoot -Parent) 'artifacts/windows'
-    [IO.Directory]::CreateDirectory($evidence) | Out-Null
     [IO.File]::WriteAllText((Join-Path $evidence 'remote-worker-selftest.json'),
         ($summary | ConvertTo-Json -Depth 8), (New-Object Text.UTF8Encoding($false)))
     $summary | ConvertTo-Json -Depth 8 -Compress | Write-Output

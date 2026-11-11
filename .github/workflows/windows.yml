@@ -26,6 +26,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install the pinned native Windows Rust toolchain
+        id: toolchain
         run: rustup toolchain install 1.99.1 --profile minimal
       - uses: actions/cache@v4
         with:
@@ -41,8 +42,13 @@ jobs:
       - name: Verify fixed remote worker reports and identity checks
         run: ./windows/test_remote_worker.ps1
       - name: Build real Rust and native Windows proof targets
+        id: build
+        # Keep independent compiler evidence when a worker fixture fails.
+        # Such a failed fixture still makes the whole job fail.
+        if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
         run: ./windows/ci.ps1 -Action build-cpu
       - name: Run Windows CPU correctness, proofs and actual TCP replay
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: ./windows/ci.ps1 -Action run-cpu
       - name: Retain Windows evidence
         if: always()
