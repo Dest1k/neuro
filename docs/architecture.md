@@ -1,7 +1,7 @@
 # Architecture and current implementation
 
-Current preparation: iteration 2 of 10. Read `state/current.json` for the next
-task and `docs/iterations/02.md` for observed evidence. Build commands live in
+Current preparation: iteration 3 of 10. Read `state/current.json` for the next
+task and `docs/iterations/03.md` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
 ## Goal
@@ -22,8 +22,10 @@ Its source tree includes the CPU implementation, Rust proof interface, and other
 dependencies. Keep their origin and license notices. Our root MIT license does
 not relicense third-party content.
 
-The immediate native checks build selected upstream components directly. They
-do not invoke upstream installers, connect to a pool, or link proof stubs.
+The immediate native checks build selected upstream components directly. The
+official BLAKE3 C implementation is separately pinned as `upstream/blake3` and
+compiled with its portable backend. The checks do not invoke upstream installers,
+connect to a pool, or link proof stubs.
 Changes to our implementation belong in this repository. Future modifications
 to the donor should be stored as reviewed patch files and applied to a separate
 working checkout; the reference checkout stays pinned and clean.
@@ -69,10 +71,19 @@ XOR alone could hide element permutations. Larger CPU cases also agree with the
 pinned CPPminer scalar transcript. CUDA compilation and full Linux linking for
 SM120 pass; physical GPU execution is still unobserved. See `docs/fullk-kernel.md`.
 
-The next integration boundary is deterministic Pearl matrices, noise and
-commitments. Synthetic arithmetic fixtures do not exercise that boundary.
-Large-panel scheduling, production memory staging and performance tuning follow
-correct integration; accepting larger dimensions alone would not supply them.
+Iteration 3 connects the real donor signal/commitment/noise functions to the
+full-K interface. A bounded first zero-B attempt resets signal matrices, mutates
+one A row, commits the signals, derives legacy or V3 seeds and constructs noisy
+A/Bt. Three fixed synthetic job fixtures are checked against an
+independent Python implementation, then against full donor builders and scalar
+arithmetic. The CUDA consumer is compiled and its host preparation mode passes;
+its physical GPU mode remains unrun. See `docs/pearl-input.md`.
+
+The next boundary is a genuine Rust proof build, generation and independent
+verification. Correct preprocessing/arithmetic does not prove witness validity
+or pool acceptance. Large-panel scheduling, production memory staging and
+performance tuning follow integration; accepting larger dimensions alone would
+not supply them.
 
 ## Measurement policy
 

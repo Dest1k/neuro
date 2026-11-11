@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(neuro LANGUAGES CXX)
+project(neuro LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +8,36 @@ option(NEURO_ENABLE_CUDA "Build bounded CUDA arithmetic kernels and probes (not 
 
 include(CTest)
 set(CPPMINER "${CMAKE_CURRENT_SOURCE_DIR}/upstream/cppminer")
+include(cmake/Blake3.cmake)
+find_package(Threads REQUIRED)
+
+# Preserve actual upstream hashing, noise and job-cancellation implementations.
+# Section GC removes the unused network client from cp_pool.cpp; no pool
+# connection or fake cancellation/hash/proof functions are needed by these checks.
+add_library(neuro_pearl_donor STATIC
+  "${CPPMINER}/src/common/cp_noise.c"
+  "${CPPMINER}/src/common/cp_job_ctrl.cpp"
+  "${CPPMINER}/src/common/cp_pool.cpp")
+target_include_directories(neuro_pearl_donor PUBLIC "${CPPMINER}/include")
+target_link_libraries(neuro_pearl_donor PUBLIC neuro_blake3 Threads::Threads)
+set_target_properties(neuro_pearl_donor PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON)
+if(MSVC)
+  target_compile_options(neuro_pearl_donor PRIVATE /Gy /Gw)
+  target_link_options(neuro_pearl_donor INTERFACE /OPT:REF)
+elseif(APPLE)
+  target_compile_options(neuro_pearl_donor PRIVATE -ffunction-sections -fdata-sections)
+  target_link_options(neuro_pearl_donor INTERFACE -Wl,-dead_strip)
+else()
+  target_compile_options(neuro_pearl_donor PRIVATE -ffunction-sections -fdata-sections)
+  target_link_options(neuro_pearl_donor INTERFACE -Wl,--gc-sections)
+endif()
+if(WIN32)
+  target_link_libraries(neuro_pearl_donor PUBLIC bcrypt ws2_32)
+endif()
+
+add_library(neuro_pearl_input STATIC native/pearl/pearl_input.cpp)
+target_include_directories(neuro_pearl_input PUBLIC native/include)
+target_link_libraries(neuro_pearl_input PUBLIC neuro_pearl_donor)
 
 add_library(neuro_fullk_reference STATIC native/reference/fullk_reference.cpp)
 target_include_directories(neuro_fullk_reference PUBLIC native/include native)
@@ -42,6 +72,20 @@ if(NEURO_BUILD_CPU_CHECKS)
   target_link_libraries(neuro_fullk_test PRIVATE neuro_fullk_reference neuro_fullk_warp)
   add_test(NAME neuro_fullk COMMAND neuro_fullk_test)
 
+  add_executable(neuro_blake3_vectors_test native/tests/blake3_vectors_test.cpp)
+  target_include_directories(neuro_blake3_vectors_test PRIVATE native)
+  target_link_libraries(neuro_blake3_vectors_test PRIVATE neuro_blake3)
+  add_test(NAME neuro_blake3_vectors COMMAND neuro_blake3_vectors_test)
+
+  add_executable(neuro_pearl_alignment_test native/tests/pearl_alignment_test.cpp)
+  target_link_libraries(neuro_pearl_alignment_test PRIVATE neuro_pearl_donor)
+  add_test(NAME neuro_pearl_alignment COMMAND neuro_pearl_alignment_test)
+
+  add_executable(neuro_pearl_input_test native/tests/pearl_input_test.cpp)
+  target_link_libraries(neuro_pearl_input_test PRIVATE neuro_pearl_input
+    neuro_fullk_reference neuro_fullk_warp)
+  add_test(NAME neuro_pearl_input COMMAND neuro_pearl_input_test)
+
   # This limited probe uses GCC LTO to omit unused noise/SIMD dependencies.
   # It does not replace a full build of CPPminer or the Rust proof library.
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND UNIX AND NOT APPLE)
@@ -65,6 +109,17 @@ if(NEURO_BUILD_CPU_CHECKS)
     target_compile_options(neuro_fullk_upstream_test PRIVATE -O2 -flto -ffunction-sections -fdata-sections)
     target_link_options(neuro_fullk_upstream_test PRIVATE -flto -Wl,--gc-sections)
     add_test(NAME neuro_fullk_upstream COMMAND neuro_fullk_upstream_test)
+
+    add_executable(neuro_pearl_upstream_test native/tests/pearl_upstream_test.cpp
+      native/reference/fullk_reference.cpp native/reference/fullk_warp.cpp
+      "${CPPMINER}/src/cpu/gemm/case33_gemm_xor.cpp"
+      "${CPPMINER}/src/cpu/gemm/case33_cpu_features.cpp")
+    target_include_directories(neuro_pearl_upstream_test PRIVATE native/include native
+      "${CPPMINER}/include" "${CPPMINER}/src/cpu/gemm")
+    target_compile_options(neuro_pearl_upstream_test PRIVATE -O2 -flto -ffunction-sections -fdata-sections)
+    target_link_options(neuro_pearl_upstream_test PRIVATE -flto -Wl,--gc-sections)
+    target_link_libraries(neuro_pearl_upstream_test PRIVATE neuro_pearl_input)
+    add_test(NAME neuro_pearl_upstream COMMAND neuro_pearl_upstream_test)
   else()
     message(STATUS "GCC/Linux LTO math probe omitted; other CPU checks remain available")
   endif()
@@ -93,4 +148,12 @@ if(NEURO_ENABLE_CUDA)
   # This mode rejects malformed calls before any CUDA runtime call. Actual GPU
   # execution remains explicit; ordinary ctest does not initialize a device.
   add_test(NAME neuro_fullk_host_validation COMMAND neuro_fullk_probe --host-validation)
+
+  add_executable(neuro_pearl_probe native/cuda/pearl_probe.cu)
+  target_link_libraries(neuro_pearl_probe PRIVATE neuro_fullk_cuda
+    neuro_fullk_reference neuro_pearl_input)
+  set_target_properties(neuro_pearl_probe PROPERTIES CUDA_STANDARD 17 CUDA_STANDARD_REQUIRED ON)
+  # Exercises real host preparation and fixed expected outputs inside the CUDA
+  # executable. Actual GPU launches remain explicit, outside ordinary CTest.
+  add_test(NAME neuro_pearl_host_preparation COMMAND neuro_pearl_probe --host-only)
 endif()

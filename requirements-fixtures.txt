@@ -1,0 +1,15 @@
+# Independent Python fixture regeneration only; no miner/runtime dependency.
+# Official binding: https://github.com/oconnor663/blake3-py
+# Version/file hashes: https://pypi.org/pypi/blake3/1.0.11/json
+# Supported locked wheels: CPython 3.11 and 3.12, Linux x86_64, glibc >= 2.17.
+# Install into an isolated environment with:
+#   python -m pip install --require-hashes -r requirements-fixtures.txt
+# Other Python/platform wheels require an explicitly reviewed hash update.
+--only-binary=:all:
+blake3==1.0.11 \
+    --hash=sha256:fe624bb87ee53d9770bec087631d7fd8f01eab0128693b8fe6b884d8c2cf0989 \
+    --hash=sha256:33424c686b291c7682b5816fe9320466dbc0a457ef7e15c273c804a2d70fea70
+# blake3's declared dependency only on Python < 3.12.
+# Source: https://pypi.org/pypi/typing_extensions/4.16.0/json
+typing_extensions==4.16.0; python_full_version < "3.12" \
+    --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8

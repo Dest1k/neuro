@@ -1,0 +1,173 @@
+Start testing: Nov 11 13:50 CET
+----------------------------------------------------------
+1/10 Testing: neuro_cli
+1/10 Test: neuro_cli
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_cli_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_cli" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_cli" end time: Nov 11 13:50 CET
+"neuro_cli" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/10 Testing: neuro_protocol
+2/10 Test: neuro_protocol
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_protocol_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_protocol" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+[pool] mining.notify rejected: missing, empty or over-long job_id
+[pool] mining.notify rejected: missing, empty or over-long job_id
+[pool] mining.notify rejected: missing, empty or over-long job_id
+[pool] mining.notify rejected: unsupported cert_version
+[pool] mining.notify rejected: unsupported cert_version
+[pool] mining.notify rejected: missing, empty or over-long job_id
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_protocol" end time: Nov 11 13:50 CET
+"neuro_protocol" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/10 Testing: neuro_mma_layout
+3/10 Test: neuro_mma_layout
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_mma_layout_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_mma_layout" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.mma_layout_test.v1","status":"PASS","kind":"cpu_layout_emulation","gpu_execution_observed":false,"mining_evidence":false,"checked_values":1024}
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_mma_layout" end time: Nov 11 13:50 CET
+"neuro_mma_layout" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/10 Testing: neuro_fullk
+4/10 Test: neuro_fullk
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_fullk_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_fullk" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.fullk_cpu_test.v1","status":"PASS","kind":"cpu_reference_and_warp_emulation","gpu_execution_observed":false,"mining_evidence":false,"fixture_count":6,"reference_checked_values":5120,"emulation_checked_values":5120,"checked_values":10240,"invalid_inputs_rejected":51}
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_fullk" end time: Nov 11 13:50 CET
+"neuro_fullk" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/10 Testing: neuro_blake3_vectors
+5/10 Test: neuro_blake3_vectors
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_blake3_vectors_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_blake3_vectors" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.blake3_vectors_test.v1","status":"PASS","kind":"official_cpu_hash_known_answers","exact":true,"gpu_execution_observed":false,"pool_connection_observed":false,"proof_verified":false,"mining_evidence":false,"cases":35,"checked_modes":105,"checked_bytes":17115}
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_blake3_vectors" end time: Nov 11 13:50 CET
+"neuro_blake3_vectors" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/10 Testing: neuro_pearl_alignment
+6/10 Test: neuro_pearl_alignment
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_pearl_alignment_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_pearl_alignment" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+[align-test] CPU keyed hash + chunk root + salted seeds OK (small cases)
+{"schema":"neuro.pearl_alignment_test.v1","status":"PASS","kind":"upstream_cpu_alignment_and_cancellation","alignment_vectors_passed":true,"cancellation_checks":13,"gpu_execution_observed":false,"pool_connection_observed":false,"proof_verified":false,"mining_evidence":false}
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_pearl_alignment" end time: Nov 11 13:50 CET
+"neuro_pearl_alignment" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/10 Testing: neuro_pearl_input
+7/10 Test: neuro_pearl_input
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_pearl_input_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_pearl_input" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.pearl_input_test.v1","status":"PASS","kind":"cpu_pearl_input_and_arithmetic","gpu_execution_observed":false,"proof_verified":false,"mining_evidence":false,"fixture_count":3,"digest_bytes_checked":1248,"matrix_bytes_fingerprinted":7340032,"transcript_words_checked":32768,"final_c_values_checked":65536,"invalid_requests_rejected":29,"global_config_reset_checked":true}
+<end of output>
+Test time =   0.71 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_pearl_input" end time: Nov 11 13:50 CET
+"neuro_pearl_input" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/10 Testing: neuro_math
+8/10 Test: neuro_math
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_math_probe"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_math" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+PASS zero M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=0
+PASS signed-int7-boundaries M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096
+PASS signed-int8-extremes M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096
+PASS rank-boundaries-cumulative M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=32
+PASS rectangular-two-macros M=128 N=256 K=4096 milestones=32 compared=8192 nonzero=8192
+All scalar GEMM/milestone-XOR component checks passed. No proof, GPU, pool, or hashrate validation performed.
+<end of output>
+Test time =   0.31 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_math" end time: Nov 11 13:50 CET
+"neuro_math" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/10 Testing: neuro_fullk_upstream
+9/10 Test: neuro_fullk_upstream
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_fullk_upstream_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_fullk_upstream" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.fullk_upstream_test.v1","status":"PASS","kind":"cpu_scalar_differential","gpu_execution_observed":false,"mining_evidence":false,"fixture_count":4,"reference_upstream_transcript_words":24576,"emulation_upstream_transcript_words":24576,"reference_emulation_final_values":98304,"checked_values":147456}
+<end of output>
+Test time =   1.27 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_fullk_upstream" end time: Nov 11 13:50 CET
+"neuro_fullk_upstream" time elapsed: 00:00:01
+----------------------------------------------------------
+
+10/10 Testing: neuro_pearl_upstream
+10/10 Test: neuro_pearl_upstream
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cmake/neuro_pearl_upstream_test"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cmake
+"neuro_pearl_upstream" start time: Nov 11 13:50 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.pearl_upstream_test.v1","status":"PASS","kind":"cpu_pearl_donor_differential","gpu_execution_observed":false,"proof_verified":false,"mining_evidence":false,"fixture_count":3,"seed_bytes_checked":384,"changed_row_bytes_checked":12288,"noisy_matrix_bytes_checked":3670016,"reference_upstream_transcript_words":16384,"emulation_upstream_transcript_words":16384,"real_cancellation_linked":true,"pool_connections_opened":false}
+<end of output>
+Test time =   0.79 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_pearl_upstream" end time: Nov 11 13:50 CET
+"neuro_pearl_upstream" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 11 13:50 CET

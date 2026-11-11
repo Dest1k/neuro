@@ -137,7 +137,7 @@ See `reports/iteration-02-validation.json` and
 AddressSanitizer and UndefinedBehaviorSanitizer passed for the small CPU fixture
 test; LeakSanitizer could not run in this ptrace environment and was disabled.
 
-Next: connect the existing deterministic Pearl matrix/noise/commitment path to
-this arithmetic contract, retain independently checkable intermediate values,
-and keep real proof verification as a distinct gate. Do not count synthetic
-fixture success as proof or share acceptance.
+Iteration 3 adds the deterministic Pearl signal/noise/commitment path as a
+separate caller of this unchanged arithmetic contract. See `docs/pearl-input.md`.
+Real proof verification remains a distinct gate; fixture success is not proof
+or share acceptance.

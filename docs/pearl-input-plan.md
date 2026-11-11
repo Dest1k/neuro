@@ -1,4 +1,8 @@
-# Next integration: Pearl inputs into full-K arithmetic
+# Iteration 3 entry plan (historical)
+
+Implemented in iteration 3. See `docs/pearl-input.md` for the actual interface,
+build, observed comparisons and remaining boundaries. The notes below preserve
+the source-inspection plan that led to that implementation.
 
 This is an implementation entry point for iteration 3, based on source inspection
 of CPPminer `5b68506af5e6433ee5c25aa9e6fbb00b537590aa`. It is not completed

@@ -22,6 +22,12 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Verify independent arithmetic fixtures
         run: python tools/generate_fullk_fixtures.py --check
+      - name: Verify pinned BLAKE3 expected vectors
+        run: python tools/generate_blake3_vectors.py --check
+      - name: Install pinned independent fixture binding
+        run: python -m pip install --require-hashes -r requirements-fixtures.txt
+      - name: Verify independent Pearl input fixtures
+        run: python tools/generate_pearl_fixtures.py --check
       - name: Compile and run CPU component checks
         run: python tools/neuroctl.py cpu-check --output artifacts/cpu-check.json
       - name: Exercise CMake build definition

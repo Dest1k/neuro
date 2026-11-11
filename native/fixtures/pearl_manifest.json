@@ -1,0 +1,412 @@
+{
+  "schema": "neuro.pearl_fixture_manifest.v1",
+  "scope": "synthetic_job_protocol_preprocessing_and_scalar_arithmetic",
+  "source": "independent Python formulas based on pinned protocol source; no native candidate calls",
+  "generator": "tools/generate_pearl_fixtures.py",
+  "generator_sha256": "974432a20cc4355ea014694bfcd253954e69f239f90251fedbfdf542e295915d",
+  "header": "native/fixtures/pearl_golden.hpp",
+  "header_sha256": "ce22e64881daff797e5664f9e0060514ec9da30860eda13e40f0230e389de7c0",
+  "requirements": "requirements-fixtures.txt",
+  "requirements_sha256": "927535020df082fbc5fbf32d4b3bb0f50e4b1bcd33740637856db332df71edd7",
+  "cryptographic_implementation": {
+    "package": "blake3",
+    "version": "1.0.11",
+    "source": "https://github.com/oconnor663/blake3-py",
+    "implementation": "official Rust implementation via PyO3 binding",
+    "locked_regeneration_platform": "CPython 3.11/3.12; Linux x86_64; glibc >= 2.17"
+  },
+  "semantic_reference": {
+    "repository": "https://github.com/1640675651/CPPminer",
+    "commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+    "file": "src/common/cp_noise.c"
+  },
+  "gpu_execution_observed": false,
+  "proof_verified": false,
+  "pool_acceptance_observed": false,
+  "mining_evidence": false,
+  "input_strategy": "first zero-B attempt: zero A/Bt, then one A row filled using the fixed seed and splitmix64",
+  "header_formula": "header[i] = (i * 7 + 11) & 255, i = 0..75",
+  "seed_formula": "seed[i] = (i * i * 13 + i * 17 + 29) & 255, i = 0..31",
+  "mining_config": {
+    "cutlass_fused": false,
+    "contiguous_tiles": true,
+    "tile_shape": [
+      8,
+      16
+    ],
+    "byte_count": 52,
+    "hex": "0010000080000000000700000000000f000000000000000000000000000000000000000000000000000000000000000000000000",
+    "sha256": "88b47f75a7c67b0aec9557d7dfdf645e76979b64295af533231f2fb1be9a15d8"
+  },
+  "domain_salts": {
+    "a": "8249406ca0ed15169616f692fcf076f892dbdb2a7023b852f0d47719c390017b",
+    "b": "11300632ec6301ca2be2af718b3f4d4f1ae9c63988e8cc044844301d71b89aa9"
+  },
+  "seed_binding": "cert2 uses raw commitment roots; cert3 hashes root || dim_le32 || 28 zero bytes with the corresponding domain salt as BLAKE3 key",
+  "integer_encoding": "INT8 raw two's-complement bytes; pair/transcript uint32 little-endian; final C int32 little-endian",
+  "hash_modes": "commitments keyed by job_key on 1024-byte-zero-padded signal; *_hash/fingerprints unkeyed over exact raw bytes; job_key and seed chain unkeyed; cert3 root binding keyed by domain salts",
+  "inner": 4096,
+  "rank": 128,
+  "milestones": 32,
+  "transcript_index": "milestone * ((rows / 8) * (cols / 16)) + tile_row * (cols / 16) + tile_col",
+  "final_c_storage": "all cells computed independently; full i32LE bytes fingerprinted; not duplicated in C++ header",
+  "cases": [
+    {
+      "name": "legacy_zero_b",
+      "shape": {
+        "rows": 128,
+        "cols": 128,
+        "inner": 4096
+      },
+      "cert_version": 2,
+      "header_hex": "0b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e858c939aa1a8afb6bdc4cbd2d9e0e7eef5fc030a1118",
+      "seed_hex": "1d3b73c531b75711e5d3dbfd398fff892debc3b5c1e72781f5832bedc9bfcff9",
+      "changed_row": 26,
+      "digests": {
+        "job_key": "8d6ab9d9344ae769e789af1bc6de75f72e5bb2a0e4c8b2f27568741d73a2b748",
+        "commitment_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+        "commitment_b": "41f7e1419e6e6b10afdc019569dcb185cd797c2131d90e3edcbb22cfdc1eea8f",
+        "bound_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+        "bound_b": "41f7e1419e6e6b10afdc019569dcb185cd797c2131d90e3edcbb22cfdc1eea8f",
+        "b_noise_seed": "9a029c8e1d122fd56e7002b681876bd3c5aed4f05771406dc828b4433fd11b72",
+        "a_noise_seed": "642ec7c9b08b07d007e488790b6b9e9f5e8114f160aa4a4d804bce129bdcc37d",
+        "signal_a_hash": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1",
+        "signal_bt_hash": "934d6b7aea5a339a9e858430cca7ac455d3537e70fd2b302931cc93b25e1df9a",
+        "noisy_a_hash": "91f1857973846540a5f332cbf098d5ccefed0cb5ece8d54716dbac9f88aeeb46",
+        "noisy_bt_hash": "394f1e6f8aac7498a8699d0021b05bff5c7a1a03f53a2f8c8e6e6bd174d2d1c8",
+        "final_c_hash": "94208b2a5108f7e50d7beba521a0f17a40464d3b4bfb7fcd3c0ce876f4cd1708"
+      },
+      "signal_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "e37fac371188f60e9c535cf75f8582f9e277662111f4ee005d90aa8001ce9ec8",
+        "blake3": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1"
+      },
+      "signal_bt": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 524288,
+        "sha256": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541",
+        "blake3": "934d6b7aea5a339a9e858430cca7ac455d3537e70fd2b302931cc93b25e1df9a"
+      },
+      "a_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "fffdfda2229854c8a9e5aa8d680395d311ca167ec910ca77cfc8fe90002a309c",
+        "blake3": "bedc524cb9c4aa04c0edc9581dc31cf169ab3bd01e00aa02f1cd3bc4cf56b88a"
+      },
+      "b_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "2eb677cdf48d742c98c97b3ec62f528946d4d6c4f3009c4e73f81fe11158779d",
+        "blake3": "1876a2512df6799c8e71d61cd0a2d30364a13e877218aed9aa81ec21fa949403"
+      },
+      "noisy_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "0dae0cfffc4c4dde7104118a4d2290f6f9fd6079c78da99d300f00a82b2a29c7",
+        "blake3": "91f1857973846540a5f332cbf098d5ccefed0cb5ece8d54716dbac9f88aeeb46"
+      },
+      "noisy_bt": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 524288,
+        "sha256": "720c9884e772bf14a6aaad3e826399c1456eb5c854694c2448710ab8bdc8039c",
+        "blake3": "394f1e6f8aac7498a8699d0021b05bff5c7a1a03f53a2f8c8e6e6bd174d2d1c8"
+      },
+      "transcript": {
+        "dtype": "uint32_le",
+        "shape": [
+          32,
+          16,
+          8
+        ],
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "byte_count": 16384,
+        "sha256": "fb62ff49a4c79937b87b70d6f2e7d447e126f54f9a815163fbe104aa095ef5ec",
+        "blake3": "6006334badecf95fe1d60c37d136c4c97fcc2cd5820a67ec7259ef98c16bd026"
+      },
+      "final_c": {
+        "dtype": "int32_le",
+        "shape": [
+          128,
+          128
+        ],
+        "layout": "row_major",
+        "byte_count": 65536,
+        "sha256": "7ab132ec4b95a1cd20bc11df22a23885aeabb91835699af3d3ee329a19330efc",
+        "blake3": "94208b2a5108f7e50d7beba521a0f17a40464d3b4bfb7fcd3c0ce876f4cd1708"
+      },
+      "commitment_padding_bytes": {
+        "a": 0,
+        "bt": 0
+      }
+    },
+    {
+      "name": "v3_zero_b",
+      "shape": {
+        "rows": 128,
+        "cols": 128,
+        "inner": 4096
+      },
+      "cert_version": 3,
+      "header_hex": "0b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e858c939aa1a8afb6bdc4cbd2d9e0e7eef5fc030a1118",
+      "seed_hex": "1d3b73c531b75711e5d3dbfd398fff892debc3b5c1e72781f5832bedc9bfcff9",
+      "changed_row": 26,
+      "digests": {
+        "job_key": "8d6ab9d9344ae769e789af1bc6de75f72e5bb2a0e4c8b2f27568741d73a2b748",
+        "commitment_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+        "commitment_b": "41f7e1419e6e6b10afdc019569dcb185cd797c2131d90e3edcbb22cfdc1eea8f",
+        "bound_a": "868e89783e040d4ba80368ad89dce789380779f4e4e109ab6dabfc9276dc8367",
+        "bound_b": "ac474ae4810014bbdefedce15ff4659300796f79473f194caa60be07c2289127",
+        "b_noise_seed": "2b2b1667574121dbc317b3978ae420fee1ac41c7869f3b31d93586ba1b1985f0",
+        "a_noise_seed": "cde2d7593a5c5172f9e6f558959ec53af8ee387e3ae72d1f4fc5ebf45d410c9a",
+        "signal_a_hash": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1",
+        "signal_bt_hash": "934d6b7aea5a339a9e858430cca7ac455d3537e70fd2b302931cc93b25e1df9a",
+        "noisy_a_hash": "425115342de6b799c01f0a6f414642e5c327412be10ccd9fdc9263307ac5f27a",
+        "noisy_bt_hash": "464646dadfa69f2a65d2f028b6d3121c4d34652179c701a7240a1673321d18bf",
+        "final_c_hash": "6e39d7678b164a1e3b7fad18d4f3b0c48ce44b206809b4c3bf33397d71d5e2c5"
+      },
+      "signal_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "e37fac371188f60e9c535cf75f8582f9e277662111f4ee005d90aa8001ce9ec8",
+        "blake3": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1"
+      },
+      "signal_bt": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 524288,
+        "sha256": "07854d2fef297a06ba81685e660c332de36d5d18d546927d30daad6d7fda1541",
+        "blake3": "934d6b7aea5a339a9e858430cca7ac455d3537e70fd2b302931cc93b25e1df9a"
+      },
+      "a_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "a8233b800f71756cfbcc0628e7c2273d01fc074a60e821ad6bf5842aa50d6034",
+        "blake3": "127df8d1461bd480fd4e3fe6a18238903367c2a67b6d0b70a70863b542642263"
+      },
+      "b_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "db015bce36283cdf09f44e3a229f5130b45eaa5028110144ed365127175b7406",
+        "blake3": "0ec8bd1e162df45ee3bd50c288359563951f6072be391c9ac4af3984f92a7888"
+      },
+      "noisy_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "441e706d8513a233072e9ec7c5d3d827746a51d1d59c565dbf6de48cd3f50b95",
+        "blake3": "425115342de6b799c01f0a6f414642e5c327412be10ccd9fdc9263307ac5f27a"
+      },
+      "noisy_bt": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 524288,
+        "sha256": "f19469169e18509b2634117b749d460e13e734a964be57d32daf69d2b0244053",
+        "blake3": "464646dadfa69f2a65d2f028b6d3121c4d34652179c701a7240a1673321d18bf"
+      },
+      "transcript": {
+        "dtype": "uint32_le",
+        "shape": [
+          32,
+          16,
+          8
+        ],
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "byte_count": 16384,
+        "sha256": "577c06e02bed174927fc541e802ef1d5670266f35d9d5d45855877e8297a6895",
+        "blake3": "be556182d44324c8e7bf5c911f90ca6f85aa67fc23a833c0a6ebafbbd844f544"
+      },
+      "final_c": {
+        "dtype": "int32_le",
+        "shape": [
+          128,
+          128
+        ],
+        "layout": "row_major",
+        "byte_count": 65536,
+        "sha256": "a96961b4be1c565fd49db054313ab6f5e048a1bfe95504d272f7c6d622902847",
+        "blake3": "6e39d7678b164a1e3b7fad18d4f3b0c48ce44b206809b4c3bf33397d71d5e2c5"
+      },
+      "commitment_padding_bytes": {
+        "a": 0,
+        "bt": 0
+      }
+    },
+    {
+      "name": "v3_rectangular_zero_b",
+      "shape": {
+        "rows": 128,
+        "cols": 256,
+        "inner": 4096
+      },
+      "cert_version": 3,
+      "header_hex": "0b121920272e353c434a51585f666d747b828990979ea5acb3bac1c8cfd6dde4ebf2f900070e151c232a31383f464d545b626970777e858c939aa1a8afb6bdc4cbd2d9e0e7eef5fc030a1118",
+      "seed_hex": "1d3b73c531b75711e5d3dbfd398fff892debc3b5c1e72781f5832bedc9bfcff9",
+      "changed_row": 26,
+      "digests": {
+        "job_key": "8d6ab9d9344ae769e789af1bc6de75f72e5bb2a0e4c8b2f27568741d73a2b748",
+        "commitment_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+        "commitment_b": "85bf67eda9fc3a1ca00905b12f00ca5eb95e6601a4dff40e6e0a1973f0adf474",
+        "bound_a": "868e89783e040d4ba80368ad89dce789380779f4e4e109ab6dabfc9276dc8367",
+        "bound_b": "7195a33cb9789b69dfe0004c559294ac8414a82c69212996beb85faaf38c8df4",
+        "b_noise_seed": "8a31b1b6326b2b1c455e261d18537920adc7c249faa1f09620994e1e5bbf0e48",
+        "a_noise_seed": "9da406320706af9886234d3134bbd3edb5a79207d604077753ee2fd8cf2b3f0a",
+        "signal_a_hash": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1",
+        "signal_bt_hash": "488de202f73bd976de4e7048f4e1f39a776d86d582b7348ff53bf432b987fca8",
+        "noisy_a_hash": "b9a4b612ad73c5c635a0462b62f622eba6ae712d1067761b29e96bb94529af8c",
+        "noisy_bt_hash": "99cbc4019bd786cded780aeb782df35bf451b420aa910904d815e2c8916e8ce8",
+        "final_c_hash": "cc2996173629e0f7bd9d92e5e4ca29c2bab94b632de3bdc832876a8ed6edf36e"
+      },
+      "signal_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "e37fac371188f60e9c535cf75f8582f9e277662111f4ee005d90aa8001ce9ec8",
+        "blake3": "1aefd939ba02a23cfcfce0fcecf15fffc6c1a0b88fda89e2b5e9e0e5d7cd94f1"
+      },
+      "signal_bt": {
+        "dtype": "int8",
+        "shape": [
+          256,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 1048576,
+        "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
+        "blake3": "488de202f73bd976de4e7048f4e1f39a776d86d582b7348ff53bf432b987fca8"
+      },
+      "a_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "0aba015e2f31f1a3c813943ca98ffbfca2e21b4b23803db27d79ccd135d120b6",
+        "blake3": "5531b841433066ec0dd800db4bee14d052780e60bbae071bd7382af32ffb6744"
+      },
+      "b_permutation_pairs": {
+        "dtype": "uint32_le",
+        "shape": [
+          4096,
+          2
+        ],
+        "layout": "k_major_then_pair_index",
+        "byte_count": 32768,
+        "sha256": "f37adc43440546ed87fc00b25ed2f48fe0e12e6cb867bb9dbc11509c0faae305",
+        "blake3": "89d567a2a4b47d2aecb30bf04886788a99a54351321d7ba722ab92d7fbd0a4f6"
+      },
+      "noisy_a": {
+        "dtype": "int8",
+        "shape": [
+          128,
+          4096
+        ],
+        "layout": "row_major",
+        "byte_count": 524288,
+        "sha256": "3eb0ef11e2705c618fab79c0324def3e75e37e8bdb6bba0446ddc72b3ed25e83",
+        "blake3": "b9a4b612ad73c5c635a0462b62f622eba6ae712d1067761b29e96bb94529af8c"
+      },
+      "noisy_bt": {
+        "dtype": "int8",
+        "shape": [
+          256,
+          4096
+        ],
+        "layout": "row_major_transposed_b",
+        "byte_count": 1048576,
+        "sha256": "3829e39eaf555e0f49af2fe9b448431f23fef2acdf3e0aaeffe26e3f6df18e56",
+        "blake3": "99cbc4019bd786cded780aeb782df35bf451b420aa910904d815e2c8916e8ce8"
+      },
+      "transcript": {
+        "dtype": "uint32_le",
+        "shape": [
+          32,
+          16,
+          16
+        ],
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "byte_count": 32768,
+        "sha256": "dfd39d4d7c5d770f40fa46456c5be0b845b67126e0c2e7fb6020be386dbac440",
+        "blake3": "306f6ed67ab62ae28fada9bd82c0ca5e4b63f1470f45fc10f819de5b5af22b19"
+      },
+      "final_c": {
+        "dtype": "int32_le",
+        "shape": [
+          128,
+          256
+        ],
+        "layout": "row_major",
+        "byte_count": 131072,
+        "sha256": "ae4c3dbd8d79aeafab6b7ec612936eb486e6edffd526a2fbda5d8414dff85689",
+        "blake3": "cc2996173629e0f7bd9d92e5e4ca29c2bab94b632de3bdc832876a8ed6edf36e"
+      },
+      "commitment_padding_bytes": {
+        "a": 0,
+        "bt": 0
+      }
+    }
+  ]
+}

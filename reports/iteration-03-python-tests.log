@@ -1,0 +1,50 @@
+test_actual_command_failure_propagates (test_cli.CliTests.test_actual_command_failure_propagates) ... ok
+test_cost_keeps_unknown_cache_and_exact_price (test_cli.CliTests.test_cost_keeps_unknown_cache_and_exact_price) ... ok
+test_empty_command_is_an_error (test_cli.CliTests.test_empty_command_is_an_error) ... ok
+test_incomplete_usage_cannot_satisfy_a_budget_gate (test_cli.CliTests.test_incomplete_usage_cannot_satisfy_a_budget_gate) ... ok
+test_missing_usage_file_is_an_error (test_cli.CliTests.test_missing_usage_file_is_an_error) ... ok
+test_synthetic_example_never_becomes_evidence (test_cli.CliTests.test_synthetic_example_never_becomes_evidence) ... ok
+test_ambiguous_format_requires_user_choice (test_cost.CostTests.test_ambiguous_format_requires_user_choice) ... ok
+test_anthropic_input_excludes_cache_read_and_write (test_cost.CostTests.test_anthropic_input_excludes_cache_read_and_write) ... ok
+test_complete_ttl_breakdown_can_supply_missing_write_total (test_cost.CostTests.test_complete_ttl_breakdown_can_supply_missing_write_total) ... ok
+test_decimal_addition_preserves_widely_separated_places (test_cost.CostTests.test_decimal_addition_preserves_widely_separated_places) ... ok
+test_decimal_math_exact_and_json_serializable (test_cost.CostTests.test_decimal_math_exact_and_json_serializable) ... ok
+test_generic_write_price_does_not_invent_one_hour_price (test_cost.CostTests.test_generic_write_price_does_not_invent_one_hour_price) ... ok
+test_manifest_exact_routes_and_source (test_cost.CostTests.test_manifest_exact_routes_and_source) ... ok
+test_missing_anthropic_metadata_not_a_false_complete_bill (test_cost.CostTests.test_missing_anthropic_metadata_not_a_false_complete_bill) ... ok
+test_missing_openai_cache_metadata_charged_as_full_input (test_cost.CostTests.test_missing_openai_cache_metadata_charged_as_full_input) ... ok
+test_mixed_format_ttl_write_premium_is_not_ignored (test_cost.CostTests.test_mixed_format_ttl_write_premium_is_not_ignored) ... ok
+test_negative_reasoning_detail_is_rejected_even_without_double_counting (test_cost.CostTests.test_negative_reasoning_detail_is_rejected_even_without_double_counting) ... ok
+test_openai_responses_input_alias (test_cost.CostTests.test_openai_responses_input_alias) ... ok
+test_openai_total_contains_cached_tokens_no_double_count (test_cost.CostTests.test_openai_total_contains_cached_tokens_no_double_count) ... ok
+test_partial_anthropic_metadata_grants_no_read_discount (test_cost.CostTests.test_partial_anthropic_metadata_grants_no_read_discount) ... ok
+test_reasoning_detail_cannot_exceed_reported_output (test_cost.CostTests.test_reasoning_detail_cannot_exceed_reported_output) ... ok
+test_rejects_cache_larger_than_total (test_cost.CostTests.test_rejects_cache_larger_than_total) ... ok
+test_rejects_conflicting_aliases_and_total (test_cost.CostTests.test_rejects_conflicting_aliases_and_total) ... ok
+test_rejects_inconsistent_ttl_totals (test_cost.CostTests.test_rejects_inconsistent_ttl_totals) ... ok
+test_rejects_invalid_prices (test_cost.CostTests.test_rejects_invalid_prices) ... ok
+test_rejects_negative_boolean_float_string_and_null_counters (test_cost.CostTests.test_rejects_negative_boolean_float_string_and_null_counters) ... ok
+test_rejects_unknown_positive_write_ttl (test_cost.CostTests.test_rejects_unknown_positive_write_ttl) ... ok
+test_router_write_premium_is_not_silently_ignored (test_cost.CostTests.test_router_write_premium_is_not_silently_ignored) ... ok
+test_stream_fragment_rejected (test_cost.CostTests.test_stream_fragment_rejected) ... ok
+test_top_level_router_write_aliases_are_not_silently_ignored (test_cost.CostTests.test_top_level_router_write_aliases_are_not_silently_ignored) ... ok
+test_ttl_writes_are_separate_not_added_to_total_twice (test_cost.CostTests.test_ttl_writes_are_separate_not_added_to_total_twice) ... ok
+test_unknown_cache_read_price_uses_full_rate (test_cost.CostTests.test_unknown_cache_read_price_uses_full_rate) ... ok
+test_unknown_write_rate_fails_closed (test_cost.CostTests.test_unknown_write_rate_fails_closed) ... ok
+test_user_scenario_m3_cache_discount (test_cost.CostTests.test_user_scenario_m3_cache_discount) ... ok
+test_user_scenario_sol_no_cache_discount (test_cost.CostTests.test_user_scenario_sol_no_cache_discount) ... ok
+test_comparability (test_experiments.EvaluationTests.test_comparability) ... ok
+test_cpu_smoke_cannot_be_gpu_or_mining_evidence (test_experiments.EvaluationTests.test_cpu_smoke_cannot_be_gpu_or_mining_evidence) ... ok
+test_missing_correctness_failed_command_and_nonfinite (test_experiments.EvaluationTests.test_missing_correctness_failed_command_and_nonfinite) ... ok
+test_pass_regression_and_stability (test_experiments.EvaluationTests.test_pass_regression_and_stability) ... ok
+test_pool_uses_accepted_work_and_rejects_invalid_shares (test_experiments.EvaluationTests.test_pool_uses_accepted_work_and_rejects_invalid_shares) ... ok
+test_atomic_json_and_invalid_input (test_experiments.RunnerTests.test_atomic_json_and_invalid_input) ... ok
+test_bounded_streams_and_launch_error (test_experiments.RunnerTests.test_bounded_streams_and_launch_error) ... ok
+test_success_failure_and_literal_arguments (test_experiments.RunnerTests.test_success_failure_and_literal_arguments) ... ok
+test_timeout (test_experiments.RunnerTests.test_timeout) ... ok
+test_timeout_kills_child_process (test_experiments.RunnerTests.test_timeout_kills_child_process) ... ok
+
+----------------------------------------------------------------------
+Ran 45 tests in 1.655s
+
+OK

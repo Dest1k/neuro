@@ -19,7 +19,7 @@ def parser():
     inventory.add_argument("--output", type=Path)
     source = commands.add_parser("source-check", help="Verify pinned and unmodified dependencies")
     source.add_argument("--output", type=Path)
-    cpu = commands.add_parser("cpu-check", help="Compile/run offline C++ component checks with GCC")
+    cpu = commands.add_parser("cpu-check", help="Compile/run offline C/C++ component checks with GCC")
     cpu.add_argument("--cxx")
     cpu.add_argument("--output", type=Path)
     cost = commands.add_parser("cost", help="Price a final API usage JSON; never calls an API")

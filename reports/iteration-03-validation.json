@@ -1,0 +1,431 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 3,
+  "observed_at_utc": "2026-11-11T12:54:58.742870+00:00",
+  "base_commit": "b538c1fc102a64cd2961ad0bb013172d3f69b950",
+  "sources": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "root_readme_bytes": 0,
+  "input_scope": "first_zero_b_attempt_with_fixed_synthetic_header_seed_and_real_donor_preprocessing",
+  "python": {
+    "command": "python -m unittest discover -s tests -v",
+    "exit_code": 0,
+    "tests_passed": 45,
+    "log": "reports/iteration-03-python-tests.log"
+  },
+  "fixture_checks": [
+    {
+      "command": [
+        "python",
+        "tools/generate_blake3_vectors.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 0.042948450000039884,
+      "stderr": "",
+      "result": {
+        "candidate_hash_calculations": false,
+        "cases": 35,
+        "header_sha256": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46",
+        "mode": "check",
+        "modes_per_case": 3,
+        "schema": "neuro.blake3_fixture_check.v1",
+        "source_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "status": "PASS"
+      }
+    },
+    {
+      "command": [
+        "python",
+        "tools/generate_fullk_fixtures.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 1.8107263019992388,
+      "stderr": "",
+      "result": {
+        "cases": 6,
+        "final_c_values": 4096,
+        "gpu_execution_observed": false,
+        "mining_evidence": false,
+        "mismatches": [],
+        "mode": "check",
+        "schema": "neuro.fullk_fixture_check.v1",
+        "status": "PASS",
+        "transcript_words": 1024
+      }
+    },
+    {
+      "command": [
+        "python",
+        "tools/generate_pearl_fixtures.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "elapsed_s": 12.8045963379991,
+      "stderr": "",
+      "result": {
+        "cases": 3,
+        "final_c_values_hashed": 65536,
+        "gpu_execution_observed": false,
+        "mismatches": [],
+        "mode": "check",
+        "pool_acceptance_observed": false,
+        "proof_verified": false,
+        "schema": "neuro.pearl_fixture_check.v1",
+        "status": "PASS",
+        "transcript_words": 16384
+      }
+    }
+  ],
+  "cpu": {
+    "command": "python tools/neuroctl.py cpu-check --output artifacts/iteration-03-cpu-check.json",
+    "passed": true,
+    "c_component_builds_passed": 4,
+    "native_checks_passed": 10,
+    "checks": [
+      {
+        "name": "cppminer_cli",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "name": "cppminer_pool_protocol",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: missing, empty or over-long job_id\n",
+        "stderr": ""
+      },
+      {
+        "name": "cppminer_math_probe",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "PASS zero M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=0\nPASS signed-int7-boundaries M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS signed-int8-extremes M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS rank-boundaries-cumulative M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=32\nPASS rectangular-two-macros M=128 N=256 K=4096 milestones=32 compared=8192 nonzero=8192\nAll scalar GEMM/milestone-XOR component checks passed. No proof, GPU, pool, or hashrate validation performed.\n",
+        "stderr": ""
+      },
+      {
+        "name": "mma_layout",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.mma_layout_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_layout_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"checked_values\":1024}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.mma_layout_test.v1",
+          "status": "PASS",
+          "kind": "cpu_layout_emulation",
+          "gpu_execution_observed": false,
+          "mining_evidence": false,
+          "checked_values": 1024
+        }
+      },
+      {
+        "name": "fullk",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.fullk_cpu_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_reference_and_warp_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"fixture_count\":6,\"reference_checked_values\":5120,\"emulation_checked_values\":5120,\"checked_values\":10240,\"invalid_inputs_rejected\":51}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.fullk_cpu_test.v1",
+          "status": "PASS",
+          "kind": "cpu_reference_and_warp_emulation",
+          "gpu_execution_observed": false,
+          "mining_evidence": false,
+          "fixture_count": 6,
+          "reference_checked_values": 5120,
+          "emulation_checked_values": 5120,
+          "checked_values": 10240,
+          "invalid_inputs_rejected": 51
+        }
+      },
+      {
+        "name": "fullk_upstream",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.fullk_upstream_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_scalar_differential\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"fixture_count\":4,\"reference_upstream_transcript_words\":24576,\"emulation_upstream_transcript_words\":24576,\"reference_emulation_final_values\":98304,\"checked_values\":147456}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.fullk_upstream_test.v1",
+          "status": "PASS",
+          "kind": "cpu_scalar_differential",
+          "gpu_execution_observed": false,
+          "mining_evidence": false,
+          "fixture_count": 4,
+          "reference_upstream_transcript_words": 24576,
+          "emulation_upstream_transcript_words": 24576,
+          "reference_emulation_final_values": 98304,
+          "checked_values": 147456
+        }
+      },
+      {
+        "name": "blake3_vectors",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.blake3_vectors_test.v1\",\"status\":\"PASS\",\"kind\":\"official_cpu_hash_known_answers\",\"exact\":true,\"gpu_execution_observed\":false,\"pool_connection_observed\":false,\"proof_verified\":false,\"mining_evidence\":false,\"cases\":35,\"checked_modes\":105,\"checked_bytes\":17115}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.blake3_vectors_test.v1",
+          "status": "PASS",
+          "kind": "official_cpu_hash_known_answers",
+          "exact": true,
+          "gpu_execution_observed": false,
+          "pool_connection_observed": false,
+          "proof_verified": false,
+          "mining_evidence": false,
+          "cases": 35,
+          "checked_modes": 105,
+          "checked_bytes": 17115
+        }
+      },
+      {
+        "name": "pearl_alignment",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "[align-test] CPU keyed hash + chunk root + salted seeds OK (small cases)\n{\"schema\":\"neuro.pearl_alignment_test.v1\",\"status\":\"PASS\",\"kind\":\"upstream_cpu_alignment_and_cancellation\",\"alignment_vectors_passed\":true,\"cancellation_checks\":13,\"gpu_execution_observed\":false,\"pool_connection_observed\":false,\"proof_verified\":false,\"mining_evidence\":false}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.pearl_alignment_test.v1",
+          "status": "PASS",
+          "kind": "upstream_cpu_alignment_and_cancellation",
+          "alignment_vectors_passed": true,
+          "cancellation_checks": 13,
+          "gpu_execution_observed": false,
+          "pool_connection_observed": false,
+          "proof_verified": false,
+          "mining_evidence": false
+        }
+      },
+      {
+        "name": "pearl_input",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.pearl_input_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_pearl_input_and_arithmetic\",\"gpu_execution_observed\":false,\"proof_verified\":false,\"mining_evidence\":false,\"fixture_count\":3,\"digest_bytes_checked\":1248,\"matrix_bytes_fingerprinted\":7340032,\"transcript_words_checked\":32768,\"final_c_values_checked\":65536,\"invalid_requests_rejected\":29,\"global_config_reset_checked\":true}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.pearl_input_test.v1",
+          "status": "PASS",
+          "kind": "cpu_pearl_input_and_arithmetic",
+          "gpu_execution_observed": false,
+          "proof_verified": false,
+          "mining_evidence": false,
+          "fixture_count": 3,
+          "digest_bytes_checked": 1248,
+          "matrix_bytes_fingerprinted": 7340032,
+          "transcript_words_checked": 32768,
+          "final_c_values_checked": 65536,
+          "invalid_requests_rejected": 29,
+          "global_config_reset_checked": true
+        }
+      },
+      {
+        "name": "pearl_upstream",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.pearl_upstream_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_pearl_donor_differential\",\"gpu_execution_observed\":false,\"proof_verified\":false,\"mining_evidence\":false,\"fixture_count\":3,\"seed_bytes_checked\":384,\"changed_row_bytes_checked\":12288,\"noisy_matrix_bytes_checked\":3670016,\"reference_upstream_transcript_words\":16384,\"emulation_upstream_transcript_words\":16384,\"real_cancellation_linked\":true,\"pool_connections_opened\":false}\n",
+        "stderr": "",
+        "result": {
+          "schema": "neuro.pearl_upstream_test.v1",
+          "status": "PASS",
+          "kind": "cpu_pearl_donor_differential",
+          "gpu_execution_observed": false,
+          "proof_verified": false,
+          "mining_evidence": false,
+          "fixture_count": 3,
+          "seed_bytes_checked": 384,
+          "changed_row_bytes_checked": 12288,
+          "noisy_matrix_bytes_checked": 3670016,
+          "reference_upstream_transcript_words": 16384,
+          "emulation_upstream_transcript_words": 16384,
+          "real_cancellation_linked": true,
+          "pool_connections_opened": false
+        }
+      }
+    ],
+    "new_results": {
+      "blake3_vectors": {
+        "schema": "neuro.blake3_vectors_test.v1",
+        "status": "PASS",
+        "kind": "official_cpu_hash_known_answers",
+        "exact": true,
+        "gpu_execution_observed": false,
+        "pool_connection_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "cases": 35,
+        "checked_modes": 105,
+        "checked_bytes": 17115
+      },
+      "pearl_alignment": {
+        "schema": "neuro.pearl_alignment_test.v1",
+        "status": "PASS",
+        "kind": "upstream_cpu_alignment_and_cancellation",
+        "alignment_vectors_passed": true,
+        "cancellation_checks": 13,
+        "gpu_execution_observed": false,
+        "pool_connection_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false
+      },
+      "pearl_input": {
+        "schema": "neuro.pearl_input_test.v1",
+        "status": "PASS",
+        "kind": "cpu_pearl_input_and_arithmetic",
+        "gpu_execution_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "fixture_count": 3,
+        "digest_bytes_checked": 1248,
+        "matrix_bytes_fingerprinted": 7340032,
+        "transcript_words_checked": 32768,
+        "final_c_values_checked": 65536,
+        "invalid_requests_rejected": 29,
+        "global_config_reset_checked": true
+      },
+      "pearl_upstream": {
+        "schema": "neuro.pearl_upstream_test.v1",
+        "status": "PASS",
+        "kind": "cpu_pearl_donor_differential",
+        "gpu_execution_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "fixture_count": 3,
+        "seed_bytes_checked": 384,
+        "changed_row_bytes_checked": 12288,
+        "noisy_matrix_bytes_checked": 3670016,
+        "reference_upstream_transcript_words": 16384,
+        "emulation_upstream_transcript_words": 16384,
+        "real_cancellation_linked": true,
+        "pool_connections_opened": false
+      }
+    }
+  },
+  "cmake_cpu": {
+    "configure_build_exit_code": 0,
+    "ctest_tests_passed": 10,
+    "ctest_tests_failed": 0,
+    "host_compiler": "GNU 14.2.0",
+    "cmake_version": "3.31.6",
+    "log": "reports/iteration-03-cmake-cpu.log"
+  },
+  "cuda": {
+    "status": "PASS_COMPILE_LINK_AND_HOST_PREPARATION_ONLY",
+    "target": "sm_120",
+    "compiler": "13.5.37",
+    "full_linux_link": true,
+    "receipt": "reports/pearl-sm120-compile.json",
+    "ctest_host_tests_passed": 2,
+    "pearl_host_result": {
+      "schema": "neuro.pearl_probe.v1",
+      "status": "PASS",
+      "exact": true,
+      "mode": "host_preparation",
+      "gpu_execution_observed": false,
+      "device": null,
+      "compute_capability": null,
+      "cases": 3,
+      "launches": 0,
+      "cpu_golden_transcript_words_checked": 16384,
+      "gpu_transcript_words_checked": 0,
+      "gpu_final_c_values_checked": 0,
+      "k": 4096,
+      "rank": 128,
+      "proof_verified": false,
+      "pool_connected": false,
+      "mining_evidence": false,
+      "hashrate": null
+    }
+  },
+  "sanitizers": {
+    "passed": true,
+    "address_and_undefined_behavior": true,
+    "noise_and_blake3_c_instrumented": true,
+    "leak_detection": false,
+    "receipt": "reports/iteration-03-sanitizers.json"
+  },
+  "coverage_limits": {
+    "gpu_execution": false,
+    "windows_build": false,
+    "windows_execution": false,
+    "pool_issued_job": false,
+    "full_pearl_proof": false,
+    "pool_shares": false,
+    "miner_hashrate_measured": false,
+    "persistent_attempt_state": false,
+    "adapter_job_preemption": false,
+    "reseller_api_calls": 0,
+    "cache_billing_verified": false,
+    "dsh_budget_enforced": false
+  },
+  "source_hashes": {
+    ".github/workflows/offline.yml": "9cf828901ed93da6c488023dfdb9e41b7470570c460f0c8d874b0998108f080a",
+    ".gitmodules": "b913088d1b6eec83b8f4cfb0db2035fcb7df87455d5b3ff1dd1abc806c9a6824",
+    "CMakeLists.txt": "e764279331db1a8b3de32e51f0704643a3a81fc9ef5d866fc89481389e6f3ef2",
+    "cmake/Blake3.cmake": "63443ef7d5d0ff7c867b076e00464ba8e518da20d6f2f42fe408126cfc70c941",
+    "native/cuda/fullk_kernel.cu": "a8bd682e454bd21e81253a8f7aee7f7acc100b23a54a93b5ff799aa42df79d37",
+    "native/cuda/fullk_probe.cu": "7d40027b1ee9a40bc86a5d4e734e59e1c4130c72e8d61240e3a2b0413b1a49b1",
+    "native/cuda/mma_probe.cu": "6172c20044e9f35b5be5e2f527d3887a41ffcb647066301b4c76bf404acd6b4c",
+    "native/cuda/pearl_probe.cu": "50c8d3162bd64140a22d9c8a04b9c9cb53ab8066a541d92dfe3d921472a41403",
+    "native/fixtures/blake3_vectors.hpp": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46",
+    "native/fixtures/fullk_golden.hpp": "3d65f45a10905868ebcc44c057ce1f044d79758ddd5af3bbca4f1e6baf475162",
+    "native/fixtures/pearl_golden.hpp": "ce22e64881daff797e5664f9e0060514ec9da30860eda13e40f0230e389de7c0",
+    "native/fixtures/pearl_manifest.json": "c6c52355e16e8de5b0e6c9c74141146b5cf23de55c60586e5f7423917c483ba5",
+    "native/include/neuro/fullk.hpp": "588078751744ab4fcd3a2365193bf69b4a9de87a4d5c5aa772726f6734b1eca7",
+    "native/include/neuro/fullk_cuda.cuh": "6bacb34b9dec8e4d4c03ef895f91fe49fb5b5e3e475b046d8e2b672102655c5d",
+    "native/include/neuro/mma_layout.hpp": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540",
+    "native/include/neuro/pearl_input.hpp": "79b72c65cb216333a87cade6609f1351f9414265e1699339d37f42f159324201",
+    "native/pearl/pearl_input.cpp": "71a6236fab4e89396fe368edbd117fd6bd02d54832f871fa1d71600d4a479057",
+    "native/reference/fullk_reference.cpp": "351f94fbb823f3302de1b15be74def5ba26fafdc19b9406d4623699a50c704f8",
+    "native/reference/fullk_warp.cpp": "9f6d8c5a746a67a8cb4d050fdd1f438df74e2af313033741a0cb55ed1feda82f",
+    "native/tests/blake3_vectors_test.cpp": "898fa72b72ec7c3a6b96c90d0d201bd8560250f59ce7e0108981d23926ce787e",
+    "native/tests/cppminer_math_probe.cpp": "597e8e241d2513c7efeae8f2ec16658b187c9185b3a4610cf6ddcf4e908928ed",
+    "native/tests/fullk_test.cpp": "268bbf23f6bd25d8d4633b79f8dad2f0990556ae924aa42373b8453c0cac86bc",
+    "native/tests/fullk_upstream_test.cpp": "c484e097f36c53aa55bc218dcbda3ca03a1fc8c68c861ca673d58f1a317267d3",
+    "native/tests/mma_layout_test.cpp": "fcd221929755fc8ce080c30a96246e7c017e7ac9a9075941dd72759e0ca87e38",
+    "native/tests/pearl_alignment_test.cpp": "ace9f6196c56f8304e9b1391bb631f4eebda0eec5df0b5cc53783d5660042d91",
+    "native/tests/pearl_input_test.cpp": "d284d78563724e78ef314b1d65e94824fa39af91270bf4790a58fe7c49ef73c3",
+    "native/tests/pearl_upstream_test.cpp": "c0e2e52cd356602151150e688a82984e4876c3f3fbc8ba74d3ff7d771db9b78e",
+    "requirements-fixtures.txt": "927535020df082fbc5fbf32d4b3bb0f50e4b1bcd33740637856db332df71edd7",
+    "tests/test_cli.py": "0a03e30bd635fb1ad2b8cecab3a05b7a307457eb844b74bee1a67834617a077a",
+    "tests/test_cost.py": "deab9c8d23f3b7323c994533058e58cd72df4d72907dd608e6c5dc61d0a2ea64",
+    "tests/test_experiments.py": "ed5bb174e1ac9c73782df56a2d4514338451b1f0747bac94e5c4fcc95dda1506",
+    "tools/generate_blake3_vectors.py": "f8b88c9db3d3fdcbb4af743e5a8146cccfcff9d0d3864058fd778def4b920173",
+    "tools/generate_fullk_fixtures.py": "269d1d029049fc7317fcddd8a5d4cf71bc4c51ad3f0087eb746c3de25fe7cdcb",
+    "tools/generate_pearl_fixtures.py": "974432a20cc4355ea014694bfcd253954e69f239f90251fedbfdf542e295915d",
+    "tools/neuroctl.py": "df198630b72411edf308c615554138b0914cdf2334c6fa1a209b76c3ce66755b",
+    "tools/neuroctl/__init__.py": "6c995c328b823f126333b0800e18459f79c5ecd5081a7c95fe84cf58328572be",
+    "tools/neuroctl/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "tools/neuroctl/cli.py": "3338db2be3ef36c2bf312692d974313eda59935278e37d1315fb40736ecebcb6",
+    "tools/neuroctl/cost.py": "96a22a3c82a5d50801995f1e91672d3539ee696daf2c1b95e65004ee46466655",
+    "tools/neuroctl/experiments.py": "1c6498a0a8a3ac2329356515609ee2064ee14ed7582c66f0fa631f02d74168b2",
+    "tools/neuroctl/workspace.py": "357c4ac8febbee9e4e8d7aa94fca2c669d65e81048adf8b2b3985c98164c75c8",
+    "upstream/blake3/c/blake3.c": "b118ddf7cf9e6e5ef3fded72dcb1acf9dfdc4ea923cbe4605900ad6ee9afe1af",
+    "upstream/blake3/c/blake3_dispatch.c": "134f21550138c0af6312925c988aeee35df287e4119e8ad1d206fccdb2238fe3",
+    "upstream/blake3/c/blake3_portable.c": "2bc25b0dad67b4329d0b49cfa075ab2b0d04e424addbddc4e9c389c52a192524",
+    "upstream/blake3/test_vectors/test_vectors.json": "dcb91ea8accc77e6d6e632af7cdc1a99a9f3ae78cf648da595c7d064db32f624",
+    "upstream/cppminer/src/common/cp_job_ctrl.cpp": "1dc8ab0badc66cac23242cbbdbb5e273a8db3c3c3e382a0fc78369ea58dc806c",
+    "upstream/cppminer/src/common/cp_noise.c": "9be175f2cfbe4f31ef19816bfeebe373ae998c0f5a81a11de4d92be94deff88c",
+    "upstream/cppminer/src/common/cp_pool.cpp": "da85ab64d00d696e63504254645c2bca0936e6ff523faae9e94f9ce8a473fe3e",
+    "upstream/sources.lock.json": "11473d7ff35477f35efb16eb48512a86fe71b02313ca12a4a713f8dcad099afd"
+  }
+}

@@ -1,3 +1,6 @@
 [submodule "upstream/cppminer"]
 	path = upstream/cppminer
 	url = https://github.com/1640675651/CPPminer.git
+[submodule "upstream/blake3"]
+	path = upstream/blake3
+	url = https://github.com/BLAKE3-team/BLAKE3.git

@@ -47,6 +47,10 @@ arithmetic fixtures with `python tools/generate_fullk_fixtures.py --check`; do n
 regenerate expected values to make a failing candidate pass. The CUDA probes
 cover an instruction and the full K=4096 arithmetic/transcript component. Their
 CPU emulators and compilation do not establish GPU execution or a working miner.
+The Pearl input adapter additionally checks real signal/commitment/noise code on
+synthetic fixed jobs; `docs/pearl-input.md` records its limited first-attempt scope.
+Its independent fixture regeneration uses the hash-locked Python binding in
+`requirements-fixtures.txt`. The native runtime uses separately pinned BLAKE3 C.
 Full proof, pool acceptance, sustained GPU operation and Windows execution need
 their own observed evidence. Upstream proof stubs must never satisfy a proof gate.
 

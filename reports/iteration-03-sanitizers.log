@@ -1,0 +1,55 @@
+Full C/C++ AddressSanitizer + UndefinedBehaviorSanitizer validation; LeakSanitizer disabled.
+
+[configure] argv=["/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake", "-S", "/workspace/scratch/ee2def0b7c52/neuro", "-B", "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized", "-DNEURO_ENABLE_CUDA=OFF", "-DNEURO_BUILD_CPU_CHECKS=ON", "-DCMAKE_BUILD_TYPE=Debug", "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON", "-DCMAKE_C_FLAGS=-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer", "-DCMAKE_CXX_FLAGS=-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer", "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"]
+-- The C compiler identification is GNU 14.2.0
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (0.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized
+
+returncode=0 timed_out=False
+
+[build] argv=["/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake", "--build", "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized", "--target", "neuro_pearl_input_test", "-j", "2"]
+[  6%] Building CXX object CMakeFiles/neuro_fullk_reference.dir/native/reference/fullk_reference.cpp.o
+[ 12%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3.c.o
+[ 18%] Linking CXX static library libneuro_fullk_reference.a
+[ 18%] Built target neuro_fullk_reference
+[ 25%] Building CXX object CMakeFiles/neuro_fullk_warp.dir/native/reference/fullk_warp.cpp.o
+[ 31%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_dispatch.c.o
+[ 37%] Linking CXX static library libneuro_fullk_warp.a
+[ 37%] Built target neuro_fullk_warp
+[ 43%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_portable.c.o
+[ 50%] Linking C static library libneuro_blake3.a
+[ 50%] Built target neuro_blake3
+[ 56%] Building C object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_noise.c.o
+[ 62%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_job_ctrl.cpp.o
+[ 68%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_pool.cpp.o
+[ 75%] Linking CXX static library libneuro_pearl_donor.a
+[ 75%] Built target neuro_pearl_donor
+[ 81%] Building CXX object CMakeFiles/neuro_pearl_input.dir/native/pearl/pearl_input.cpp.o
+[ 87%] Linking CXX static library libneuro_pearl_input.a
+[ 87%] Built target neuro_pearl_input
+[ 93%] Building CXX object CMakeFiles/neuro_pearl_input_test.dir/native/tests/pearl_input_test.cpp.o
+[100%] Linking CXX executable neuro_pearl_input_test
+[100%] Built target neuro_pearl_input_test
+
+returncode=0 timed_out=False
+
+[test] argv=["/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized/neuro_pearl_input_test"]
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1
+{"schema":"neuro.pearl_input_test.v1","status":"PASS","kind":"cpu_pearl_input_and_arithmetic","gpu_execution_observed":false,"proof_verified":false,"mining_evidence":false,"fixture_count":3,"digest_bytes_checked":1248,"matrix_bytes_fingerprinted":7340032,"transcript_words_checked":32768,"final_c_values_checked":65536,"invalid_requests_rejected":29,"global_config_reset_checked":true}
+
+returncode=0 timed_out=False

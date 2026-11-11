@@ -67,7 +67,8 @@ def doctor(target="offline", root=ROOT):
     found = {name: shutil.which(name) for name in
              ("git", "cmake", "cargo", "nvcc", "nvidia-smi", "ssh")}
     found["cxx"] = compiler
-    required = ["git", "cxx"] if target == "offline" else ["git", "cmake", "cxx", "nvcc", "nvidia-smi"]
+    found["cc"] = shutil.which("gcc") or shutil.which("cc") or shutil.which("cl")
+    required = ["git", "cc", "cxx"] if target == "offline" else ["git", "cmake", "cc", "cxx", "nvcc", "nvidia-smi"]
     missing = [name for name in required if not found[name]]
     if sys.version_info < (3, 11):
         missing.append("Python >= 3.11")
@@ -108,12 +109,39 @@ def cpu_check(root=ROOT, cxx=None):
         result["reason"] = "GCC g++ required for the checked LTO math-probe recipe"
         return result
     if os.name == "nt":
-        result["reason"] = "Direct CPU recipe is Linux/GCC; use CMake for Windows CLI/protocol/layout/full-K checks"
+        result["reason"] = "Direct CPU recipe is Linux/GCC; use CMake for Windows native checks"
+        return result
+    cc = shutil.which("gcc")
+    if not cc:
+        result["reason"] = "GCC C compiler required for the pinned BLAKE3 and Pearl noise components"
         return result
     build = root / "build" / "cpu"
     build.mkdir(parents=True, exist_ok=True)
     upstream = root / "upstream" / "cppminer"
+    blake3 = root / "upstream" / "blake3" / "c"
     includes = ["-I", str(upstream / "include"), "-I", str(root / "native" / "include")]
+    portable = ["-DBLAKE3_NO_SSE2", "-DBLAKE3_NO_SSE41", "-DBLAKE3_NO_AVX2",
+                "-DBLAKE3_NO_AVX512", "-DBLAKE3_USE_NEON=0"]
+    c_objects = []
+    result["c_component_builds"] = []
+    c_sources = [blake3 / name for name in ("blake3.c", "blake3_dispatch.c", "blake3_portable.c")]
+    c_sources.append(upstream / "src/common/cp_noise.c")
+    for source in c_sources:
+        output = build / (source.stem + ".o")
+        compiled = run_command([cc, "-std=c11", "-O2", "-ffunction-sections",
+                                "-fdata-sections", *portable, *includes,
+                                "-I", str(blake3), "-c", str(source), "-o", str(output)],
+                               cwd=root, timeout_s=120, stage="build")
+        result["c_component_builds"].append({"source": str(source.relative_to(root)), "build": compiled})
+        if not process_ok(compiled):
+            result["reason"] = "Pinned C component failed to compile"
+            return result
+        c_objects.append(output)
+    pearl_sources = [root / "native/pearl/pearl_input.cpp",
+                     upstream / "src/common/cp_job_ctrl.cpp", upstream / "src/common/cp_pool.cpp"]
+    fullk_sources = [root / "native/reference/fullk_reference.cpp", root / "native/reference/fullk_warp.cpp"]
+    pearl_flags = ["-I", str(root / "native"), "-I", str(blake3), *portable,
+                   "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections"]
     targets = [
         ("cppminer_cli", [upstream / "tests/cp_cli_test.cpp"], []),
         ("cppminer_pool_protocol", [upstream / p for p in [
@@ -135,6 +163,17 @@ def cpu_check(root=ROOT, cxx=None):
             upstream / "src/cpu/gemm/case33_cpu_features.cpp"],
             ["-I", str(root / "native"), "-I", str(upstream / "src/cpu/gemm"),
              "-flto", "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections"]),
+        ("blake3_vectors", [root / "native/tests/blake3_vectors_test.cpp", *c_objects[:3]],
+            ["-I", str(root / "native"), "-I", str(blake3), *portable]),
+        ("pearl_alignment", [root / "native/tests/pearl_alignment_test.cpp",
+            *pearl_sources[1:], *c_objects], pearl_flags),
+        ("pearl_input", [root / "native/tests/pearl_input_test.cpp",
+            *pearl_sources, *fullk_sources, *c_objects], pearl_flags),
+        ("pearl_upstream", [root / "native/tests/pearl_upstream_test.cpp",
+            *pearl_sources, *fullk_sources, *c_objects,
+            upstream / "src/cpu/gemm/case33_gemm_xor.cpp",
+            upstream / "src/cpu/gemm/case33_cpu_features.cpp"],
+            [*pearl_flags, "-I", str(upstream / "src/cpu/gemm"), "-flto"]),
     ]
     for name, sources, extra in targets:
         executable = build / name

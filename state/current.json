@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 2,
+  "preparation_iteration": 3,
   "preparation_total": 10,
-  "status": "iteration_2_complete_ready_for_iteration_3",
+  "status": "iteration_3_complete_ready_for_iteration_4",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/02.md"
+    "docs/iterations/03.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
@@ -17,14 +17,15 @@
     "proof": "reuse_existing_Rust",
     "executor": "openai/gpt-6.1-sol",
     "executor_selection": "provisional",
-    "challenger": "minimax/minimax-m3"
+    "challenger": "minimax/minimax-m3",
+    "hash_implementation": "official_pinned_BLAKE3_C_portable"
   },
   "coverage": {
     "python_controls": "passed_45_tests",
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
-    "cuda_compilation": "passed_fullk_sm120_linux_compile_and_link",
+    "cuda_compilation": "passed_sm120_pearl_consumer_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
     "windows_execution": "not_run",
     "full_proof": "not_built",
@@ -35,13 +36,20 @@
     "cpu_fullk_upstream": "passed_49152_transcript_comparisons_and_98304_final_cells",
     "fullk_invalid_inputs": "passed_51_cpu_and_12_cuda_host_rejections",
     "cuda_fullk_execution": "not_run_no_gpu",
-    "cpu_sanitizers": "passed_address_and_undefined_behavior_leak_check_unavailable"
+    "cpu_sanitizers": "passed_instrumented_pearl_input_noise_blake3_and_arithmetic_address_and_undefined_behavior",
+    "cpu_pearl_preprocessing": "passed_three_fixed_jobs_legacy_and_v3_with_independent_python_expectations",
+    "cpu_pearl_full_builders": "passed_3670016_noisy_bytes_against_actual_donor_builders",
+    "cpu_blake3": "passed_105_official_known_answer_modes",
+    "cpu_job_cancellation": "passed_13_real_donor_component_checks_without_pool_connection",
+    "cpu_native": "passed_10_tests_direct_and_cmake",
+    "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
+    "gpu_pearl_execution": "not_run_no_gpu"
   },
   "next_iteration": {
-    "number": 3,
-    "goal": "Connect deterministic Pearl matrices, commitments and noise to the full-K arithmetic component",
-    "first_step": "Read docs/pearl-input-plan.md; pin portable BLAKE3, build the donor alignment tests, then a bounded M=N=128 input adapter with explicitly selected contiguous8x16 config and real noisy matrices",
-    "avoid": "Do not replace miner work with another general agent framework or count proof stubs as verification"
+    "number": 4,
+    "goal": "Build genuine Rust proof generation and independent verification with negative cases",
+    "first_step": "Read docs/pearl-input.md and the pinned donor proof FFI/build files; reconcile the vendored Rust dependency origins/notices, build the real implementation without cp_proof_stub, then verify valid and deliberately invalid cases using the retained preprocessing baseline",
+    "avoid": "Do not replace proof work with another agent framework or count a stub/static link as a verified proof"
   },
   "handoff": {
     "target_iteration": 10,
@@ -49,7 +57,7 @@
     "archive_created": false,
     "must_include_submodule_contents": true
   },
-  "validation_report": "reports/iteration-02-validation.json",
+  "validation_report": "reports/iteration-03-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points."
   }

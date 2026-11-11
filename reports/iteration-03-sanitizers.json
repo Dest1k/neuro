@@ -1,0 +1,103 @@
+{
+  "schema": "neuro.sanitizer_validation.v1",
+  "started_at": "2026-11-11T12:50:13.279992+00:00",
+  "build_directory": "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized",
+  "target": "neuro_pearl_input_test",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "leak_detection_enabled": false,
+  "leak_detection_note": "Disabled because LeakSanitizer is unsupported under this environment ptrace; no leak-check claim.",
+  "gpu_execution_observed": false,
+  "proof_verified": false,
+  "passed": true,
+  "steps": [
+    {
+      "stage": "configure",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "-S",
+        "/workspace/scratch/ee2def0b7c52/neuro",
+        "-B",
+        "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized",
+        "-DNEURO_ENABLE_CUDA=OFF",
+        "-DNEURO_BUILD_CPU_CHECKS=ON",
+        "-DCMAKE_BUILD_TYPE=Debug",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+        "-DCMAKE_C_FLAGS=-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer",
+        "-DCMAKE_CXX_FLAGS=-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer",
+        "-DCMAKE_EXE_LINKER_FLAGS=-fsanitize=address,undefined"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_s": 0.735023410001304
+    },
+    {
+      "stage": "build",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "--build",
+        "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized",
+        "--target",
+        "neuro_pearl_input_test",
+        "-j",
+        "2"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_s": 7.360698455999227
+    },
+    {
+      "stage": "test",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro/build/iteration3-sanitized/neuro_pearl_input_test"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_s": 8.056777425999826,
+      "environment_overrides": {
+        "ASAN_OPTIONS": "detect_leaks=0",
+        "UBSAN_OPTIONS": "halt_on_error=1"
+      },
+      "result": {
+        "schema": "neuro.pearl_input_test.v1",
+        "status": "PASS",
+        "kind": "cpu_pearl_input_and_arithmetic",
+        "gpu_execution_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "fixture_count": 3,
+        "digest_bytes_checked": 1248,
+        "matrix_bytes_fingerprinted": 7340032,
+        "transcript_words_checked": 32768,
+        "final_c_values_checked": 65536,
+        "invalid_requests_rejected": 29,
+        "global_config_reset_checked": true
+      }
+    }
+  ],
+  "source_sha256": {
+    "native/pearl/pearl_input.cpp": "71a6236fab4e89396fe368edbd117fd6bd02d54832f871fa1d71600d4a479057",
+    "native/tests/pearl_input_test.cpp": "d284d78563724e78ef314b1d65e94824fa39af91270bf4790a58fe7c49ef73c3",
+    "native/reference/fullk_reference.cpp": "351f94fbb823f3302de1b15be74def5ba26fafdc19b9406d4623699a50c704f8",
+    "native/reference/fullk_warp.cpp": "9f6d8c5a746a67a8cb4d050fdd1f438df74e2af313033741a0cb55ed1feda82f",
+    "upstream/cppminer/src/common/cp_noise.c": "9be175f2cfbe4f31ef19816bfeebe373ae998c0f5a81a11de4d92be94deff88c",
+    "upstream/blake3/c/blake3.c": "b118ddf7cf9e6e5ef3fded72dcb1acf9dfdc4ea923cbe4605900ad6ee9afe1af",
+    "upstream/blake3/c/blake3_dispatch.c": "134f21550138c0af6312925c988aeee35df287e4119e8ad1d206fccdb2238fe3",
+    "upstream/blake3/c/blake3_portable.c": "2bc25b0dad67b4329d0b49cfa075ab2b0d04e424addbddc4e9c389c52a192524"
+  },
+  "instrumentation_confirmed": {
+    "native/pearl/pearl_input.cpp": true,
+    "native/tests/pearl_input_test.cpp": true,
+    "native/reference/fullk_reference.cpp": true,
+    "native/reference/fullk_warp.cpp": true,
+    "upstream/cppminer/src/common/cp_noise.c": true,
+    "upstream/blake3/c/blake3.c": true,
+    "upstream/blake3/c/blake3_dispatch.c": true,
+    "upstream/blake3/c/blake3_portable.c": true
+  },
+  "completed_at": "2026-11-11T12:50:29.451499+00:00",
+  "log_sha256": "eb958059d1e48eeeca09846984f91dc1bf727c873f90fd0db0a8f1c5a905fa00",
+  "log": "reports/iteration-03-sanitizers.log"
+}
