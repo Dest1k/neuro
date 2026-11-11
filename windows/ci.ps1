@@ -182,10 +182,35 @@ try {
     $Record.passed = $true
 } catch {
     $Record.error = $_.Exception.Message
+    # Cargo writes full logs to artifacts. Surface only the failing stage's
+    # bounded tail so an unattended Windows build can diagnose the real error.
+    try {
+        $proofReportPath = Join-Path $Repo 'artifacts/proof-build.json'
+        if ([IO.File]::Exists($proofReportPath)) {
+            $proofBuild = Get-Content -LiteralPath $proofReportPath -Raw | ConvertFrom-Json
+            if ($proofBuild.PSObject.Properties.Name -contains 'commands') {
+                foreach ($stage in $proofBuild.commands) {
+                    if (-not $stage.passed -and $stage.log.StartsWith('artifacts/proof-build/')) {
+                        $log = Join-Path $Repo $stage.log
+                        if ([IO.File]::Exists($log)) {
+                            $tail = (Get-Content -LiteralPath $log -Tail 80) -join "`n"
+                            if ($tail.Length -gt 16384) { $tail = $tail.Substring($tail.Length - 16384) }
+                            Write-Host ('[neuro] failing Rust stage: ' + $stage.name)
+                            Write-Host $tail
+                        }
+                    }
+                }
+            }
+        }
+    } catch { Write-Host '[neuro] Detailed build log is retained under artifacts/proof-build.' }
 } finally {
     $Record.finished_at = [DateTime]::UtcNow.ToString('o')
     Save-Record
 }
-Write-Output (($Record | Select-Object schema, action, passed, windows_execution, gpu_execution, error) | ConvertTo-Json -Compress)
+$summary = [ordered]@{
+    schema = $Record.schema; action = $Record.action; passed = $Record.passed
+    windows_execution = $Record.windows_execution; gpu_execution = $Record.gpu_execution; error = $Record.error
+}
+Write-Output ($summary | ConvertTo-Json -Compress)
 if (-not $Record.passed) { exit 1 }
 exit 0
