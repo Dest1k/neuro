@@ -88,7 +88,7 @@ function Enter-CompilerEnvironment {
 
 function Source-Fingerprint {
     $paths = [Collections.Generic.List[string]]::new()
-    foreach ($directory in @('native', 'cmake', 'rust')) {
+    foreach ($directory in @('native', 'cmake', 'rust', 'patches')) {
         Get-ChildItem (Join-Path $Repo $directory) -File -Recurse | ForEach-Object { $paths.Add($_.FullName) }
     }
     foreach ($directory in @('tools', 'tests')) {

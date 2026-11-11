@@ -1,12 +1,6 @@
 # Bounded lifecycle and real loopback wire integration. Called from proof mode.
-# Keep networking in the existing donor archive so its cyclic utility symbols
-# resolve together. The asynchronous donor session/reader is never started.
-target_sources(neuro_pearl_donor PRIVATE
-  "${CPPMINER}/src/common/cp_pool_notify.cpp"
-  "${CPPMINER}/src/common/cp_tcp.cpp"
-  "${CPPMINER}/src/common/cp_json_frame.cpp"
-  "${CPPMINER}/src/common/cp_util.cpp"
-  "${CPPMINER}/src/common/cp_state.cpp")
+# The base donor archive already contains the genuine transport/utility code.
+# Its generated bounded copy excludes the unused asynchronous reader.
 
 add_library(neuro_mining_job STATIC native/host/mining_job.cpp)
 target_include_directories(neuro_mining_job PUBLIC native/include)

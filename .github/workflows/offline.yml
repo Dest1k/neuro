@@ -85,4 +85,5 @@ jobs:
             artifacts/proof-check.json
             artifacts/pool-replay.json
             artifacts/pool-replay/
+            build/proof-cmake/bounded-donor/source.json
             build/proof-cmake/Testing/Temporary/LastTest.log

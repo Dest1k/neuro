@@ -1,0 +1,37 @@
+--- a/src/common/cp_pool.cpp
++++ b/src/common/cp_pool.cpp
+@@ -247,6 +247,8 @@
+     return json_msg;
+ }
+ 
++// neuro uses its own bounded job/response loop; do not compile the legacy reader.
++#ifndef NEURO_BOUNDED_HOST
+ static void pool_dispatch_line(const char* line)
+ {
+     if(cp_qpow_pool_on_line(line))
+@@ -375,6 +377,8 @@
+         net_pos += n;
+     }
+ }
++
++#endif // NEURO_BOUNDED_HOST
+ 
+ int cp_pool_connect(const char* host, int port)
+ {
+@@ -505,6 +509,7 @@
+     return ok;
+ }
+ 
++#ifndef NEURO_BOUNDED_HOST
+ void cp_pool_reader_start(void)
+ {
+     if(g_net_reader_run.load()) return;
+@@ -514,6 +519,8 @@
+     printf("[net] pool reader started (always on)\n");
+     fflush(stdout);
+ }
++
++#endif // NEURO_BOUNDED_HOST
+ 
+ void cp_pool_reader_stop(void)
+ {

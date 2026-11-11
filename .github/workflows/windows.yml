@@ -72,4 +72,5 @@ jobs:
             artifacts/proof-build.json
             artifacts/proof-build/**/*.log
             artifacts/pool-replay/
+            build/windows/bounded-donor/source.json
             build/windows/Testing/Temporary/LastTest.log

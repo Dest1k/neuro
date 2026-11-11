@@ -11,25 +11,45 @@ include(CTest)
 set(CPPMINER "${CMAKE_CURRENT_SOURCE_DIR}/upstream/cppminer")
 include(cmake/Blake3.cmake)
 find_package(Threads REQUIRED)
+find_package(Python3 3.11 REQUIRED COMPONENTS Interpreter)
+
+# Preserve the reference checkout. The explicit bounded copy excludes only the
+# legacy asynchronous reader, which this project's event loop never starts.
+set(bounded_donor "${CMAKE_CURRENT_BINARY_DIR}/bounded-donor")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+  "${CMAKE_SOURCE_DIR}/tools/prepare_bounded_pool.py"
+  "${CMAKE_SOURCE_DIR}/patches/cppminer-bounded-pool.patch"
+  "${CPPMINER}/src/common/cp_pool.cpp")
+execute_process(
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/prepare_bounded_pool.py"
+          --output-dir "${bounded_donor}"
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  RESULT_VARIABLE bounded_donor_result OUTPUT_VARIABLE bounded_donor_report
+  ERROR_VARIABLE bounded_donor_error)
+if(NOT bounded_donor_result EQUAL 0)
+  message(FATAL_ERROR "Cannot prepare the pinned bounded donor: ${bounded_donor_report}${bounded_donor_error}")
+endif()
 
 # Preserve actual upstream hashing, noise and job-cancellation implementations.
-# Section GC removes unused network code from ordinary CPU checks. Proof mode
-# adds the real donor transport for explicit loopback replay; no stubs are used.
+# The bounded copy omits the legacy asynchronous reader explicitly. Keep its
+# real transport/utility dependencies together so correctness does not depend
+# on a linker discarding unresolved references. No stubs are used.
 add_library(neuro_pearl_donor STATIC
   "${CPPMINER}/src/common/cp_noise.c"
   "${CPPMINER}/src/common/cp_job_ctrl.cpp"
-  "${CPPMINER}/src/common/cp_pool.cpp")
+  "${bounded_donor}/src/common/cp_pool.cpp"
+  "${CPPMINER}/src/common/cp_pool_notify.cpp"
+  "${CPPMINER}/src/common/cp_tcp.cpp"
+  "${CPPMINER}/src/common/cp_json_frame.cpp"
+  "${CPPMINER}/src/common/cp_util.cpp"
+  "${CPPMINER}/src/common/cp_state.cpp")
+target_compile_definitions(neuro_pearl_donor PRIVATE NEURO_BOUNDED_HOST=1)
 target_include_directories(neuro_pearl_donor PUBLIC "${CPPMINER}/include")
 target_link_libraries(neuro_pearl_donor PUBLIC neuro_blake3 Threads::Threads)
 set_target_properties(neuro_pearl_donor PROPERTIES C_STANDARD 11 C_STANDARD_REQUIRED ON)
 if(MSVC)
-  # The bounded host never starts the donor's asynchronous reader. MSVC's
-  # section GC alone still retained its dispatcher references. Give the host
-  # linker the donor IR so it can remove unreachable code before codegen.
-  # These objects are built and linked together, never shipped as an SDK .lib.
-  target_compile_options(neuro_pearl_donor PRIVATE /Gy /Gw /GL)
-  target_link_options(neuro_pearl_donor INTERFACE
-    "$<HOST_LINK:LINKER:/LTCG>" "$<HOST_LINK:LINKER:/OPT:REF>")
+  target_compile_options(neuro_pearl_donor PRIVATE /Gy /Gw)
+  target_link_options(neuro_pearl_donor INTERFACE "$<HOST_LINK:LINKER:/OPT:REF>")
 elseif(APPLE)
   target_compile_options(neuro_pearl_donor PRIVATE -ffunction-sections -fdata-sections)
   target_link_options(neuro_pearl_donor INTERFACE -Wl,-dead_strip)
