@@ -3,6 +3,7 @@
 All usage is synthetic. No SDK, model endpoint, credential, or DSH is involved.
 """
 
+from contextlib import closing
 from dataclasses import replace
 from decimal import Decimal, localcontext
 import multiprocessing
@@ -395,12 +396,12 @@ class BudgetTests(unittest.TestCase):
 
     def test_existing_unrelated_database_is_not_repurposed(self):
         path = Path(self.directory.name) / "other.sqlite3"
-        with sqlite3.connect(path) as connection:
+        with closing(sqlite3.connect(path)) as connection, connection:
             connection.execute("CREATE TABLE unrelated (value TEXT)")
             connection.execute("INSERT INTO unrelated VALUES ('keep')")
         with self.assertRaises(BudgetError):
             BudgetLedger(path, self.policy, prices())
-        with sqlite3.connect(path) as connection:
+        with closing(sqlite3.connect(path)) as connection:
             self.assertEqual(connection.execute("SELECT value FROM unrelated").fetchone()[0], "keep")
 
 
