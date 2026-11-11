@@ -42,6 +42,17 @@ The existing authority for bounded local and owner-hardware development remains
 in effect; this incident does not create a new approval gate for those actions.
 Read `docs/incidents/2026-11-12-github-suspension.md` for the incident boundary.
 
+This execution policy follows the project across account, remote, repository,
+clone and checkpoint changes. None of those changes authorizes re-enabling
+Actions. Include this policy in both the iteration-10 archive and the DSH
+starting directive, so the executor inherits it explicitly.
+
+Before choosing any third-party execution service, check its terms against the
+actual workload. Calling a workload a test, using only CPUs or localhost, or
+remaining within a free allowance does not establish that it is permitted.
+This is a lesson about choosing an execution service; it does not prohibit
+ordinary CI in unrelated projects or add approvals to authorized local work.
+
 ## Architecture decisions
 
 - CUDA C++17 for GPU kernels; selective inline PTX when measurement justifies it.

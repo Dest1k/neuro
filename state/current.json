@@ -3,7 +3,7 @@
   "project": "neuro",
   "preparation_iteration": 7,
   "preparation_total": 10,
-  "status": "iteration_7_local_work_preserved_GitHub_suspension_review_local_Actions_definitions_disabled",
+  "status": "iteration_7_local_work_preserved_GitHub_reinstatement_denied_Actions_disabled",
   "updated_moscow_date": "2026-11-12",
   "entry_points": [
     "state/current.json",
@@ -88,7 +88,9 @@
     "private_owner_note": "neuro-owner-handoff-iteration06.json",
     "private_key_contents_must_be_excluded": true,
     "executor": "minimax/minimax-m3",
-    "private_owner_gpu_handoff_instructions_required": true
+    "private_owner_gpu_handoff_instructions_required": true,
+    "execution_policy_in_archive_and_directive_required": true,
+    "github_actions_must_remain_disabled": true
   },
   "validation_report": "reports/iteration-07-validation.json",
   "owner_preferences": {
@@ -114,6 +116,8 @@
     "archived_definitions": "ci/disabled/*.yml.disabled",
     "restoration_condition": "policy_issue_resolved_and_explicit_new_owner_direction",
     "account_reinstatement_alone_reenables_actions": false,
+    "account_remote_or_repository_change_reenables_actions": false,
+    "applies_after_checkpoint_restore": true,
     "additional_approval_for_already_authorized_local_tests": false,
     "incident_note": "docs/incidents/2026-11-12-github-suspension.md"
   },
@@ -121,10 +125,13 @@
     "kind": "GitHub_account_suspension",
     "first_API_403_observed_moscow_date": "2026-11-11",
     "owner_reported_login_suspension_moscow_date": "2026-11-12",
-    "owner_reported_explanatory_email_received": false,
+    "owner_reported_explanatory_email_received": true,
     "API_error": "Sorry. Your account was suspended",
-    "confirmed_enforcement_reason": null,
-    "relationship_to_Actions": "plausible_requires_GitHub_confirmation",
+    "confirmed_enforcement_reason": "Support_cited_prohibited_Actions_use_specific_workflow_step_and_category_not_identified",
+    "relationship_to_Actions": "cited_by_GitHub_Support_in_reinstatement_denial",
+    "support_ticket": "4990916",
+    "support_reply_moscow_date": "2026-11-12",
+    "reinstatement_status": "denied_without_expiry_stated",
     "local_mitigation": "both_workflows_moved_out_of_recognized_directory_without_content_changes",
     "remote_workflows_or_account_settings_changed": false,
     "current_iteration_advanced": false

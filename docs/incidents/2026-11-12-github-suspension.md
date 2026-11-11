@@ -10,9 +10,14 @@ Dates in this note use Europe/Moscow.
   a remote commit or branch was published; no iteration-7 Actions run started.
 - On 12 November, the owner reported a suspended-account message when signing
   in and said that no explanatory suspension email had arrived.
-- The specific enforcement reason has not been supplied by GitHub. A connection
-  to the earlier Actions workloads is plausible, but it is not a confirmed
-  moderation finding.
+- GitHub Support subsequently denied reinstatement in ticket #4990916 on
+  11 November at 23:03 UTC (12 November at 02:03 Moscow time), citing use of
+  GitHub Actions inconsistent with its terms. The reply gave general examples
+  involving third-party sites, incentivized activities and general computing;
+  it did not identify a specific workflow, step or applicable category. Do not
+  describe it as a confirmed finding of cryptomining or all three examples.
+  The reply states that restrictions will not be removed and gives no expiry.
+  Restoration must not be assumed when planning further work.
 - Earlier published workflows used GitHub-hosted Linux and Windows runners.
   Besides compiling code, they executed real CPU matrix/jackpot/proof code and
   a synthetic loopback TCP peer. The saved evidence distinguishes this from
@@ -43,6 +48,17 @@ This mitigation exists locally. The blocked remote account, remote workflow
 settings and published repository have not been modified. Reinstatement does
 not automatically authorize restoring the removed triggers. If an older
 checkpoint is restored, apply this containment before publishing it.
+
+## Owner instruction after the refusal
+
+The owner explicitly asked that this mistake not be repeated. The execution
+policy follows neuro across any account, remote or repository changes and
+must be included in the iteration-10 archive and DSH starting directive.
+Before selecting a third-party execution service, assess the actual workload
+against that service's terms. A test label, CPU-only execution, loopback peer
+or free compute allowance is not sufficient evidence of permission.
+Keep authorized local development moving; this lesson does not add an approval
+procedure or prohibit ordinary CI in unrelated projects.
 
 ## Recovery and policy boundary
 
