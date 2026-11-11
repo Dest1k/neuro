@@ -42,7 +42,9 @@ function Save-Record {
     $json = $Record | ConvertTo-Json -Depth 16
     $temporary = $ReportPath + '.tmp'
     [IO.File]::WriteAllText($temporary, $json + "`n", [Text.UTF8Encoding]::new($false))
-    if ([IO.File]::Exists($ReportPath)) { [IO.File]::Replace($temporary, $ReportPath, $null) }
+    # PowerShell coerces an ordinary $null to an empty string for this .NET
+    # overload. NullString preserves the required null backup filename.
+    if ([IO.File]::Exists($ReportPath)) { [IO.File]::Replace($temporary, $ReportPath, [NullString]::Value) }
     else { [IO.File]::Move($temporary, $ReportPath) }
 }
 
@@ -59,10 +61,11 @@ function Invoke-Checked {
         stdout_truncated = $result.StdoutTruncated; stderr_truncated = $result.StderrTruncated
     }
     $Phases.Add($entry)
-    if ($result.Stdout) { Write-Host $result.Stdout.TrimEnd() }
-    if ($result.Stderr) { Write-Host $result.Stderr.TrimEnd() }
+    if ($result.Stdout) { Write-Host ($result.Stdout.TrimEnd()) }
+    if ($result.Stderr) { Write-Host ($result.Stderr.TrimEnd()) }
     Save-Record
-    if ($result.Error -or $result.TimedOut -or -not $result.OutputComplete -or $result.ExitCode -ne 0) {
+    if ($result.Error -or $result.TimedOut -or -not $result.OutputComplete -or
+        $result.StdoutTruncated -or $result.StderrTruncated -or $result.ExitCode -ne 0) {
         throw ('Phase failed: ' + $Name + '; exit=' + $result.ExitCode + '; timeout=' + $result.TimedOut + '; ' + $result.Error)
     }
     return $result
