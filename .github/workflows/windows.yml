@@ -8,6 +8,10 @@ jobs:
   windows:
     runs-on: windows-2025
     timeout-minutes: 35
+    env:
+      # Pinned Pearl recursively includes deeply named CUTLASS examples. Keep
+      # Cargo's Git checkout below the Windows path limit without registry edits.
+      CARGO_HOME: C:\nc
     defaults:
       run:
         shell: pwsh
@@ -26,14 +30,16 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
+            C:\nc\registry
+            C:\nc\git
             build/proof-target
           key: ${{ runner.os }}-pearl-proof-msvc-rust-1.99.1-${{ hashFiles('configs/proof-build.json', 'rust/pearl-proof-check/Cargo.lock', 'upstream/cppminer/rust/cp-proof-ffi/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-pearl-proof-msvc-rust-1.99.1-
       - name: Verify Windows process bounds and child cleanup
         run: ./windows/test_worker.ps1
+      - name: Verify fixed remote worker reports and identity checks
+        run: ./windows/test_remote_worker.ps1
       - name: Build real Rust and native Windows proof targets
         run: ./windows/ci.ps1 -Action build-cpu
       - name: Run Windows CPU correctness, proofs and actual TCP replay

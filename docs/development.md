@@ -7,7 +7,7 @@ submodule rather than an upstream moving branch.
 ## Offline CPU work
 
 Python 3.11+, C11 and C++17 compilers are sufficient for the Python/native checks.
-The direct `cpu-check` recipe and two donor arithmetic differentials currently
+The direct `cpu-check` recipe and three donor arithmetic differentials currently
 require GCC on Linux. CMake 3.24+ also builds the portable native targets.
 
 ```bash
@@ -72,16 +72,21 @@ host preparation/reference path (two tests). It does not start GPU work.
 An unavailable `nvcc` must be supplied through `CMAKE_CUDA_COMPILER` or PATH.
 Do not silently compile for a different device architecture.
 
-For Windows, run configuration in an x64 Visual Studio developer environment
-with a compatible CUDA toolkit. Multi-configuration generators put executables
-under `build/cuda/Release/` and append `.exe`. Windows compilation/execution
-remains untested here. See `docs/fullk-kernel.md` for bounded physical GPU checks.
+For Windows, use the fixed MSVC/Ninja recipe below. It enters the x64 Visual
+Studio environment and puts the release executables in `build/windows/` with
+the `.exe` suffix. Its `build-probes` action includes the real proof and CUDA
+host. A compiled executable and a passing CPU backend do not establish physical
+GPU execution. See `docs/fullk-kernel.md` for bounded component checks and
+`docs/windows-worker.md` for the complete Windows action sequence.
 
 ## Real proof build and separate official verifier
 
-The iteration-4 optional proof build requires Linux x86_64, Rust/Cargo 1.99.1,
-and Python 3.11.8+ or 3.12+. The complete contract and limitations are in
-`docs/proof.md`; dependency origins are in `docs/proof-provenance.md`.
+The optional proof builder has native Linux x86_64 and Windows x64 MSVC profiles,
+pinned to Rust/Cargo 1.99.1. It requires Python 3.11.8+ or 3.12+ and refuses to
+present cross-compiled unit tests as executed tests. The following recipe is
+the recorded Linux path; the Windows entry point is below. The complete contract
+and limitations are in `docs/proof.md`; dependency origins are in
+`docs/proof-provenance.md`.
 
 ```bash
 rustup toolchain install 1.99.1 --profile minimal
@@ -102,8 +107,8 @@ Ordinary ten-test CPU builds remain independent of Cargo.
 The corpus check generates six proofs and performs 66 checks across the native
 FFI and official verifier, including expected losing tiles and structured
 corruptions. It checks the actual Rust gzip payload as well. No command in this
-section connects to a pool or invokes a GPU. The proof link recipe has not been
-validated on Windows.
+section connects to a pool or invokes a GPU. Windows uses its own target,
+dynamic release CRT, native link dependencies and separately recorded gates.
 
 With the previously installed hash-locked Python fixture binding, check the
 independent jackpot/target expectations separately:
@@ -112,9 +117,67 @@ independent jackpot/target expectations separately:
 python tools/generate_proof_fixtures.py --check
 ```
 
-The builder and checks save JSON evidence under `artifacts/`. The GitHub proof
-job runs the same workflow and uploads the logs. Initial dependency download is
-required; subsequent builds reuse Cargo's cache.
+The builder and checks save JSON evidence under `artifacts/`. GitHub's Linux
+proof job runs the same workflow and uploads the logs. The separate Windows job
+uses `windows/ci.ps1`. Initial dependency download is required; subsequent builds
+reuse Cargo's cache. A cached file does not replace a successful current build
+report matching the source/configuration and library hash.
+
+## Windows build and bounded remote actions
+
+The implemented Windows recipe needs x64 Visual Studio C++ Build Tools, Windows
+SDK, Python 3.12, Git, CMake 3.24+, Ninja and the pinned Rust toolchain already
+installed. `windows/ci.ps1` finds Visual Studio with `vswhere` and configures
+Ninja/Release with `MultiThreadedDLL` to match Rust. It does not install tools
+or change drivers. From Windows PowerShell or PowerShell 7 in the checkout:
+
+```powershell
+./windows/ci.ps1 -Action build-cpu
+./windows/ci.ps1 -Action run-cpu
+```
+
+`build-cpu` builds the real donor Rust library and separate official checker,
+then the native CPU/proof/host targets. `run-cpu` requires matching build evidence
+and runs Python controls, native CTest, the 66-case proof corpus and complete
+15-scenario loopback replay. Windows omits the three GCC/Linux donor arithmetic
+differentials. The iteration-6 Windows CI is validating this full sequence;
+consult the recorded CI/iteration result for its current verdict rather than
+treating the recipe or earlier Linux results as a Windows pass.
+
+On the owner's suitable SM120 GPU machine, after installing a compatible CUDA
+toolkit and supported MSVC host compiler, use:
+
+```powershell
+./windows/ci.ps1 -Action build-probes
+./windows/ci.ps1 -Action run-cpu
+./windows/ci.ps1 -Action run-cuda -Device 0
+```
+
+`build-probes` adds the CUDA kernels/host but does not launch them. `run-cuda`
+requires a matching successful CPU report, checks exact results from the three
+physical probes, then runs the same TCP replay with `--backend cuda`. Reports
+under `artifacts/windows/` bind source and binary fingerprints to the action.
+Changes invalidate the next gate's prerequisite. A Windows CPU CI result does
+not demonstrate the owner's laptop connection, GPU execution or performance.
+
+The Linux controller accepts a private profile based on
+`configs/remote.example.json`. Use the owner's verified SSH information in the
+ignored local file; do not put credentials in the repository or these commands:
+
+```bash
+python tools/remote_worker.py --profile configs/remote.local.json inventory
+python tools/remote_worker.py --profile configs/remote.local.json build-probes
+python tools/remote_worker.py --profile configs/remote.local.json run-cpu
+python tools/remote_worker.py --profile configs/remote.local.json run-cuda --device 0
+```
+
+These commands are for a configured real endpoint. They are not evidence that
+SSH has already connected. The worker uses fixed actions, bounded output and
+process lifetime, strict request identity and a Windows Job Object for owned
+descendants. An interrupted transport gets one bounded result fetch, without
+blindly rerunning the action. Source transfer, full packaging and a completely
+hung operating system are outside this worker's recovery contract. Details and
+the private handoff boundary are in `docs/windows-worker.md`.
 
 ## Host lifecycle and real loopback replay
 
@@ -133,15 +196,31 @@ is CPU. `docs/host-replay.md` specifies the supported donor wire dialect and
 provides combined CUDA/proof build commands and the explicit hardware-run mode.
 
 An ordinary proof-enabled native CTest run includes the coordinator and wire
-component tests. The Python replay is an additional process-level gate and is
-also run by GitHub's proof job. Native failure in an expected disconnect or
+component tests. The Python replay is an additional process-level gate included
+in both platform workflows. Native failure in an expected disconnect or
 ACK-timeout scenario counts as a replay pass only when its exact unresolved
 result and zero accepted/rejected counters are observed.
 
+## Local model budget boundary
+
+MiniMax M3 is the owner-selected retrial executor; Sol is a disabled-by-default,
+explicit bounded fallback. `neuroctl budget` provides durable reserve, begin,
+reconcile, cancel and status commands. It holds full-price request bounds before
+dispatch, keeps unresolved charges across process restarts and applies shared
+session/campaign limits without speculative cache discounts. See
+`docs/model-selection.md` for executable CLI examples and the caller contract.
+
+These commands do not send an API request or launch DSH. A real adapter must
+apply the declared input/output bounds and route every paid attempt through the
+gate. Provider cache/billing verification and observed DSH integration remain
+separate work; synthetic usage tests do not establish either.
+
 ## Evidence and fixture changes
 
-`reports/iteration-05-validation.json` records the checked source hashes and
-coverage. Reports from earlier iterations describe their historical inputs.
+Use `state/current.json` and the latest `docs/iterations/` entry to locate the
+current validation report. `reports/iteration-05-validation.json` and earlier
+reports preserve the source hashes and results of their historical inputs;
+they are not interchangeable with the new Windows or budget gates.
 
 `tools/generate_fullk_fixtures.py` defaults to read-only verification. Its
 `--write` option deliberately changes expected data; use it only after reviewing

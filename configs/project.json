@@ -21,16 +21,26 @@
     "orchestration": "Python_stdlib_plus_existing_DSH"
   },
   "model_policy": {
-    "executor": "openai/gpt-6.1-sol",
-    "challenger": "minimax/minimax-m3",
-    "selection_status": "provisional_no_provider_trial",
+    "executor": "minimax/minimax-m3",
+    "selection_status": "provisional_user_selected_retrial",
     "input_budget_tokens": 64000,
     "output_budget_tokens": 8000,
     "maximum_calls_per_work_session": 200,
     "work_session_budget_usd": "5.00",
     "initial_campaign_budget_usd": "25.00",
     "unknown_cache_discount": "none",
-    "budget_enforcement": "not_integrated_with_DSH_yet"
+    "budget_cache_discount": "none",
+    "cache_billing_verified": false,
+    "budget_ledger": "artifacts/model-budget.sqlite3",
+    "budget_enforcement": "durable_local_boundary_available_DSH_adapter_not_connected",
+    "fallback": {
+      "model": "openai/gpt-6.1-sol",
+      "enabled": false,
+      "maximum_calls_per_work_session": 3,
+      "work_session_budget_usd": "0.50",
+      "shares_main_budget": true,
+      "trigger": "explicit_runner_request_after_failed_bounded_minimax_attempt"
+    }
   },
   "experiments": {
     "parallel_gpu_workers": 1,

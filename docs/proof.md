@@ -5,9 +5,13 @@ real Rust proof builder and a separately built official Pearl verifier. This
 is an **offline dense PlainProof path**. It does not generate a recursive STARK,
 execute a GPU, or demonstrate acceptance by a live pool.
 
-The observed results and exact source hashes are recorded in
-`reports/iteration-04-validation.json`. Source relationships, differences and
-notices are described in `docs/proof-provenance.md`.
+The original Linux results and exact source hashes are recorded in
+`reports/iteration-04-validation.json`. Iteration 5 connects this proof path to
+the real local TCP replay; iteration 6 adds a native Windows MSVC build profile
+and fixed build/run actions. The Windows workflow is being validated separately;
+the earlier Linux report does not establish a Windows pass. Current gate results
+belong in `state/current.json` and the latest iteration report. Source
+relationships, differences and notices are in `docs/proof-provenance.md`.
 
 ## What the miner proves
 
@@ -95,7 +99,7 @@ all 16 message words, obtained on an intentionally rejected zero-target check,
 with the independent golden data. This catches more than a permissive
 accept/reject test could establish.
 
-## Observed checks
+## Observed Linux checks from iteration 4
 
 The Rust crate's 20 unit tests pass. The native proof suite generates six full
 proofs and three matching witness proofs, checks 16,384 transcript words and
@@ -122,12 +126,16 @@ about other signal distributions or accepted pool traffic.
 
 ## Build and reproduce
 
-The recorded recipe is Linux x86_64, Rust/Cargo 1.99.1, two compile jobs and
-locked dependencies. It requires ordinary C/C++ build tools, CMake 3.24+ and
-Python 3.11.8+ or 3.12+. Install Rust through its official rustup distribution.
-The builder verifies the exact rustc release/commit/host and both Cargo.lock
-hashes. It explicitly sets the Cargo target so an inherited target setting
-cannot cause the report to select an old artifact from another output folder.
+`configs/proof-build.json` defines native Linux x86_64 and Windows x64 MSVC
+profiles, using Rust/Cargo 1.99.1, two compile jobs and locked dependencies. The
+builder requires C/C++ build tools, CMake 3.24+ and Python 3.11.8+ or 3.12+; the
+fixed Windows CI uses Python 3.12. Install Rust through its official rustup
+distribution. The builder verifies the exact rustc release/commit/host and both
+Cargo.lock hashes. It explicitly sets the Cargo target so an inherited setting
+cannot select an old artifact from another output folder. The target must match
+the actual host: cross-compiling cannot satisfy the executed unit-test gate.
+
+The recorded Linux command sequence remains:
 
 ```sh
 git submodule update --init --recursive
@@ -154,16 +162,49 @@ again. `--cargo`/`--rustc` accept explicit tool paths; isolated installations
 can set `CARGO_HOME` and `RUSTUP_HOME` without changing the user's HOME.
 
 The build writes `artifacts/proof-build.json`, including source inventory,
-compiler, commands, lock identities and artifact hashes. CMake refuses proof
-mode if that successful report or matching real static library is absent.
-CPU-only builds still work without Rust when `NEURO_ENABLE_PROOF` is OFF.
-The proof link recipe intentionally fails on unvalidated platforms; Windows
-integration needs its own observed build and tests.
+compiler, target, profile, CRT, commands, lock identities, native dependencies
+and artifact hashes. CMake refuses proof mode if the successful report, matching
+configuration or real static library is absent. CPU-only builds still work
+without Rust when `NEURO_ENABLE_PROOF` is OFF. Unsupported host/target combinations
+fail explicitly.
+
+### Windows MSVC profile
+
+`windows/ci.ps1` prepares the x64 Visual Studio environment and configures
+Ninja/Release under `build/windows`. It passes the native
+`x86_64-pc-windows-msvc` target to the Rust builder. The Rust static library
+`cp_proof_ffi.lib` uses the dynamic release CRT, matched by
+`CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL`; target-specific system libraries
+come from the actual compiler's `--print native-static-libs` output. The pinned
+donor and official source remain unmodified.
+
+From Windows PowerShell or PowerShell 7 with the required tools installed:
+
+```powershell
+./windows/ci.ps1 -Action build-cpu
+./windows/ci.ps1 -Action run-cpu
+```
+
+The build action includes the real Rust unit tests and separately pinned
+`pearl-proof-check.exe`. The run action requires matching build fingerprints,
+then executes native CPU tests, the cross-process proof corpus and complete
+loopback replay. Its reports are under `artifacts/windows/`; Rust stage logs
+remain under `artifacts/proof-build/`. The independent fixture regeneration
+still uses the separately hash-locked Linux Python environment; Windows native
+tests consume the committed expected data.
+
+The complete Windows sequence is a separate validation gate currently in
+progress. A successful donor Rust stage alone does not establish successful
+reference-checker compilation, native linking or proof/replay execution. See
+`docs/windows-worker.md` for prerequisites, CPU/GPU actions and recorded evidence.
 
 `tools/check_pearl_proofs.py` exports fresh corpus files under
 `artifacts/proof-corpus`, bounds each verifier process, and saves
-`artifacts/proof-check.json`. The GitHub `proof` job reproduces the build,
-fixture check, native suite and cross-process verification, and retains logs.
+`artifacts/proof-check.json`. It selects the native executable paths for Linux
+or Windows; `--native` and `--reference` can select explicit built binaries.
+The GitHub Linux `proof` job reproduces the build, fixture check, native suite
+and cross-process verification. The separate Windows workflow invokes the
+fixed Windows actions. Both retain their own logs.
 
 ## Host integration
 
@@ -173,6 +214,7 @@ arithmetic selection, proof construction and actual TCP submission payload.
 `docs/host-replay.md` describes the local peer, independent verification of the
 received bytes and expected failure cases. It also documents the combined CUDA
 executable and its observed CPU-only replay.
-Persistent zero-B attempts, production-sized scheduling, physical CUDA results,
-Windows execution, accepted network shares and DSH billing remain separate
-work items.
+The Windows build/run path and bounded SSH worker now exist; their observed
+platform and endpoint results must accompany any execution claim. Persistent
+zero-B attempts, production-sized scheduling, physical CUDA results, accepted
+network shares and live DSH/provider billing remain separate work items.

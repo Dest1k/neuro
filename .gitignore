@@ -14,5 +14,6 @@ __pycache__/
 *credentials*
 *token*.txt
 /configs/local.json
+/configs/remote.local.json
 /start/
 /dist/

@@ -1,7 +1,7 @@
 # Architecture and current implementation
 
-Current preparation: iteration 5 of 10. Read `state/current.json` for the next
-task and `docs/iterations/05.md` for observed evidence. Build commands live in
+Current preparation: iteration 6 of 10. Read `state/current.json` for the next
+task and the latest entry in `docs/iterations/` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
 ## Goal
@@ -40,11 +40,11 @@ distributed-derivative license requires the original 2% fee.
 
 | Layer | Choice | First responsibility |
 |---|---|---|
-| Orchestration | Existing DSH + small Python stdlib tools | Run bounded experiments, capture observations, keep project state |
+| Orchestration | Existing DSH + small Python tools and fixed Windows actions | Run bounded experiments, capture observations, keep project state |
 | Miner host | Pinned CPPminer wire code + small C++ coordinator | Immutable work identity, cancellation, GPU/proof handoff and exact response accounting |
 | GPU math | CUDA C++17 + selective inline PTX | Exact INT8/INT32 matrix work and intermediate transcript |
 | Proof | Existing Rust proof code | Generate and independently verify the protocol's required evidence |
-| Model cost | Saved final usage + exact Decimal pricing | Track observed usage without inventing cache savings |
+| Model cost | Durable SQLite reservations + exact Decimal pricing | Reserve before dispatch, reconcile final usage and retain uncertain charges |
 
 Do not rewrite functioning host or proof code just to use a new language.
 Do not implement a replacement LLM harness or a new network protocol.
@@ -99,9 +99,21 @@ the separate official checker against its own issued-job ledger. See
 The same host accepts our CUDA compute callback. The combined SM120 executable
 compiles and links on Linux; its CPU backend passes the real loopback exchange.
 This provides a hardware-test entry point without claiming observed GPU work.
-The optional proof/network build remains Linux-only. Windows build validation,
-SSH worker execution, actual DSH usage accounting, continuous search scheduling,
-large-panel staging and performance tuning remain ahead.
+Iteration 6 adds a native Windows MSVC proof profile, a fixed Ninja/Release
+build/run entry point and a bounded Linux-to-Windows SSH worker. The Windows
+profile matches the Rust release CRT and checks compiler, lockfiles, library
+hash and configuration before linking. Windows CI is validating the complete
+CPU/proof/loopback path; the existing Linux results do not supply that verdict.
+`docs/windows-worker.md` describes the implemented recipe and evidence contract.
+
+The worker dispatches only inventory, build-probes, run-cpu and run-cuda actions.
+A Windows Job Object owns each action's descendants, output and lifetime. Saved
+source/binary fingerprints bind later CPU/GPU gates to the successful build.
+A lost SSH session is an uncertain outcome until a matching result is retrieved;
+it never triggers an automatic duplicate GPU run. These components are
+implemented, but the owner's laptop connection and physical GPU execution
+still need their own observations. Continuous search scheduling, large-panel
+staging and performance tuning remain ahead.
 
 ## Measurement policy
 
@@ -117,23 +129,35 @@ remote worker must state that failure and preserve the last completed record.
 
 ## Model policy
 
-Start with `openai/gpt-6.1-sol`, conservatively priced at the owner's ordinary
-input/output rates. Its route, context limit and cache billing are unverified.
-The 64k input budget is our task-size policy, not a claim about its maximum
-context. Trial MiniMax M3 on the same bounded coding/repair tasks before letting
-it take over. Score verified useful work and total retry cost, not token price
-alone. A fallback model must not silently multiply the spending budget.
+The owner selected `minimax/minimax-m3` for a second bounded trial. Its status is
+`provisional_user_selected_retrial`; route identity, availability, cache usage
+and billing are unverified. Both reservations and reconciled usage use ordinary
+input pricing without a speculative cache discount. The 64k input and 8k output
+limits are our request policy, not verified model context limits. Score accepted
+changes and total retry cost. `openai/gpt-6.1-sol` is an explicitly enabled
+fallback, disabled by default, with three calls and $0.50 per session inside
+the shared budget.
 
-Initial proposed limits are $5 per work session and $25 for the first campaign,
-with bounded calls and context. These are configuration intentions. The DSH
-bridge must reserve a worst-case request cost and reconcile real usage before
-we can call them enforced limits. This bridge is not implemented yet.
+`neuroctl budget` implements the local accounting boundary: reserve full maximum
+request cost, grant one dispatch permission, then reconcile the final normalized
+usage. SQLite transactions protect the shared $5/session and $25/campaign caps
+and the 200-attempt session limit across processes and restarts. Missing usage
+keeps its hold and stops further campaign dispatch; an observed overrun is
+recorded in full and also stops new work. Prices and numerical limits are pinned
+in the ledger. See `docs/model-selection.md` for the API, CLI and recovery rules.
+
+The actual DSH/provider transport is not connected. Its adapter must enforce
+the token bounds, route every paid retry through the boundary and supply complete
+usage. Until that integration and billing are observed, the local gate is not
+evidence that live DSH spending is controlled. No paid model calls were needed
+to implement or test it.
 
 ## Open inputs for the handoff
 
 - Actual DSH version/launch interface and usage events.
 - API endpoint and chosen route's real response/usage/cache semantics.
-- SSH host alias, Windows project path, CUDA toolchain and driver inventory.
+- Resolve the owner's private SSH/access notes into the ignored worker profile;
+  collect the actual Windows checkout, CUDA toolchain and driver inventory.
 - Pool and wallet configuration, kept outside the public repository.
 - Fresh network protocol/test vectors before final integration; protocol drafts
   are not activation evidence.

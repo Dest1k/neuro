@@ -7,6 +7,11 @@ proof in a separate process using pinned official Pearl code. These are syntheti
 jobs and a local pool implementation. No live pool shares or GPU execution are
 implied by a passing CPU replay.
 
+Iteration 6 adds native Windows build/run entry points and a bounded SSH worker
+for this same lifecycle. The historical observations in this document are the
+iteration-5 Linux runs. Windows CI is checking its own CPU/proof/loopback gates;
+that result and any later physical GPU run must be recorded separately.
+
 ## Source and reuse boundary
 
 The wire dialect comes from CPPminer commit
@@ -151,7 +156,7 @@ to this local peer, never a live pool.
 
 ## Reproduce the CPU replay
 
-After the real proof build in `docs/proof.md`:
+On Linux, after the real proof build in `docs/proof.md`:
 
 ```bash
 cmake -S . -B build/proof-cmake -DCMAKE_BUILD_TYPE=Release -DNEURO_ENABLE_PROOF=ON
@@ -165,6 +170,23 @@ the actual peer exchanges. Its default backend is CPU; `--scenario NAME` selects
 individual cases. `--native` and `--reference` select explicit built executables.
 Reports retain events, issued-job identities, payload fingerprints, real verifier
 results and native counters. They contain no actual wallet or credentials.
+
+On Windows, the fixed MSVC/Ninja actions build the native executables and the
+separate official `.exe` checker, then run the same replay:
+
+```powershell
+./windows/ci.ps1 -Action build-cpu
+./windows/ci.ps1 -Action run-cpu
+```
+
+The Python runners select `build/windows/` and the Windows Rust target directory
+on that host. `run-cpu` also checks native CTest and the 66-case proof corpus;
+its loopback report is `artifacts/windows/pool-replay.json`. The prior successful
+build report and source/binary fingerprints must match before it starts.
+Windows omits the three GCC/Linux donor arithmetic differential tests, so its
+native test count is different. The recipe is implemented; use the current CI
+and iteration report for the observed Windows verdict. It does not inherit the
+iteration-5 Linux pass or establish an SSH connection to the owner's laptop.
 
 ## CUDA integration and its present evidence
 
@@ -199,24 +221,44 @@ python tools/replay_pool.py --native build/host-cuda/neuro_pool_replay_client_cu
 ```
 
 This is an executable future hardware check, not a claim that it ran here.
-The proof/network build is still Linux-only; Windows integration needs a
-separately verified build recipe before these commands can be used on the laptop.
+Windows uses the corresponding fixed action sequence:
+
+```powershell
+./windows/ci.ps1 -Action build-probes
+./windows/ci.ps1 -Action run-cpu
+./windows/ci.ps1 -Action run-cuda -Device 0
+```
+
+`build-probes` compiles the real proof library, CUDA probes and combined host.
+`run-cuda` first requires successful CPU gates for matching source/binaries,
+then checks the three physical GPU probes before the full replay with an
+explicit CUDA backend. A successful Windows CPU job alone cannot satisfy it.
+Prerequisites, output paths and bounded remote invocation are documented in
+`docs/windows-worker.md`; no physical GPU result is claimed here.
 
 ## Bounded operation and remaining work
 
 The replay client performs one deterministic first-zero-B attempt per generation,
 using a fixed synthetic seed and small 128/256 dimensions. It is not a continuous
 production seed/search scheduler. The peer exercises 128x128 jobs. Real pool
-configuration, production work scheduling, performance tuning and model/API
-cost enforcement remain separate tasks.
+configuration, production work scheduling and performance tuning remain separate
+tasks. Iteration 6 implements local model-cost reservations and reconciliation
+in `neuroctl budget`; actual DSH/provider dispatch and billing still need their
+own integration and observations. See `docs/model-selection.md`.
 
 The client has connection, submission, socket and scheduling limits. A native
 deadline cannot preempt an in-flight GPU call or a CUDA destructor stuck in a
-driver error. The Python runner owns a separate process group and enforces
-termination/kill deadlines; a process that ignores SIGTERM is tested and reaped.
-This cannot recover a completely hung operating system. No power/clock changes,
-TDR changes or driver replacements are performed.
+driver error. On Linux, the Python runner owns a separate process group and
+enforces termination/kill deadlines; a process that ignores SIGTERM is tested
+and reaped. On Windows, the fixed entry point and SSH worker wrap the action
+in a Windows Job Object which owns its descendants and closes them on timeout
+or cleanup. The inner Python `taskkill` fallback alone does not guarantee cleanup
+after a process leader exits; the outer job supplies that ownership boundary.
+Neither path can recover a completely hung operating system. No power/clock
+changes, TDR changes or driver replacements are performed.
 
-Evidence: `reports/iteration-05-validation.json`, the native/CUDA logs and
-`reports/iteration-05-pool-replay.json`. Earlier arithmetic and proof gates remain
-in place; a network replay pass never replaces them.
+Historical Linux evidence: `reports/iteration-05-validation.json`, the native/CUDA
+logs and `reports/iteration-05-pool-replay.json`. Current platform reports are
+identified by `state/current.json` and the latest iteration entry. Earlier
+arithmetic and proof gates remain in place; a network replay pass never replaces
+them.

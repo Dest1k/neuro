@@ -3,7 +3,7 @@
     "base_url_env": "NEURO_API_BASE_URL",
     "key_env": "NEURO_API_KEY",
     "api_format": null,
-    "model": "openai/gpt-6.1-sol",
+    "model": "minimax/minimax-m3",
     "cache_usage_verified": false,
     "billing_verified": false
   },

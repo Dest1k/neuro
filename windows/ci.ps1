@@ -24,6 +24,10 @@ $Reference = Join-Path $Repo 'build/proof-target/x86_64-pc-windows-msvc/release/
 $env:RAYON_NUM_THREADS = '2'
 $env:PYTHONUTF8 = '1'
 $env:VSLANG = '1033'
+# The pinned official source fetch includes deep CUTLASS paths. Use a short,
+# isolated cache on this drive; callers may supply another short writable path.
+# rustup and its installed toolchains remain in their existing locations.
+if (-not $env:CARGO_HOME) { $env:CARGO_HOME = Join-Path ([IO.Path]::GetPathRoot($Repo)) 'nc' }
 
 if (-not ('Neuro.Windows.BoundedProcess' -as [type])) {
     Add-Type -Path (Join-Path $PSScriptRoot 'BoundedProcess.cs')
@@ -84,11 +88,15 @@ function Enter-CompilerEnvironment {
 
 function Source-Fingerprint {
     $paths = [Collections.Generic.List[string]]::new()
-    foreach ($directory in @('native', 'cmake')) {
+    foreach ($directory in @('native', 'cmake', 'rust')) {
         Get-ChildItem (Join-Path $Repo $directory) -File -Recurse | ForEach-Object { $paths.Add($_.FullName) }
     }
-    foreach ($name in @('CMakeLists.txt', 'configs/proof-build.json', 'tools/build_pearl_proof.py',
-                         'tools/check_pearl_proofs.py', 'tools/replay_pool.py', 'windows/ci.ps1')) {
+    foreach ($directory in @('tools', 'tests')) {
+        Get-ChildItem (Join-Path $Repo $directory) -File -Recurse -Filter '*.py' |
+            ForEach-Object { $paths.Add($_.FullName) }
+    }
+    foreach ($name in @('CMakeLists.txt', 'configs/proof-build.json', 'upstream/sources.lock.json',
+                         'windows/ci.ps1', 'windows/BoundedProcess.cs')) {
         $paths.Add((Join-Path $Repo $name))
     }
     $rows = foreach ($path in ($paths | Sort-Object)) {

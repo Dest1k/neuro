@@ -4,8 +4,10 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sqlite3
 import sys
 
+from .budget import BudgetLedger
 from .cost import estimate_cost, load_pricing, normalize_usage
 from .experiments import evaluate, run_command, write_result
 from .workspace import ROOT, cpu_check, doctor, process_ok, read_json, source_check
@@ -29,6 +31,33 @@ def parser():
         "auto", "openai", "openai_chat", "openai_responses", "anthropic"])
     cost.add_argument("--prices", type=Path, default=ROOT / "configs/model-prices.json")
     cost.add_argument("--output", type=Path)
+    budget = commands.add_parser("budget", help="Persistent request reservations; connect these hooks to DSH before dispatch")
+    budget.add_argument("--db", type=Path, default=ROOT / "artifacts/model-budget.sqlite3")
+    budget.add_argument("--project", type=Path, default=ROOT / "configs/project.json")
+    budget.add_argument("--prices", type=Path, default=ROOT / "configs/model-prices.json")
+    budget.add_argument("--output", type=Path)
+    actions = budget.add_subparsers(dest="budget_action", required=True)
+    reserve = actions.add_parser("reserve", help="Hold full-price maximum input/output cost before a request")
+    reserve.add_argument("--campaign", required=True)
+    reserve.add_argument("--session", required=True)
+    reserve.add_argument("--request", required=True)
+    reserve.add_argument("--model")
+    reserve.add_argument("--input-tokens", type=int)
+    reserve.add_argument("--output-tokens", type=int)
+    begin = actions.add_parser("begin", help="Obtain the single-use dispatch permission for a reservation")
+    begin.add_argument("--request", required=True)
+    reconcile = actions.add_parser("reconcile", help="Record a final usage receipt or preserve an unresolved charge")
+    reconcile.add_argument("--request", required=True)
+    receipt = reconcile.add_mutually_exclusive_group(required=True)
+    receipt.add_argument("--usage", type=Path)
+    receipt.add_argument("--missing-usage", action="store_true")
+    reconcile.add_argument("--format", default="auto", choices=[
+        "auto", "openai", "openai_chat", "openai_responses", "anthropic"])
+    cancel = actions.add_parser("cancel", help="Release only a request that was never dispatched")
+    cancel.add_argument("--request", required=True)
+    status = actions.add_parser("status", help="Inspect actual settled costs and outstanding reservations")
+    status.add_argument("--campaign", required=True)
+    status.add_argument("--session")
     comparison = commands.add_parser("compare", help="Validate evidence and compare measured candidates")
     comparison.add_argument("--candidate", required=True, type=Path)
     comparison.add_argument("--baseline", required=True, type=Path)
@@ -59,6 +88,33 @@ def main(argv=None):
             result = estimate_cost(usage, load_pricing(args.prices, args.model))
             # Incomplete usage must not silently satisfy an automated budget check.
             success = result["accounting_complete"]
+        elif args.command == "budget":
+            ledger = BudgetLedger.from_project(args.db, args.project, args.prices)
+            success = True
+            if args.budget_action == "reserve":
+                result = ledger.reserve(campaign_id=args.campaign, session_id=args.session,
+                    reservation_id=args.request, model_id=args.model,
+                    max_input_tokens=args.input_tokens, max_output_tokens=args.output_tokens)
+            elif args.budget_action == "begin":
+                result = ledger.begin_dispatch(args.request)
+                success = result["dispatch_permitted"] is True
+            elif args.budget_action == "reconcile":
+                receipt_read_error = False
+                try:
+                    payload = None if args.missing_usage else read_json(args.usage)
+                except (OSError, ValueError, UnicodeError):
+                    # The call was already dispatched. A broken/missing receipt
+                    # must become explicit uncertainty, never free budget.
+                    payload = None
+                    receipt_read_error = True
+                result = ledger.reconcile(args.request, payload, api_format=args.format)
+                if receipt_read_error:
+                    result["receipt_read_error"] = True
+                success = result["reconciled"] is True and not result["overrun"]
+            elif args.budget_action == "cancel":
+                result = ledger.cancel_undispatched(args.request)
+            else:
+                result = ledger.status(campaign_id=args.campaign, session_id=args.session)
         elif args.command == "compare":
             result = evaluate(read_json(args.candidate), read_json(args.baseline))
             success = result["passed"]
@@ -70,7 +126,7 @@ def main(argv=None):
             result = write_result(args.output, result)
         print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
         return 0 if success else 1
-    except (ValueError, OSError, KeyError, TypeError) as exc:
+    except (ValueError, OSError, KeyError, TypeError, sqlite3.Error) as exc:
         print(json.dumps({"error": str(exc), "error_type": type(exc).__name__},
                          ensure_ascii=False), file=sys.stderr)
         return 2

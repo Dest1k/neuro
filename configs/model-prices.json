@@ -11,8 +11,9 @@
     "note": "Selected routes from the user's table; no provider request or billing check has been made. All prices are USD per 1,000,000 tokens. Null means unknown, never free."
   },
   "selection": {
-    "provisional_executor": "openai/gpt-6.1-sol",
-    "bounded_trial_challenger": "minimax/minimax-m3",
+    "provisional_executor": "minimax/minimax-m3",
+    "selection_status": "provisional_user_selected_retrial",
+    "explicit_bounded_fallback": "openai/gpt-6.1-sol",
     "reviewer_candidates": [
       "anthropic/claude-sonnet-5",
       "anthropic/claude-opus-5"

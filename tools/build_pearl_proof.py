@@ -3,8 +3,9 @@
 
 Native Linux x86_64 or Windows x64 MSVC release build; no pool, GPU, credentials,
 or proof stub. Requires the specific rustup toolchain from configs/proof-build.json
-and, on Windows, an x64 MSVC/SDK developer environment. Writes only generated
-build/artifacts paths. Reference checkouts remain untouched.
+and, on Windows, an x64 MSVC/SDK developer environment plus a writable short
+CARGO_HOME (for example C:\\nc). Writes generated build/artifacts paths and the
+selected Cargo cache. Reference checkouts remain untouched.
 """
 from __future__ import annotations
 
@@ -126,6 +127,39 @@ def native_libraries(log: Path, target: str) -> list[str]:
     return parsed[0]
 
 
+def configure_cargo_home(env: dict, requested: str | None, target: str) -> dict:
+    """Keep pinned git/submodule checkout paths below Windows MAX_PATH.
+
+    The pinned Pearl checkout includes a 246-character path relative to
+    CARGO_HOME, in the CUTLASS submodule. An at-most-eight-UTF-16-unit cache
+    root leaves that full path at most 255 units. Cargo still checks out this
+    submodule for the CPU checker. No global Git config or registry changes.
+    """
+    selected = requested or env.get("CARGO_HOME")
+    source = "argument" if requested else "environment" if selected else "cargo_default"
+    windows = target == "x86_64-pc-windows-msvc"
+    if not selected:
+        if windows:
+            raise ValueError("Windows proof dependencies need a short writable CARGO_HOME; "
+                             "set CARGO_HOME=C:\\nc or pass --cargo-home C:\\nc")
+        return {"path": None, "source": source, "windows_short_path_checked": False}
+    path = Path(selected).expanduser().absolute()
+    if windows:
+        units = len(str(path).encode("utf-16-le")) // 2
+        if not re.fullmatch(r"[A-Za-z]:", path.drive) or units > 8:
+            raise ValueError("Windows CARGO_HOME must be a short local absolute path "
+                             "of at most 8 UTF-16 units, such as C:\\nc; "
+                             "the pinned CUTLASS checkout otherwise exceeds MAX_PATH")
+        path.mkdir(parents=True, exist_ok=True)
+        # Fail before Cargo downloads/builds if this user cannot write the cache.
+        # This creates no lasting marker and does not request administrator access.
+        with tempfile.TemporaryFile(dir=path):
+            pass
+    env["CARGO_HOME"] = str(path)
+    return {"path": str(path), "source": source,
+            "windows_short_path_checked": windows}
+
+
 def build(args) -> dict:
     config = json.loads(CONFIG.read_text())
     target, profile = select_target(config, args.target)
@@ -156,6 +190,7 @@ def build(args) -> dict:
                 "CARGO_TARGET_DIR": str(ROOT / "build/proof-target"),
                 "CARGO_BUILD_JOBS": str(config["jobs"]), "RUST_BACKTRACE": "0",
                 "RAYON_NUM_THREADS": "2", "RUSTFLAGS": " ".join(profile["rustflags"])})
+    report["cargo_home"] = configure_cargo_home(env, args.cargo_home, target)
     env["PATH"] = str(Path(cargo).parent) + os.pathsep + env.get("PATH", "")
     rust_version = checked_output([rustc, "-Vv"], env)
     cargo_version = checked_output([cargo, "--version"], env)
@@ -220,6 +255,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cargo", help="Path to the cargo/rustup executable")
     parser.add_argument("--rustc", help="Defaults to rustc next to cargo")
+    parser.add_argument("--cargo-home", help="Cargo cache path; otherwise inherits CARGO_HOME. "
+                        "Windows requires a writable short local path such as C:\\nc")
     parser.add_argument("--target", choices=["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"],
                         help="Defaults to this host's native target; cross-compiling cannot pass runtime tests")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/proof-build.json")

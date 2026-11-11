@@ -78,16 +78,29 @@ substitute for miner progress.
 
 ## Costs and operation
 
-The provisional executor is `openai/gpt-6.1-sol`, budgeted without a cache
-discount. `minimax/minimax-m3` is the first cheaper challenger. Rates in
+The owner selected `minimax/minimax-m3` for a second trial in iteration 6.
+Budget without a cache discount. Sol is a disabled fallback with explicit
+configuration and its own small sublimit inside the shared budget. Rates in
 `configs/model-prices.json` are the owner's reseller quote, not verified billing.
-Unknown cache usage is UNKNOWN, not a zero-cost cache hit. A provider/DSH usage
-adapter and actual billing verification remain required before unattended API
-spending. Never claim the offline cost tool already controls DSH's API calls.
+Use the durable budget ledger described in `docs/model-selection.md`: reserve,
+single-use begin_dispatch, then reconcile every actual billable attempt. Retain
+the same database and campaign/session IDs across restart; never reset them to
+make a denied call possible. Missing usage keeps its hold and blocks dispatch.
+The local boundary is implemented; the actual DSH/provider adapter is not yet
+connected. Do not claim it controls requests which bypass these hooks.
 
-Keep private endpoint settings in ignored `configs/local.json` and keys in the
+Keep private endpoint settings in ignored `configs/local.json`, the SSH profile
+in ignored `configs/remote.local.json`, and keys in the
 environment or the owner's credential store. Never commit, print, or embed
 credentials in a command line or archive. Do not inspect unrelated credentials.
+
+Use `docs/windows-worker.md` for the fixed Windows build/probe actions and
+Linux SSH dispatcher. Before run-cuda, require current source/binary evidence
+from build-probes and run-cpu. Windows CI CPU evidence and owner-laptop/GPU
+evidence are different observations. The owner supplied private SSH access
+details in iteration 6 for inclusion in the iteration-10 directive; retrieve
+`neuro-owner-handoff-iteration06.json` privately or use that conversation message.
+Do not copy the private connection profile or key into the public repository.
 
 Use bounded subprocesses and small GPU jobs first. After a CUDA context error,
 restart the worker. Do not retry a hanging candidate forever. Preserve the

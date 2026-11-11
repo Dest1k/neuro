@@ -36,6 +36,25 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("error", json.loads(result.stderr))
 
+    def test_dispatched_budget_with_unreadable_receipt_blocks_until_reconciled(self):
+        with tempfile.TemporaryDirectory() as directory:
+            common = ("budget", "--db", str(Path(directory) / "budget.sqlite3"))
+            reserve = self.invoke(*common, "reserve", "--campaign", "cli-campaign",
+                                  "--session", "cli-session", "--request", "one")
+            self.assertEqual(reserve.returncode, 0, reserve.stderr)
+            self.assertEqual(self.invoke(*common, "begin", "--request", "one").returncode, 0)
+            failed = self.invoke(*common, "reconcile", "--request", "one", "--usage", str(Path(directory) / "missing.json"))
+            self.assertEqual(failed.returncode, 1, failed.stderr)
+            self.assertEqual(json.loads(failed.stdout)["state"], "UNRESOLVED")
+            self.assertTrue(json.loads(failed.stdout)["receipt_read_error"])
+            blocked = self.invoke(*common, "reserve", "--campaign", "cli-campaign",
+                                  "--session", "cli-session", "--request", "two")
+            self.assertEqual(blocked.returncode, 2)
+            settled = self.invoke(*common, "reconcile", "--request", "one", "--usage", "examples/usage-openai-uncached.json")
+            self.assertEqual(settled.returncode, 0, settled.stderr)
+            status = self.invoke(*common, "status", "--campaign", "cli-campaign")
+            self.assertFalse(json.loads(status.stdout)["campaign"]["blocked"])
+
     def test_synthetic_example_never_becomes_evidence(self):
         result = self.invoke("compare", "--candidate", "examples/experiment-result.json",
                              "--baseline", "examples/experiment-result.json")
