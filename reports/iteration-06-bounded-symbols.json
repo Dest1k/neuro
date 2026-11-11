@@ -1,0 +1,18 @@
+{
+  "schema": "neuro.bounded_pool_symbols.v1",
+  "passed": true,
+  "object": "build/proof-cmake/CMakeFiles/neuro_pearl_donor.dir/bounded-donor/src/common/cp_pool.cpp.o",
+  "excluded_undefined_callbacks": [
+    "cp_api_on_share",
+    "cp_fee_session_is_dev",
+    "cp_qpow_pool_on_line"
+  ],
+  "real_bounded_functions_present": [
+    "cp_pool_connect",
+    "cp_pool_recv_one",
+    "cp_pool_conn_lost",
+    "cp_pool_send_plain_proof_submit"
+  ],
+  "legacy_reader_entrypoint_absent": true,
+  "platform": "Linux_object_not_Windows_link_evidence"
+}

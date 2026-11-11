@@ -11,8 +11,8 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 | 3 — complete within offline boundary | Real signal/commitment/noise preparation, independent vectors and full-K consumer | Three fixed jobs; byte-exact donor differential; official BLAKE3 vectors; 10 CPU tests; CUDA consumer compiled, GPU unrun |
 | 4 — complete within offline boundary | Real Rust PlainProof/witness, independent jackpots and official verifier | 20 Rust tests; 11 native tests; 66 cross-process checks; real winner/loser and corruption cases; GPU/network unrun |
 | 5 — complete within offline boundary | Immutable host/backend lifecycle, real TCP replay, independent verification of wire submissions and combined CUDA executable | Cancellation/ACK/reconnect scenarios; CPU execution and SM120 compile/link; GPU/Windows/live pool unrun |
-| 6 | Windows build/SSH worker and DSH usage/cost boundary | Prepare bounded hardware commands and exact usage records; observe Windows/cache/billing only with actual endpoint access |
-| 7 | Bounded optimization loop with preserved baseline | Correctness before timing; no-progress and spending stops |
+| 6 — complete within CI/local boundary | Native Windows proof/host execution, bounded SSH worker and durable local model-cost ledger | Actual Windows CPU/proof/loopback and worker gates; Linux regressions; owner SSH/GPU and real DSH/provider billing unobserved |
+| 7 | Bounded reproducible multi-attempt miner search with a preserved verified baseline | Full job/attempt identity, cancellation and independent proof gates; bind the complete candidate manifest to remote deployment/results before comparisons; no-progress and spending stops |
 | 8 | End-to-end recovery and stability work | Broken jobs, disconnects, CUDA errors; physical GPU coverage explicitly distinguished |
 | 9 | Fresh-directory handoff rehearsal | Rebuild from pinned sources, resolve missing dependencies, verify package contents |
 | 10 | Complete archive + DSH starting directive | Extract layout `/home/jericho/neuro/start/`; checksums, exact status, next executable step |
@@ -34,8 +34,9 @@ machine-specific caches, or binaries falsely labelled as tested on the laptop.
 ## Access constraints
 
 The web environment does not mount the owner's `/home/jericho` and currently has
-no connection to the laptop or model reseller. Local CPU execution and GPU
-compilation can be prepared here. Hardware runs, real accepted shares, DSH's
+no connection to the laptop or model reseller. Local CPU execution, Linux GPU
+compilation and actual GitHub Windows CPU/proof/loopback execution have been
+observed. Owner hardware runs, real accepted shares, DSH's
 actual usage events and reseller billing need the actual endpoints. If they are
 still unavailable by iteration10, the handoff must make the remaining tasks
 directly executable and state the untested coverage. It must not invent success.

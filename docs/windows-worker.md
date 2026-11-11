@@ -17,8 +17,27 @@ CRT, library hash and configuration hash against the successful build report.
 
 System link libraries are taken from the actual target compiler's
 `--print native-static-libs` output. They are not guessed from the Linux list.
+The observed MSVC output also contains `/defaultlib:msvcrt`. The report preserves
+that token and CMake passes it as a host linker option, alongside the separately
+listed `.lib` inputs. This retains the search semantics of
+[MSVC DEFAULTLIB](https://learn.microsoft.com/en-us/cpp/build/reference/defaultlib-specify-default-library)
+using [CMake's host link options](https://cmake.org/cmake/help/latest/command/target_link_options.html).
 The source submodules stay pinned and unmodified. `.gitattributes` preserves
 literal LF bytes in Cargo lockfiles, source scripts and fingerprinted C# files.
+
+CMake uses `tools/prepare_bounded_pool.py` to apply
+`patches/cppminer-bounded-pool.patch` to an owned build copy. Exact input, patch
+and output hashes are checked. The patch excludes the legacy asynchronous
+reader/dispatcher and its start entrypoint under `NEURO_BOUNDED_HOST`; this
+project's event loop continues to use the original connect/receive/serialize
+functions. The real transport/utility dependencies stay in the donor archive.
+The reference checkout and Rust proof implementations are unchanged. The copy's
+provenance is saved in `build/windows/bounded-donor/source.json`.
+
+MSVC retained the unused dispatcher's external references with both ordinary
+section elimination and an attempted `/GL`/`/LTCG` build. The current recipe uses
+the explicit source boundary; it does not depend on either optimizer dropping
+those unsupported reader callbacks.
 
 Required installed tools: x64 Visual Studio C++ Build Tools, Windows SDK,
 Python 3.12, Git, CMake 3.24+, Ninja and rustup with the pinned toolchain. A CUDA
@@ -69,6 +88,14 @@ standing in for the current run. These remain synthetic correctness checks,
 not continuous production mining or performance comparisons.
 
 ## Process ownership and time bounds
+
+The remote entry point uses Windows PowerShell 5. A process launched through
+native code can inherit PowerShell 7's incompatible module paths; Microsoft
+documents this [module discovery behavior](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath#starting-windows-powershell-from-powershell-7).
+The worker sets the normal Windows PowerShell paths only in its own process
+and calculates source hashes directly through .NET. A real Windows fixture
+also checks `Get-FileHash` inside the child. The CI build/run steps use Windows
+PowerShell 5, while the compatibility fixture starts from PowerShell 7.
 
 `windows/BoundedProcess.cs` starts a process suspended, assigns its Windows Job
 Object at creation and then resumes it. The job uses `KILL_ON_JOB_CLOSE`, and
@@ -128,6 +155,14 @@ point. Before build/run the remote checkout must contain the expected entry
 point and runner bytes. The controller accepts only the matching report and
 consistent outcome fields. `inventory` may inspect a missing checkout without
 pretending a build action ran.
+
+These request hashes cover the worker protocol and entry point. They do not
+assert that every kernel/source file on the target matches the Linux caller's
+checkout. The current dispatcher assumes a correctly prepositioned repository;
+its source/binary fingerprints enforce consistency between actions on that
+target. Before using remote results to rank different candidates, the experiment
+loop must bind a full candidate manifest to deployment and returned evidence.
+That cross-host candidate identity belongs to the next iteration's search loop.
 
 The wrapper distinguishes passed, failed, timeout, output limit and worker error.
 Process success is only one prerequisite: the fixed entry point also enforces

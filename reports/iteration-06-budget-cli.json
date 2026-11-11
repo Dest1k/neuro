@@ -1,0 +1,218 @@
+{
+  "schema": "neuro.budget_cli_smoke.v1",
+  "passed": true,
+  "synthetic_usage_only": true,
+  "model_api_calls": false,
+  "cases": [
+    {
+      "action": "reserve",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "result": {
+        "reservation_id": "one",
+        "campaign_id": "cli-test",
+        "session_id": "session1",
+        "model_id": "minimax/minimax-m3",
+        "role": "executor",
+        "state": "RESERVED",
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8000,
+        "reserved_cost_usd": "0.007408",
+        "held_cost_usd": "0.007408",
+        "settled_cost_usd": null,
+        "quote_cost_usd": null,
+        "error_code": null,
+        "overrun": false,
+        "created_utc": "2026-11-11T14:33:14.698875+00:00",
+        "updated_utc": "2026-11-11T14:33:14.698875+00:00",
+        "schema": "neuro.budget_reservation.v1",
+        "usage": null,
+        "dispatch_permitted": false,
+        "reconciled": false,
+        "budget_cache_discount": "none",
+        "billing_verified": false,
+        "dsh_adapter_connected": false
+      }
+    },
+    {
+      "action": "begin",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "result": {
+        "reservation_id": "one",
+        "campaign_id": "cli-test",
+        "session_id": "session1",
+        "model_id": "minimax/minimax-m3",
+        "role": "executor",
+        "state": "IN_FLIGHT",
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8000,
+        "reserved_cost_usd": "0.007408",
+        "held_cost_usd": "0.007408",
+        "settled_cost_usd": null,
+        "quote_cost_usd": null,
+        "error_code": null,
+        "overrun": false,
+        "created_utc": "2026-11-11T14:33:14.698875+00:00",
+        "updated_utc": "2026-11-11T14:33:14.801065+00:00",
+        "schema": "neuro.budget_reservation.v1",
+        "usage": null,
+        "dispatch_permitted": true,
+        "reconciled": false,
+        "budget_cache_discount": "none",
+        "billing_verified": false,
+        "dsh_adapter_connected": false
+      }
+    },
+    {
+      "action": "begin",
+      "returncode": 2,
+      "expected_returncode": 2,
+      "result": {
+        "error": "Reservation is not available for a new dispatch; paid retries need a new ID",
+        "error_type": "BudgetError"
+      }
+    },
+    {
+      "action": "reconcile",
+      "returncode": 1,
+      "expected_returncode": 1,
+      "result": {
+        "reservation_id": "one",
+        "campaign_id": "cli-test",
+        "session_id": "session1",
+        "model_id": "minimax/minimax-m3",
+        "role": "executor",
+        "state": "UNRESOLVED",
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8000,
+        "reserved_cost_usd": "0.007408",
+        "held_cost_usd": "0.007408",
+        "settled_cost_usd": null,
+        "quote_cost_usd": null,
+        "error_code": "missing_final_usage",
+        "overrun": false,
+        "created_utc": "2026-11-11T14:33:14.698875+00:00",
+        "updated_utc": "2026-11-11T14:33:14.981856+00:00",
+        "schema": "neuro.budget_reservation.v1",
+        "usage": null,
+        "dispatch_permitted": false,
+        "reconciled": false,
+        "budget_cache_discount": "none",
+        "billing_verified": false,
+        "dsh_adapter_connected": false
+      }
+    },
+    {
+      "action": "reserve",
+      "returncode": 2,
+      "expected_returncode": 2,
+      "result": {
+        "error": "Campaign is blocked by unresolved usage or a request/budget overrun",
+        "error_type": "BudgetDenied"
+      }
+    },
+    {
+      "action": "reconcile",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "result": {
+        "reservation_id": "one",
+        "campaign_id": "cli-test",
+        "session_id": "session1",
+        "model_id": "minimax/minimax-m3",
+        "role": "executor",
+        "state": "SETTLED",
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8000,
+        "reserved_cost_usd": "0.007408",
+        "held_cost_usd": "0",
+        "settled_cost_usd": "0.005548",
+        "quote_cost_usd": "0.005548",
+        "error_code": null,
+        "overrun": false,
+        "created_utc": "2026-11-11T14:33:14.698875+00:00",
+        "updated_utc": "2026-11-11T14:33:15.151399+00:00",
+        "schema": "neuro.budget_reservation.v1",
+        "usage": {
+          "accounting_complete": true,
+          "api_format": "openai",
+          "cache_read_tokens": 0,
+          "cache_status": "UNKNOWN",
+          "cache_write_1h_tokens": 0,
+          "cache_write_5m_tokens": 0,
+          "cache_write_tokens": 0,
+          "input_tokens": 64000,
+          "output_tokens": 2000,
+          "uncached_input_tokens": 64000,
+          "warnings": [
+            "cache_metadata_missing_charge_full_input"
+          ]
+        },
+        "dispatch_permitted": false,
+        "reconciled": true,
+        "budget_cache_discount": "none",
+        "billing_verified": false,
+        "dsh_adapter_connected": false
+      }
+    },
+    {
+      "action": "status",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "result": {
+        "schema": "neuro.budget_status.v1",
+        "campaign_id": "cli-test",
+        "configuration_sha256": "4bbb83b600f02229a42bf8c51d5834d51085e3623903209c5dd69c1067e69462",
+        "executor": "minimax/minimax-m3",
+        "budget_cache_discount": "none",
+        "billing_verified": false,
+        "dsh_adapter_connected": false,
+        "campaign": {
+          "limit_usd": "25",
+          "settled_cost_usd": "0.005548",
+          "held_cost_usd": "0",
+          "committed_cost_usd": "0.005548",
+          "remaining_usd": "24.994452",
+          "reserved_calls": 1,
+          "dispatched_calls": 1,
+          "unresolved_calls": 0,
+          "overrun_calls": 0,
+          "blocked": false,
+          "blocking_reasons": []
+        },
+        "session_id": "session1",
+        "session": {
+          "limit_usd": "5",
+          "settled_cost_usd": "0.005548",
+          "held_cost_usd": "0",
+          "committed_cost_usd": "0.005548",
+          "remaining_usd": "4.994452",
+          "reserved_calls": 1,
+          "dispatched_calls": 1,
+          "unresolved_calls": 0,
+          "overrun_calls": 0,
+          "blocked": false,
+          "blocking_reasons": [],
+          "maximum_calls": 200
+        },
+        "fallback": {
+          "limit_usd": "0.5",
+          "settled_cost_usd": "0",
+          "held_cost_usd": "0",
+          "committed_cost_usd": "0",
+          "remaining_usd": "0.5",
+          "reserved_calls": 0,
+          "dispatched_calls": 0,
+          "unresolved_calls": 0,
+          "overrun_calls": 0,
+          "blocked": false,
+          "blocking_reasons": [],
+          "model": "openai/gpt-6.1-sol",
+          "enabled": false,
+          "maximum_calls": 3
+        }
+      }
+    }
+  ]
+}

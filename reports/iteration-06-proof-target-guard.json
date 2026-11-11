@@ -1,0 +1,28 @@
+{
+  "schema": "neuro.process.v1",
+  "run_id": "a70252fc-1d4c-47fb-abf8-8bc0fa84ca39",
+  "source": "local-subprocess",
+  "stage": "negative_proof_target_guard",
+  "argv": [
+    "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+    "-S",
+    ".",
+    "-B",
+    "build/iteration6-proof-rejected-target",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DNEURO_ENABLE_PROOF=ON",
+    "-DNEURO_PROOF_BUILD_REPORT=/workspace/scratch/ee2def0b7c52/neuro/build/iteration6-wrong-target-report.json"
+  ],
+  "cwd": "/workspace/scratch/ee2def0b7c52/neuro",
+  "started_at": "2026-11-11T14:31:35.304745+00:00",
+  "returncode": 1,
+  "timed_out": false,
+  "launch_error": null,
+  "output_complete": true,
+  "elapsed_s": 0.6676125469984981,
+  "stdout": "-- The C compiler identification is GNU 14.2.0\n-- The CXX compiler identification is GNU 14.2.0\n-- Detecting C compiler ABI info\n-- Detecting C compiler ABI info - done\n-- Check for working C compiler: /usr/bin/cc - skipped\n-- Detecting C compile features\n-- Detecting C compile features - done\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: /usr/bin/c++ - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n-- Found Threads: TRUE\n-- Configuring incomplete, errors occurred!\n",
+  "stdout_truncated": false,
+  "stderr": "CMake Error at cmake/Proof.cmake:49 (message):\n  Rust proof report does not match the native target, release profile and CRT\nCall Stack (most recent call first):\n  CMakeLists.txt:49 (include)\n\n\n",
+  "stderr_truncated": false,
+  "expected_rejection_observed": true
+}

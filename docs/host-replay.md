@@ -9,8 +9,9 @@ implied by a passing CPU replay.
 
 Iteration 6 adds native Windows build/run entry points and a bounded SSH worker
 for this same lifecycle. The historical observations in this document are the
-iteration-5 Linux runs. Windows CI is checking its own CPU/proof/loopback gates;
-that result and any later physical GPU run must be recorded separately.
+iteration-5 Linux runs. The iteration-6 Windows CPU/proof/loopback gates passed
+on an actual GitHub Windows runner; its separate evidence is recorded in
+`reports/iteration-06-validation.json`. Physical GPU execution remains unobserved.
 
 ## Source and reuse boundary
 
@@ -184,9 +185,10 @@ on that host. `run-cpu` also checks native CTest and the 66-case proof corpus;
 its loopback report is `artifacts/windows/pool-replay.json`. The prior successful
 build report and source/binary fingerprints must match before it starts.
 Windows omits the three GCC/Linux donor arithmetic differential tests, so its
-native test count is different. The recipe is implemented; use the current CI
-and iteration report for the observed Windows verdict. It does not inherit the
-iteration-5 Linux pass or establish an SSH connection to the owner's laptop.
+native test count is different: the iteration-6 Windows run passed 10 native
+tests, all 66 proof checks and all 15 TCP scenarios with 17 independently
+verified wire proofs. The validation report identifies the tested commit and
+CI run. This observation does not establish a connection to the owner's laptop.
 
 ## CUDA integration and its present evidence
 

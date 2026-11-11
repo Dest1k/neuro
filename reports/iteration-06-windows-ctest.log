@@ -1,0 +1,25 @@
+Test project D:/a/neuro/neuro/build/windows
+      Start  1: neuro_pearl_proof
+ 1/10 Test  #1: neuro_pearl_proof ................   Passed    0.50 sec
+      Start  2: neuro_mining_job
+ 2/10 Test  #2: neuro_mining_job .................   Passed    0.25 sec
+      Start  3: neuro_pool_wire
+ 3/10 Test  #3: neuro_pool_wire ..................   Passed    0.08 sec
+      Start  4: neuro_cli
+ 4/10 Test  #4: neuro_cli ........................   Passed    0.01 sec
+      Start  5: neuro_protocol
+ 5/10 Test  #5: neuro_protocol ...................   Passed    0.01 sec
+      Start  6: neuro_mma_layout
+ 6/10 Test  #6: neuro_mma_layout .................   Passed    0.01 sec
+      Start  7: neuro_fullk
+ 7/10 Test  #7: neuro_fullk ......................   Passed    0.08 sec
+      Start  8: neuro_blake3_vectors
+ 8/10 Test  #8: neuro_blake3_vectors .............   Passed    0.01 sec
+      Start  9: neuro_pearl_alignment
+ 9/10 Test  #9: neuro_pearl_alignment ............   Passed    0.01 sec
+      Start 10: neuro_pearl_input
+10/10 Test #10: neuro_pearl_input ................   Passed    1.39 sec
+
+100% tests passed out of 10
+
+Total Test time (real) =   2.43 sec

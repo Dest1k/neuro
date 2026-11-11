@@ -22,7 +22,11 @@ Its source tree includes the CPU implementation, Rust proof interface, and other
 dependencies. Keep their origin and license notices. Our root MIT license does
 not relicense third-party content.
 
-The immediate native checks build selected upstream components directly. The
+The native checks build selected upstream components. CMake prepares a
+hash-checked copy of `cp_pool.cpp` with the unused legacy asynchronous reader
+excluded; `tools/prepare_bounded_pool.py` applies the recorded patch only under
+`build/`. Connect/receive/serializer functions retain their donor implementation.
+The
 official BLAKE3 C implementation is separately pinned as `upstream/blake3` and
 compiled with its portable backend. The checks do not invoke upstream installers,
 connect to a pool, or link proof stubs.
@@ -102,13 +106,17 @@ This provides a hardware-test entry point without claiming observed GPU work.
 Iteration 6 adds a native Windows MSVC proof profile, a fixed Ninja/Release
 build/run entry point and a bounded Linux-to-Windows SSH worker. The Windows
 profile matches the Rust release CRT and checks compiler, lockfiles, library
-hash and configuration before linking. Windows CI is validating the complete
-CPU/proof/loopback path; the existing Linux results do not supply that verdict.
+hash and configuration before linking. The complete Windows CPU/proof/loopback
+path passed on an actual GitHub Windows runner. The tested commit and evidence
+are recorded separately in `reports/iteration-06-validation.json`.
 `docs/windows-worker.md` describes the implemented recipe and evidence contract.
 
 The worker dispatches only inventory, build-probes, run-cpu and run-cuda actions.
 A Windows Job Object owns each action's descendants, output and lifetime. Saved
 source/binary fingerprints bind later CPU/GPU gates to the successful build.
+This binds actions within the remote checkout; it does not yet bind the caller's
+complete candidate tree to that checkout. Full deployment/result candidate
+identity is part of iteration 7.
 A lost SSH session is an uncertain outcome until a matching result is retrieved;
 it never triggers an automatic duplicate GPU run. These components are
 implemented, but the owner's laptop connection and physical GPU execution

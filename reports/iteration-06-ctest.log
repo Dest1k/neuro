@@ -1,0 +1,33 @@
+Internal ctest changing into directory: /workspace/scratch/ee2def0b7c52/neuro/build/proof-cmake
+Test project /workspace/scratch/ee2def0b7c52/neuro/build/proof-cmake
+      Start  1: neuro_pearl_proof
+ 1/13 Test  #1: neuro_pearl_proof ................   Passed    0.17 sec
+      Start  2: neuro_mining_job
+ 2/13 Test  #2: neuro_mining_job .................   Passed    0.14 sec
+      Start  3: neuro_pool_wire
+ 3/13 Test  #3: neuro_pool_wire ..................   Passed    0.01 sec
+      Start  4: neuro_cli
+ 4/13 Test  #4: neuro_cli ........................   Passed    0.00 sec
+      Start  5: neuro_protocol
+ 5/13 Test  #5: neuro_protocol ...................   Passed    0.00 sec
+      Start  6: neuro_mma_layout
+ 6/13 Test  #6: neuro_mma_layout .................   Passed    0.00 sec
+      Start  7: neuro_fullk
+ 7/13 Test  #7: neuro_fullk ......................   Passed    0.04 sec
+      Start  8: neuro_blake3_vectors
+ 8/13 Test  #8: neuro_blake3_vectors .............   Passed    0.00 sec
+      Start  9: neuro_pearl_alignment
+ 9/13 Test  #9: neuro_pearl_alignment ............   Passed    0.00 sec
+      Start 10: neuro_pearl_input
+10/13 Test #10: neuro_pearl_input ................   Passed    0.63 sec
+      Start 11: neuro_math
+11/13 Test #11: neuro_math .......................   Passed    0.31 sec
+      Start 12: neuro_fullk_upstream
+12/13 Test #12: neuro_fullk_upstream .............   Passed    1.11 sec
+      Start 13: neuro_pearl_upstream
+13/13 Test #13: neuro_pearl_upstream .............   Passed    0.78 sec
+
+100% tests passed, 0 tests failed out of 13
+
+Total Test time (real) =   3.22 sec
+

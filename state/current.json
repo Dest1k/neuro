@@ -1,36 +1,36 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 5,
+  "preparation_iteration": 6,
   "preparation_total": 10,
-  "status": "iteration_5_complete_ready_for_iteration_6",
+  "status": "iteration_6_complete_with_observed_windows_cpu_and_local_budget_boundary",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/05.md"
+    "docs/iterations/06.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
     "gpu": "CUDA_C++17_inline_PTX_as_needed",
     "host": "pinned_CPPminer_wire_plus_immutable_generation_coordinator",
     "proof": "pinned_Rust_PlainProof_and_separate_official_Pearl_verifier",
-    "executor": "openai/gpt-6.1-sol",
-    "executor_selection": "provisional",
-    "challenger": "minimax/minimax-m3",
-    "hash_implementation": "official_pinned_BLAKE3_C_portable"
+    "executor": "minimax/minimax-m3",
+    "executor_selection": "provisional_owner_selected_second_trial",
+    "hash_implementation": "official_pinned_BLAKE3_C_portable",
+    "fallback": "openai/gpt-6.1-sol_disabled_by_default"
   },
   "coverage": {
-    "python_controls": "passed_63_tests",
+    "python_controls": "passed_110_of_111_Linux_tests_1_Windows_specific_skip",
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
     "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
-    "windows_execution": "not_run",
+    "windows_execution": "passed_actual_GitHub_Windows2025_CPU_proof_TCP_and_worker_not_owner_laptop",
     "full_proof": "plainproof_built_and_verified_stark_not_generated",
     "pool_shares": "not_run_external_pool_no_live_share_acceptance",
-    "dsh_api_integration": "not_implemented",
+    "dsh_api_integration": "local_budget_boundary_implemented_actual_DSH_provider_transport_not_connected",
     "provider_cache_billing": "not_verified",
     "cpu_fullk": "passed_python_gold_cpp_oracle_and_warp_emulator_10240_values",
     "cpu_fullk_upstream": "passed_49152_transcript_comparisons_and_98304_final_cells",
@@ -45,13 +45,13 @@
     "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
     "gpu_pearl_execution": "not_run_no_gpu",
     "plain_proof": "passed_6_full_signal_proofs_and_3_byte_identical_witness_proofs",
-    "proof_rust_unit_tests": "passed_20_tests_real_ffi_no_stubs",
+    "proof_rust_unit_tests": "passed_20_Linux_and_20_Windows_real_Rust_tests",
     "proof_native": "passed_46_verifier_calls_and_69_rejected_cases_including_37_real_semantic_rejections",
     "proof_official_verification": "passed_66_crossprocess_checks_6_acceptances_60_rejections_across_two_verifiers",
     "proof_gzip": "passed_6_exact_raw_proof_roundtrips",
     "proof_expected_values": "passed_independent_python_512_tiles_and_exact_target_boundaries",
     "proof_provenance": "official_Pearl_ISC_notice_and_349_file_comparisons_plus_locked_registry_inventory",
-    "proof_windows_build": "not_run_Linux_x86_64_only",
+    "proof_windows_build": "passed_real_Rust_native_Msvc_release_dynamic_CRT_and_official_verifier",
     "stark_proof": "not_generated",
     "cpu_host_lifecycle": "passed_141_checks_7_cancellation_stages_4_controlled_concurrency_cases",
     "cpu_pool_wire": "passed_41_checks_54_rejections_5_real_loopback_connections",
@@ -60,23 +60,35 @@
     "pool_ack_timeout": "passed_open_socket_silence_and_separate_EOF_without_ACK",
     "cuda_host_backend": "passed_5_invalid_inputs_before_CUDA_calls",
     "cuda_linked_cpu_replay": "passed_2_scenarios_2_officially_verified_wire_proofs_no_GPU_execution",
-    "host_proof_windows_build": "not_run_Linux_x86_64_only",
-    "continuous_mining_search": "not_implemented_one_synthetic_attempt_per_generation"
+    "host_proof_windows_build": "passed_real_MSVC_WinSock_15_TCP_scenarios_17_independently_verified_wire_proofs",
+    "continuous_mining_search": "not_implemented_one_synthetic_attempt_per_generation",
+    "model_budget": "implemented_durable_SQLite_reserve_single_dispatch_reconcile_25_tests_passed",
+    "remote_worker": "passed_21_synthetic_controller_tests_23_actual_Windows_runner_checks_55_actual_whole_worker_checks_SSH_not_run",
+    "model_executor": "MiniMax_M3_owner_selected_no_live_endpoint_trial",
+    "remote_candidate_identity": "not_implemented_full_cross_host_manifest_worker_and_entrypoint_identity_only",
+    "windows_python_controls": "passed_109_of_111_tests_2_platform_specific_skips",
+    "windows_native": "passed_10_native_tests_real_MSVC_dynamic_CRT",
+    "bounded_donor_source": "passed_4_copy_preparation_checks_pinned_patch_and_output_hashes_untouched_reference_real_Linux_and_MSVC_links"
   },
   "next_iteration": {
-    "number": 6,
-    "goal": "Prepare the Windows build/SSH worker and the DSH usage/cost boundary for bounded real hardware work",
-    "first_step": "Read docs/host-replay.md and docs/proof.md. Establish a reproducible Windows build recipe for the real proof plus CUDA host, implement a small bounded SSH worker with saved hardware inventory/results, and define the DSH usage adapter against an actual available interface. Preserve the local replay and official proof gates; missing endpoint access must remain explicit.",
-    "avoid": "Do not claim Windows/GPU execution, live shares or enforced DSH spending without observed endpoint evidence. Do not replace miner progress with a general agent framework or fake cached usage."
+    "number": 7,
+    "goal": "Advance the miner to bounded reproducible multi-attempt search with a preserved verified baseline",
+    "first_step": "Read the donor attempt/mutation semantics, native/pearl/pearl_input.cpp, native/host/mining_job.cpp and docs/host-replay.md. Replace the one-first-zero-B-attempt limit with a bounded explicit attempt sequence, preserving full job identity, cancellation, independent proof validation and at-most-once submission per attempt. Extend real CPU/TCP checks before performance work. Bind full candidate source identity to remote deployment and returned evidence before using remote results for candidate comparisons.",
+    "avoid": "Do not invent GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner progress with another agent framework."
   },
   "handoff": {
     "target_iteration": 10,
     "extract_path": "/home/jericho/neuro/start",
     "archive_created": false,
-    "must_include_submodule_contents": true
+    "must_include_submodule_contents": true,
+    "private_owner_connection_instructions_required": true,
+    "private_owner_note": "neuro-owner-handoff-iteration06.json",
+    "private_key_contents_must_be_excluded": true,
+    "executor": "minimax/minimax-m3"
   },
-  "validation_report": "reports/iteration-05-validation.json",
+  "validation_report": "reports/iteration-06-validation.json",
   "owner_preferences": {
-    "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points."
+    "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points.",
+    "executor": "Give MiniMax M3 a second bounded trial; the Sol fallback is disabled by default."
   }
 }

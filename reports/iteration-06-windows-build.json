@@ -1,0 +1,124 @@
+{
+    "schema":  "neuro.windows_action.v1",
+    "action":  "build-cpu",
+    "passed":  true,
+    "started_at":  "2026-11-11T15:26:59.6548418Z",
+    "windows_execution":  true,
+    "gpu_execution":  false,
+    "live_pool":  false,
+    "error":  null,
+    "source_fingerprint":  "f22cbf9d8a1eb5889f66a9564e70be2bc38a63662063d6d880be114ed73cb8c6",
+    "artifacts":  {
+                      "build/windows/neuro_pearl_proof.exe":  "14f5b33bf791e6a0253bc874d90cd9e3e9494656bc7db6cd9890b1680edc5857",
+                      "build/proof-target/x86_64-pc-windows-msvc/release/pearl-proof-check.exe":  "911d971694cd17021c8237f6ad39cf830747f7c2310eb87ddf93d0f77e5cec50",
+                      "build/windows/neuro_pool_replay_client.exe":  "71cb18d3b7c3076f4a7e5e8de937dea50780945495daf9bb4589a66999adea2a"
+                  },
+    "phases":  [
+                   {
+                       "name":  "verify pinned sources",
+                       "argv":  [
+                                    "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+                                    "tools/neuroctl.py",
+                                    "source-check"
+                                ],
+                       "exit_code":  0,
+                       "timed_out":  false,
+                       "output_complete":  true,
+                       "elapsed_ms":  2085,
+                       "error":  "",
+                       "stdout":  "{\r\n  \"schema\": \"neuro.sources.v1\",\r\n  \"passed\": true,\r\n  \"sources\": [\r\n    {\r\n      \"id\": \"cppminer\",\r\n      \"path\": \"upstream/cppminer\",\r\n      \"expected_commit\": \"5b68506af5e6433ee5c25aa9e6fbb00b537590aa\",\r\n      \"passed\": true,\r\n      \"actual_commit\": \"5b68506af5e6433ee5c25aa9e6fbb00b537590aa\",\r\n      \"clean\": true\r\n    },\r\n    {\r\n      \"id\": \"blake3\",\r\n      \"path\": \"upstream/blake3\",\r\n      \"expected_commit\": \"93a431c78a52d7ccf0f366f106467f5070e6075e\",\r\n      \"passed\": true,\r\n      \"actual_commit\": \"93a431c78a52d7ccf0f366f106467f5070e6075e\",\r\n      \"clean\": true\r\n    }\r\n  ]\r\n}\r\n",
+                       "stderr":  "",
+                       "stdout_truncated":  false,
+                       "stderr_truncated":  false
+                   },
+                   {
+                       "name":  "locate Visual Studio x64 tools",
+                       "argv":  [
+                                    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
+                                    "-latest",
+                                    "-products",
+                                    "*",
+                                    "-requires",
+                                    "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+                                    "-property",
+                                    "installationPath"
+                                ],
+                       "exit_code":  0,
+                       "timed_out":  false,
+                       "output_complete":  true,
+                       "elapsed_ms":  326,
+                       "error":  "",
+                       "stdout":  "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\r\n",
+                       "stderr":  "",
+                       "stdout_truncated":  false,
+                       "stderr_truncated":  false
+                   },
+                   {
+                       "name":  "real Rust proof build and unit tests",
+                       "argv":  [
+                                    "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+                                    "tools/build_pearl_proof.py",
+                                    "--target",
+                                    "x86_64-pc-windows-msvc"
+                                ],
+                       "exit_code":  0,
+                       "timed_out":  false,
+                       "output_complete":  true,
+                       "elapsed_ms":  98066,
+                       "error":  "",
+                       "stdout":  "{\"schema\": \"neuro.proof_build.v2\", \"passed\": true, \"report\": \"D:\\\\a\\\\neuro\\\\neuro\\\\artifacts\\\\proof-build.json\", \"error\": null, \"failed_stage\": null}\r\n",
+                       "stderr":  "",
+                       "stdout_truncated":  false,
+                       "stderr_truncated":  false
+                   },
+                   {
+                       "name":  "configure native Windows build",
+                       "argv":  [
+                                    "C:\\Program Files\\CMake\\bin\\cmake.exe",
+                                    "-S",
+                                    ".",
+                                    "-B",
+                                    "build/windows",
+                                    "-G",
+                                    "Ninja",
+                                    "-DCMAKE_BUILD_TYPE=Release",
+                                    "-DCMAKE_C_COMPILER=cl",
+                                    "-DCMAKE_CXX_COMPILER=cl",
+                                    "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL",
+                                    "-DNEURO_ENABLE_PROOF=ON",
+                                    "-DNEURO_BUILD_CPU_CHECKS=ON",
+                                    "-DNEURO_ENABLE_CUDA=OFF"
+                                ],
+                       "exit_code":  0,
+                       "timed_out":  false,
+                       "output_complete":  true,
+                       "elapsed_ms":  9772,
+                       "error":  "",
+                       "stdout":  "-- The C compiler identification is MSVC 19.51.36260.0\n-- The CXX compiler identification is MSVC 19.51.36260.0\n-- Detecting C compiler ABI info\n-- Detecting C compiler ABI info - done\n-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped\n-- Detecting C compile features\n-- Detecting C compile features - done\n-- Detecting CXX compiler ABI info\n-- Detecting CXX compiler ABI info - done\n-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe - skipped\n-- Detecting CXX compile features\n-- Detecting CXX compile features - done\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed\n-- Looking for pthread_create in pthreads\n-- Looking for pthread_create in pthreads - not found\n-- Looking for pthread_create in pthread\n-- Looking for pthread_create in pthread - not found\n-- Found Threads: TRUE\n-- Found Python3: C:/hostedtoolcache/windows/Python/3.12.10/x64/python3.exe (found suitable version \"3.12.10\", minimum required is \"3.11\") found components: Interpreter\n-- GCC/Linux LTO math probe omitted; other CPU checks remain available\n-- Configuring done (9.6s)\n-- Generating done (0.1s)\n-- Build files have been written to: D:/a/neuro/neuro/build/windows\n",
+                       "stderr":  "",
+                       "stdout_truncated":  false,
+                       "stderr_truncated":  false
+                   },
+                   {
+                       "name":  "compile native Windows targets",
+                       "argv":  [
+                                    "C:\\Program Files\\CMake\\bin\\cmake.exe",
+                                    "--build",
+                                    "build/windows",
+                                    "--parallel",
+                                    "2"
+                                ],
+                       "exit_code":  0,
+                       "timed_out":  false,
+                       "output_complete":  true,
+                       "elapsed_ms":  25122,
+                       "error":  "",
+                       "stdout":  "[1/54] Building C object CMakeFiles\\neuro_blake3.dir\\upstream\\blake3\\c\\blake3.c.obj\r\n[2/54] Building C object CMakeFiles\\neuro_blake3.dir\\upstream\\blake3\\c\\blake3_dispatch.c.obj\r\n[3/54] Building C object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_noise.c.obj\r\n[4/54] Building C object CMakeFiles\\neuro_blake3.dir\\upstream\\blake3\\c\\blake3_portable.c.obj\r\n[5/54] Linking C static library neuro_blake3.lib\r\n[6/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_job_ctrl.cpp.obj\r\n[7/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_pool_notify.cpp.obj\r\n[8/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\bounded-donor\\src\\common\\cp_pool.cpp.obj\r\n[9/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_tcp.cpp.obj\r\n[10/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_json_frame.cpp.obj\r\n[11/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_state.cpp.obj\r\n[12/54] Building CXX object CMakeFiles\\neuro_pearl_donor.dir\\upstream\\cppminer\\src\\common\\cp_util.cpp.obj\r\n[13/54] Linking CXX static library neuro_pearl_donor.lib\r\n[14/54] Building CXX object CMakeFiles\\neuro_fullk_reference.dir\\native\\reference\\fullk_reference.cpp.obj\r\n[15/54] Building CXX object CMakeFiles\\neuro_pearl_input.dir\\native\\pearl\\pearl_input.cpp.obj\r\n[16/54] Linking CXX static library neuro_fullk_reference.lib\r\n[17/54] Linking CXX static library neuro_pearl_input.lib\r\n[18/54] Building CXX object CMakeFiles\\neuro_pearl_proof.dir\\native\\proof\\pearl_proof.cpp.obj\r\n[19/54] Building CXX object CMakeFiles\\neuro_pearl_proof.dir\\native\\proof\\pearl_witness.cpp.obj\r\n[20/54] Linking CXX static library neuro_pearl_proof.lib\r\n[21/54] Building CXX object CMakeFiles\\neuro_fullk_warp.dir\\native\\reference\\fullk_warp.cpp.obj\r\n[22/54] Building CXX object CMakeFiles\\neuro_mining_job.dir\\native\\host\\mining_job.cpp.obj\r\n[23/54] Linking CXX static library neuro_mining_job.lib\r\n[24/54] Linking CXX static library neuro_fullk_warp.lib\r\n[25/54] Building CXX object CMakeFiles\\neuro_pool_wire.dir\\native\\host\\pool_wire.cpp.obj\r\n[26/54] Building CXX object CMakeFiles\\neuro_pearl_proof_cli.dir\\native\\proof\\pearl_proof_cli.cpp.obj\r\n[27/54] Linking CXX static library neuro_pool_wire.lib\r\n[28/54] Building CXX object CMakeFiles\\neuro_pearl_proof_test.dir\\native\\tests\\pearl_proof_test.cpp.obj\r\n[29/54] Building CXX object CMakeFiles\\neuro_pool_replay_client.dir\\native\\host\\pool_replay_client.cpp.obj\r\n[30/54] Building CXX object CMakeFiles\\neuro_mining_job_test.dir\\native\\tests\\mining_job_test.cpp.obj\r\n[31/54] Building CXX object CMakeFiles\\neuro_pool_wire_test.dir\\native\\tests\\pool_wire_test.cpp.obj\r\n[32/54] Building CXX object CMakeFiles\\neuro_cli_test.dir\\upstream\\cppminer\\tests\\cp_cli_test.cpp.obj\r\n[33/54] Building CXX object CMakeFiles\\neuro_protocol_test.dir\\upstream\\cppminer\\src\\common\\cp_json_frame.cpp.obj\r\n[34/54] Building CXX object CMakeFiles\\neuro_protocol_test.dir\\upstream\\cppminer\\src\\common\\cp_pool_notify.cpp.obj\r\n[35/54] Building CXX object CMakeFiles\\neuro_protocol_test.dir\\upstream\\cppminer\\src\\common\\cp_util.cpp.obj\r\n[36/54] Building CXX object CMakeFiles\\neuro_protocol_test.dir\\upstream\\cppminer\\src\\common\\cp_state.cpp.obj\r\n[37/54] Building CXX object CMakeFiles\\neuro_protocol_test.dir\\upstream\\cppminer\\tests\\cp_pool_protocol_test.cpp.obj\r\n[38/54] Building CXX object CMakeFiles\\neuro_mma_layout_test.dir\\native\\tests\\mma_layout_test.cpp.obj\r\n[39/54] Building CXX object CMakeFiles\\neuro_fullk_test.dir\\native\\tests\\fullk_test.cpp.obj\r\n[40/54] Building CXX object CMakeFiles\\neuro_blake3_vectors_test.dir\\native\\tests\\blake3_vectors_test.cpp.obj\r\n[41/54] Building CXX object CMakeFiles\\neuro_pearl_alignment_test.dir\\native\\tests\\pearl_alignment_test.cpp.obj\r\n[42/54] Linking CXX executable neuro_pearl_proof.exe\r\n[43/54] Linking CXX executable neuro_pearl_proof_test.exe\r\n[44/54] Linking CXX executable neuro_pool_replay_client.exe\r\n[45/54] Building CXX object CMakeFiles\\neuro_pearl_input_test.dir\\native\\tests\\pearl_input_test.cpp.obj\r\n[46/54] Linking CXX executable neuro_mining_job_test.exe\r\n[47/54] Linking CXX executable neuro_pool_wire_test.exe\r\n[48/54] Linking CXX executable neuro_cli_test.exe\r\n[49/54] Linking CXX executable neuro_mma_layout_test.exe\r\n[50/54] Linking CXX executable neuro_protocol_test.exe\r\n[51/54] Linking CXX executable neuro_blake3_vectors_test.exe\r\n[52/54] Linking CXX executable neuro_fullk_test.exe\r\n[53/54] Linking CXX executable neuro_pearl_alignment_test.exe\r\n[54/54] Linking CXX executable neuro_pearl_input_test.exe\r\n",
+                       "stderr":  "",
+                       "stdout_truncated":  false,
+                       "stderr_truncated":  false
+                   }
+               ],
+    "cuda_enabled":  false,
+    "finished_at":  "2026-11-11T15:29:18.0124192Z"
+}

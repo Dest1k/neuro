@@ -1,0 +1,346 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 6,
+  "date": "2026-11-11",
+  "generated_at": "2026-11-11T15:31:07.397870+00:00",
+  "passed": true,
+  "scope": "native_Windows_proof_host_worker_and_durable_MiniMax_budget_boundary",
+  "parent_main_commit": "170b9f6ff00b79762afff2e4d200c4fa1792b9c6",
+  "validated_implementation_commit": "aed46cecc73d5e6c682e7f6e228f283f5347e560",
+  "evidence_text_line_endings": "LF in repository copies; original Windows ZIP digest recorded under windows.ci",
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "linux": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "python_tests": {
+      "discovered": 111,
+      "passed": 110,
+      "skipped": 1,
+      "failed": 0
+    },
+    "native_ctest": {
+      "passed": 13,
+      "failed": 0
+    },
+    "ordinary_cpu_configuration_ctest": {
+      "passed": 10,
+      "failed": 0
+    },
+    "real_rust_unit_tests": 20,
+    "proof_crosscheck": {
+      "passed": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "tcp_replay": {
+      "passed": 15,
+      "wire_proofs_officially_verified": 17,
+      "live_pool": false
+    },
+    "cuda": {
+      "toolkit": "13.5.37",
+      "architecture": "SM120",
+      "compiled_and_linked": true,
+      "host_only_ctest_passed": 3,
+      "explicit_cpu_replay_passed": 2,
+      "physical_gpu_execution": false
+    },
+    "proof_library_sha256": "aaf9a7db9fa6d036f36aff8598358b3e7849ec0136b2d24dcb2e179554da54f6"
+  },
+  "windows": {
+    "environment": "GitHub Windows 2025 runner; separate from owner laptop",
+    "ci": {
+      "commit": "aed46cecc73d5e6c682e7f6e228f283f5347e560",
+      "run_id": 43048195965,
+      "job_id": 130617753569,
+      "url": "https://github.com/alinescafs3mp-afk/neuro/actions/runs/43048195965",
+      "artifact_id": 13868731868,
+      "artifact_digest": "sha256:f0ba8a867db7857fa99e3d9d9eda7f98f452aac6f491029335b73860acbdad72",
+      "artifact_download_digest_verified": true,
+      "conclusion": "success",
+      "linux_run_id": 43048195936,
+      "linux_conclusion": "success"
+    },
+    "powershell": "Windows PowerShell 5 for real build/run; PowerShell 7 parent for compatibility fixtures",
+    "proof_target": "x86_64-pc-windows-msvc",
+    "proof_crt": "dynamic",
+    "native_static_libs": [
+      "bcrypt.lib",
+      "advapi32.lib",
+      "kernel32.lib",
+      "ntdll.lib",
+      "userenv.lib",
+      "ws2_32.lib",
+      "dbghelp.lib",
+      "/defaultlib:msvcrt"
+    ],
+    "real_rust_unit_tests": 20,
+    "native_ctest": {
+      "passed": 10,
+      "failed": 0
+    },
+    "python_tests": {
+      "discovered": 111,
+      "passed": 109,
+      "skipped": 2,
+      "failed": 0
+    },
+    "proof_crosscheck": {
+      "passed": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "tcp_replay": {
+      "passed": 15,
+      "wire_proofs_officially_verified": 17,
+      "live_pool": false
+    },
+    "job_object_selftest": {
+      "schema": "neuro.windows.worker.selftest.v1",
+      "status": "passed",
+      "checks": 23,
+      "actual_windows_execution": true,
+      "gpu_execution": false
+    },
+    "fixed_worker_selftest": {
+      "schema": "neuro.windows.remote_worker.selftest.v1",
+      "status": "passed",
+      "checks": 55,
+      "actual_windows_worker_execution": true,
+      "actual_ssh_execution": false,
+      "gpu_execution": false,
+      "miner_validation": false,
+      "cases": [
+        {
+          "action": "inventory",
+          "status": "passed",
+          "process_exit": 0,
+          "child_exit": 0,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "passed",
+          "process_exit": 0,
+          "child_exit": 0,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "failed",
+          "process_exit": 1,
+          "child_exit": 1,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "failed",
+          "process_exit": 1,
+          "child_exit": 2,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "timeout",
+          "process_exit": 124,
+          "child_exit": 124,
+          "timed_out": true
+        },
+        {
+          "action": "run-cpu",
+          "status": "output_limit",
+          "process_exit": 3,
+          "child_exit": 0,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "worker_error",
+          "process_exit": 2,
+          "child_exit": -1,
+          "timed_out": false
+        },
+        {
+          "action": "run-cpu",
+          "status": "worker_error",
+          "process_exit": 2,
+          "child_exit": -1,
+          "timed_out": false
+        }
+      ]
+    },
+    "source_fingerprint": "f22cbf9d8a1eb5889f66a9564e70be2bc38a63662063d6d880be114ed73cb8c6",
+    "binaries_sha256": {
+      "build/windows/neuro_pearl_proof.exe": "14f5b33bf791e6a0253bc874d90cd9e3e9494656bc7db6cd9890b1680edc5857",
+      "build/proof-target/x86_64-pc-windows-msvc/release/pearl-proof-check.exe": "911d971694cd17021c8237f6ad39cf830747f7c2310eb87ddf93d0f77e5cec50",
+      "build/windows/neuro_pool_replay_client.exe": "71cb18d3b7c3076f4a7e5e8de937dea50780945495daf9bb4589a66999adea2a"
+    },
+    "owner_laptop_connection": false,
+    "actual_ssh_execution": false,
+    "cuda_compilation": false,
+    "physical_gpu_execution": false
+  },
+  "model_budget": {
+    "executor": "minimax/minimax-m3",
+    "selection": "owner_selected_second_trial",
+    "tests_passed": 25,
+    "cli_state_transitions_passed": 7,
+    "synthetic_usage_only": true,
+    "real_model_api_calls": false,
+    "reservation_usd": "0.007408",
+    "maximum_input_tokens": 64000,
+    "maximum_output_tokens": 8000,
+    "session_limit_usd": "5",
+    "campaign_limit_usd": "25",
+    "session_calls_limit": 200,
+    "cache_discount_for_budget": "none",
+    "actual_DSH_provider_adapter_connected": false,
+    "billing_verified": false
+  },
+  "remote_controller": {
+    "python_tests_passed": 21,
+    "synthetic_transports_only": true,
+    "actual_owner_connection": false
+  },
+  "bounded_donor_source": {
+    "linux": {
+      "schema": "neuro.bounded_pool_source.v1",
+      "passed": true,
+      "source_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "source_sha256": "da85ab64d00d696e63504254645c2bca0936e6ff523faae9e94f9ce8a473fe3e",
+      "patch_sha256": "d43e18030c9178aadbc299d2243e327063ec68f08598b366efc31c4f65afec4d",
+      "output_sha256": "98ca31d7e4e5552a626df7534f542f28521cc3b81b79efec8c8ec607c7e4f48f",
+      "output": "build/proof-cmake/bounded-donor/src/common/cp_pool.cpp",
+      "reused": false,
+      "excluded_component": "legacy_async_reader",
+      "reference_modified": false,
+      "proof_stub_used": false
+    },
+    "windows": {
+      "schema": "neuro.bounded_pool_source.v1",
+      "passed": true,
+      "source_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "source_sha256": "da85ab64d00d696e63504254645c2bca0936e6ff523faae9e94f9ce8a473fe3e",
+      "patch_sha256": "d43e18030c9178aadbc299d2243e327063ec68f08598b366efc31c4f65afec4d",
+      "output_sha256": "98ca31d7e4e5552a626df7534f542f28521cc3b81b79efec8c8ec607c7e4f48f",
+      "output": "build/windows/bounded-donor/src/common/cp_pool.cpp",
+      "reused": false,
+      "excluded_component": "legacy_async_reader",
+      "reference_modified": false,
+      "proof_stub_used": false
+    },
+    "preparation_checks": 4,
+    "compiled_linux_symbol_checks": {
+      "schema": "neuro.bounded_pool_symbols.v1",
+      "passed": true,
+      "object": "build/proof-cmake/CMakeFiles/neuro_pearl_donor.dir/bounded-donor/src/common/cp_pool.cpp.o",
+      "excluded_undefined_callbacks": [
+        "cp_api_on_share",
+        "cp_fee_session_is_dev",
+        "cp_qpow_pool_on_line"
+      ],
+      "real_bounded_functions_present": [
+        "cp_pool_connect",
+        "cp_pool_recv_one",
+        "cp_pool_conn_lost",
+        "cp_pool_send_plain_proof_submit"
+      ],
+      "legacy_reader_entrypoint_absent": true,
+      "platform": "Linux_object_not_Windows_link_evidence"
+    },
+    "msvc_native_build_observed": true
+  },
+  "boundaries": {
+    "README_bytes": 0,
+    "upstream_pins_unchanged": true,
+    "live_pool_connection": false,
+    "live_share_acceptance": false,
+    "stark_proof_generated": false,
+    "continuous_mining_search": false,
+    "performance_claim": false,
+    "driver_or_power_changes": false,
+    "private_key_material_included": false,
+    "final_DSH_archive_created": false
+  },
+  "evidence_sha256": {
+    "reports/iteration-06-bounded-source-checks.json": "ea8a3c5e6039c799c1d13fc860d4c61140f9a201170ca563a1bc85bc27094cfa",
+    "reports/iteration-06-bounded-source-linux.json": "95bf9d9d3a467ca510865548a8f6d01a1579cd413b03a40eb5a233b60b930a99",
+    "reports/iteration-06-bounded-source-windows.json": "17b5c65ff0dcb48b13e6f3527b109a577ec394744b1757db496141c3371496b1",
+    "reports/iteration-06-bounded-symbols.json": "3632cb876a126343db8bdbecdba018e90ce4cc5b0396c08d12df8eab34eb382b",
+    "reports/iteration-06-budget-cli.json": "71d98c2b91f677e68263dc3860cbb5655c255563faaaca9931ec2ee29f6dfdac",
+    "reports/iteration-06-ctest.log": "1906d0f09773955b795e15ae57bf4680741ecd19771f8fa9f9471c05b2edf1a8",
+    "reports/iteration-06-cuda-build.log": "6d577aded1ac4b1bb90b4b2ddc1edb629743f3d1601c6d0153033cbdd5499aa5",
+    "reports/iteration-06-cuda-configure.log": "b6d04388c5d7dd46a2cc04edc585ad422a059946bf082f0795c802d7ed6ac715",
+    "reports/iteration-06-cuda-ctest.log": "4fde33b569c0949ff539451952e875bccb4fe3f6d3b7239d98ee38d53c94666f",
+    "reports/iteration-06-cuda-linked-replay.json": "22e5c504deadc19200fd757272c9e7f4a9129f7d23e3ce37ec9e8620bd53b834",
+    "reports/iteration-06-ordinary-cpu-ctest.log": "d9f65b69131b27b2f328a742aa7b40fb1d20b7395117a51af78f8e8aa797aeee",
+    "reports/iteration-06-pool-replay.json": "26013542c9c24859e57b5674a0c9becb0919c51783a74761eea97e6c74b00933",
+    "reports/iteration-06-proof-build-linux.json": "b564abb4ed28c2aff6cf1f24a4ef3e686e38212d61c1f2d2767f60fe2ab0b2b5",
+    "reports/iteration-06-proof-build-windows.json": "4ca59bd7c5441c635666e6718223f5cb617334679e63c5c2a93c662c812211b7",
+    "reports/iteration-06-proof-check.json": "a0f6bd85685798106f606755ee85dbf3182addfc70fc503e0438cb73393c24c1",
+    "reports/iteration-06-proof-target-guard.json": "36b700599ce486ba52b7250631c2213601f632e09d69c3fcbf15202fbb6cc1cc",
+    "reports/iteration-06-python-tests.log": "afe7552756adf2f337cedba3f5812fc4bcc7b4deac1341b67139da68cbd3d56b",
+    "reports/iteration-06-rust-donor-tests-linux.log": "603f44aa38921760bfa06c1225201742283a1ba969b23f8c2f3904ebf2ee275e",
+    "reports/iteration-06-rust-donor-tests-windows.log": "61c45e0bfe06bd4bd548ed0392f8371c924fee576a6dd4fa0943a77f408fec8c",
+    "reports/iteration-06-rust-native-libs-linux.log": "ace12022e0a80b969478a367b8f41f9fb8f4c07cd21e0035762d43c70af73c64",
+    "reports/iteration-06-rust-native-libs-windows.log": "55daf59be4c4459c29155ad85a43205dd79559afdf226daf2e74101038c36b6a",
+    "reports/iteration-06-windows-build.json": "b354cd2f1f5cfa36bf64667264be4bde35f413c84e54e21ecbbe8ab22d6d5a01",
+    "reports/iteration-06-windows-ctest.log": "6eb68615ad27005f62143d6e4ca105f1a0eb92d6e281f80d3fa48506bf837ce3",
+    "reports/iteration-06-windows-pool-replay.json": "2c0a8ee78498370e298ace66926da07e43ddc6be1f24ef56973400811b69ec40",
+    "reports/iteration-06-windows-proof-check.json": "319a2078f659d4f6a3baa4d957f6555e2b96a707f6383828921fc6da40a2ffef",
+    "reports/iteration-06-windows-python-tests.log": "97f47b46a149acd999179556fc5402a6829ef9cc5fa7852b36d78a04c8be0483",
+    "reports/iteration-06-windows-run-cpu.json": "bea80af342e3ec377ec297ee42219c0a7895ae7b194a31386c25fa26c7004139",
+    "reports/iteration-06-windows-runner-selftest.json": "c68b8e03e12b08096bc00e4e43ce5076461135d391fcfc1d595fea20dd6ae5b8",
+    "reports/iteration-06-windows-worker-selftest.json": "4906d730e771543043720ad54083e8aded36063a7883c819d81cf1398362bb32"
+  },
+  "source_sha256": {
+    "CMakeLists.txt": "40c7f89ad17db65314ca8a365ee77a6a1f6d8c84281cd683132f22bcdd7dd3c1",
+    ".github/workflows/windows.yml": "3b8e6e60c105e402035f2ea7a3d5450932d303b1a1a2208b190974dc84178671",
+    "windows/worker.ps1": "9bb779fbfcf95a807f32a06d135ebf9fff772fbe1ea847c1d50ef8d877d88eeb",
+    "windows/ci.ps1": "7846bd0ac473c2e493abb8c7e0c737a3aa10bf4696b6a6f52de6199e822e8e7d",
+    "windows/BoundedProcess.cs": "5d3472065996eaffb474e770db51073e3586719f69946a62036f5f25b5aa0aeb",
+    "windows/test_worker.ps1": "03ac0e35b066ed78f809a64b9d3cebb36016feb847c9497f7722bca9fa338fb6",
+    "windows/test_remote_worker.ps1": "687499572ea03c2d52d12946b8f6bf9f4d68ba54bbc2d23f502f8df9e007d880",
+    "tools/remote_worker.py": "fadbeebbec45da6549e73cd35adf645ae9a67221c4adf94cf775ed78254abb9e",
+    "tools/build_pearl_proof.py": "caaa7346094cd5e190e61720ca3a7ed0cad7dc7f76918c52890e95cec13ffe7f",
+    "tools/prepare_bounded_pool.py": "8034abc99a24cf5444816f5d1dfcbef73ef24a7f2ce2d79cccbeee460552ee31",
+    "patches/cppminer-bounded-pool.patch": "d43e18030c9178aadbc299d2243e327063ec68f08598b366efc31c4f65afec4d",
+    "cmake/Host.cmake": "604863c60df77067b49d7cbfea3ef4064529de983b859604401e826c133adeea",
+    "cmake/Proof.cmake": "01fd7196937f708a408b2e501e93f620f8b85fd2d973fa5235200d6197a8db25",
+    "native/host/pool_wire.cpp": "e29a1a7a0a63c9f69b61374182e22eda951cbac4469e28ff62564284987888ea",
+    "native/tests/pool_wire_test.cpp": "df90ba4557d648db2e688fb13ed47991121e000d6bd5da6487763dad438e3cdb",
+    "tools/check_pearl_proofs.py": "6711b3e38700a95d5312097f601b225e9dc930e3a2eb1467168abb249db50a52",
+    "tools/replay_pool.py": "a7bbdf874fe4996582dadfb4431f5c4b95d0638678244dc7b90b3047af5e81aa",
+    "tools/neuroctl/budget.py": "891552d348fb620b784d52ba5f21ff302bd5198365ceca1df4caf2f42dd7c5d5",
+    "tools/neuroctl/cli.py": "a9145810df62fdbe6f8283d4216cf500f8c2b7caa209e3e9c34d0c3eba28608a",
+    "configs/project.json": "e0aeb280f4e0ca6d7aae06ac8c301fd445ea8dfb0252271716f60ca6fa2deaa4",
+    "configs/model-prices.json": "21f26ff5d330797e38af8ed5d88f9dffbf1a8a315cd74d4c768d99808fcf3b51",
+    "configs/proof-build.json": "ba2f0bc5ac5ad53c6a91a13563db390e005d51eb70913ae1629c31417420f900",
+    "tests/test_budget.py": "4f39c2b0ab7ac67d3fabf491a236adc563a213bc1953ca42a44b26c5423f4848",
+    "tests/test_remote_worker.py": "4b73c27fb31177f7643dfa590baad944154929bcbdf4d93fd6c65667a39980cb",
+    "tests/test_cli.py": "7e0950bfe500964355021b95acb7c2a61f757dfe9b819e1563b9add031436853",
+    "tests/test_pool_replay.py": "2287c2279f376334144f44d6417d2c973914ac8fedde827e3f23db78b14ad243"
+  }
+}

@@ -59,6 +59,11 @@ STARK generation, sustained GPU operation and Windows execution need their own
 observed evidence. Upstream proof stubs must never satisfy a proof gate.
 
 The bounded host lifecycle and real TCP replay are in `docs/host-replay.md`.
+The CMake build applies `patches/cppminer-bounded-pool.patch` to a byte-checked
+copy under `build/`, excluding only the legacy asynchronous reader that our
+event loop does not start. Preserve this explicit boundary and its provenance;
+do not restore unresolved reader callbacks through no-op stubs or edit the
+reference checkout. `tools/prepare_bounded_pool.py` checks all three hashes.
 Run `python tools/replay_pool.py` after the proof build. Its peer verifies received
 proofs with the separate official executable and supplies expectations from its
 own issued-job ledger. Preserve full job identity, generation checks and distinct

@@ -1,0 +1,67 @@
+{
+  "schema": "neuro.windows.remote_worker.selftest.v1",
+  "status": "passed",
+  "checks": 55,
+  "actual_windows_worker_execution": true,
+  "actual_ssh_execution": false,
+  "gpu_execution": false,
+  "miner_validation": false,
+  "cases": [
+    {
+      "action": "inventory",
+      "status": "passed",
+      "process_exit": 0,
+      "child_exit": 0,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "passed",
+      "process_exit": 0,
+      "child_exit": 0,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "failed",
+      "process_exit": 1,
+      "child_exit": 1,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "failed",
+      "process_exit": 1,
+      "child_exit": 2,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "timeout",
+      "process_exit": 124,
+      "child_exit": 124,
+      "timed_out": true
+    },
+    {
+      "action": "run-cpu",
+      "status": "output_limit",
+      "process_exit": 3,
+      "child_exit": 0,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "worker_error",
+      "process_exit": 2,
+      "child_exit": -1,
+      "timed_out": false
+    },
+    {
+      "action": "run-cpu",
+      "status": "worker_error",
+      "process_exit": 2,
+      "child_exit": -1,
+      "timed_out": false
+    }
+  ]
+}

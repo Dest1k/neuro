@@ -1,0 +1,7 @@
+{
+  "schema": "neuro.windows.worker.selftest.v1",
+  "status": "passed",
+  "checks": 23,
+  "actual_windows_execution": true,
+  "gpu_execution": false
+}

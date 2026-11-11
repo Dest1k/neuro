@@ -1,0 +1,28 @@
+   Compiling cp-proof-ffi v0.1.0 (D:\a\neuro\neuro\build\proof-source\rust\cp-proof-ffi)
+    Finished `release` profile [optimized] target(s) in 5.30s
+     Running unittests src\lib.rs (build\proof-target\x86_64-pc-windows-msvc\release\deps\cp_proof_ffi-126ce0d70c01727d.exe)
+
+running 20 tests
+test mining_config::tests::contiguous_4x64_config_bytes_match_embedded ... ok
+test mining_config::tests::bzminer_patterns_encode ... ok
+test mining_config::tests::contiguous_4x8_config_bytes_match_embedded ... ok
+test mining_config::tests::contiguous_8x8_config_bytes_match_embedded ... ok
+test mining_config::tests::contiguous_config_bytes_match_embedded ... ok
+test mining_config::tests::cutlass_config_bytes_match_embedded ... ok
+test tests::build_then_verify_round_trip ... ok
+test tests::contiguous_4x8_proof_row_counts ... ok
+test tests::cutlass_proof_row_counts ... ok
+test tests::fast_subroots_match_reference ... ok
+test tests::gzip_b64_round_trip_is_a_gzip_stream ... ok
+test tests::in_place_matches_reference_unaligned_sizes ... ok
+test tests::contiguous_4x64_build_then_verify ... ok
+test tests::round_trip_bincode_header ... ok
+test tests::null_bt_matches_zero_matrix ... ok
+test tests::witness_matches_full_proof_partial_last_block ... ok
+test tests::witness_matches_full_proof_single_block ... ok
+test tests::witness_matches_full_proof_scattered_multi_block ... ok
+test tests::witness_rejects_corrupt_subroot ... ok
+test tests::witness_matches_full_proof_zero_bt ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+

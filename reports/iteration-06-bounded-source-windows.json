@@ -1,0 +1,13 @@
+{
+  "schema": "neuro.bounded_pool_source.v1",
+  "passed": true,
+  "source_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+  "source_sha256": "da85ab64d00d696e63504254645c2bca0936e6ff523faae9e94f9ce8a473fe3e",
+  "patch_sha256": "d43e18030c9178aadbc299d2243e327063ec68f08598b366efc31c4f65afec4d",
+  "output_sha256": "98ca31d7e4e5552a626df7534f542f28521cc3b81b79efec8c8ec607c7e4f48f",
+  "output": "build/windows/bounded-donor/src/common/cp_pool.cpp",
+  "reused": false,
+  "excluded_component": "legacy_async_reader",
+  "reference_modified": false,
+  "proof_stub_used": false
+}

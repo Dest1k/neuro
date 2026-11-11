@@ -1,0 +1,27 @@
+Internal ctest changing into directory: /workspace/scratch/ee2def0b7c52/neuro/build/iteration06-cpu-patched
+Test project /workspace/scratch/ee2def0b7c52/neuro/build/iteration06-cpu-patched
+      Start  1: neuro_cli
+ 1/10 Test  #1: neuro_cli ........................   Passed    0.00 sec
+      Start  2: neuro_protocol
+ 2/10 Test  #2: neuro_protocol ...................   Passed    0.00 sec
+      Start  3: neuro_mma_layout
+ 3/10 Test  #3: neuro_mma_layout .................   Passed    0.00 sec
+      Start  4: neuro_fullk
+ 4/10 Test  #4: neuro_fullk ......................   Passed    0.04 sec
+      Start  5: neuro_blake3_vectors
+ 5/10 Test  #5: neuro_blake3_vectors .............   Passed    0.00 sec
+      Start  6: neuro_pearl_alignment
+ 6/10 Test  #6: neuro_pearl_alignment ............   Passed    0.00 sec
+      Start  7: neuro_pearl_input
+ 7/10 Test  #7: neuro_pearl_input ................   Passed    0.66 sec
+      Start  8: neuro_math
+ 8/10 Test  #8: neuro_math .......................   Passed    0.32 sec
+      Start  9: neuro_fullk_upstream
+ 9/10 Test  #9: neuro_fullk_upstream .............   Passed    1.23 sec
+      Start 10: neuro_pearl_upstream
+10/10 Test #10: neuro_pearl_upstream .............   Passed    0.88 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =   3.15 sec
+

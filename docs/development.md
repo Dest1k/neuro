@@ -140,9 +140,9 @@ or change drivers. From Windows PowerShell or PowerShell 7 in the checkout:
 then the native CPU/proof/host targets. `run-cpu` requires matching build evidence
 and runs Python controls, native CTest, the 66-case proof corpus and complete
 15-scenario loopback replay. Windows omits the three GCC/Linux donor arithmetic
-differentials. The iteration-6 Windows CI is validating this full sequence;
-consult the recorded CI/iteration result for its current verdict rather than
-treating the recipe or earlier Linux results as a Windows pass.
+differentials. The iteration-6 Windows CI passed this full sequence on an actual
+Windows runner. `reports/iteration-06-validation.json` records the tested commit,
+per-platform counts and CI URL. Owner-laptop and GPU execution remain separate.
 
 On the owner's suitable SM120 GPU machine, after installing a compatible CUDA
 toolkit and supported MSVC host compiler, use:

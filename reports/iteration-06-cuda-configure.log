@@ -1,0 +1,5 @@
+-- Found Python3: /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 (found suitable version "3.12.14", minimum required is "3.11") found components: Interpreter
+-- Configuring done (0.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /workspace/scratch/ee2def0b7c52/neuro/build/host-cuda
+
