@@ -1,7 +1,7 @@
 # Architecture and current implementation
 
-Current preparation: iteration 3 of 10. Read `state/current.json` for the next
-task and `docs/iterations/03.md` for observed evidence. Build commands live in
+Current preparation: iteration 4 of 10. Read `state/current.json` for the next
+task and `docs/iterations/04.md` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
 ## Goal
@@ -79,11 +79,19 @@ independent Python implementation, then against full donor builders and scalar
 arithmetic. The CUDA consumer is compiled and its host preparation mode passes;
 its physical GPU mode remains unrun. See `docs/pearl-input.md`.
 
-The next boundary is a genuine Rust proof build, generation and independent
-verification. Correct preprocessing/arithmetic does not prove witness validity
-or pool acceptance. Large-panel scheduling, production memory staging and
-performance tuning follow integration; accepting larger dimensions alone would
-not supply them.
+Iteration 4 builds the genuine Rust PlainProof and witness implementations.
+The native adapter selects tiles using independent jackpot vectors, generates
+Merkle proofs from signal data, and verifies them both with the donor FFI and
+with a separately pinned official Pearl verifier. All three synthetic winning
+proofs pass both paths; losing and deliberately corrupted cases are rejected.
+This verifies the bounded dense proof path, without generating a recursive
+STARK or establishing live pool acceptance. See `docs/proof.md`.
+
+The next boundary is the complete host job lifecycle: work identity,
+cancellation, arithmetic/proof handoff and submission payload under an offline
+pool replay. Large-panel scheduling, production memory staging and performance
+tuning follow integration; accepting larger dimensions alone would not supply
+them.
 
 ## Measurement policy
 

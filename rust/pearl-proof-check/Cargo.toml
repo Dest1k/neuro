@@ -1,0 +1,12 @@
+[package]
+name = "pearl-proof-check"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license = "MIT"
+description = "Offline PlainProof check using the pinned official Pearl verifier"
+
+[dependencies]
+base64 = "=0.21.7"
+serde_json = "1.0"
+zk-pow = { git = "https://github.com/pearl-research-labs/pearl", rev = "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c", default-features = false }

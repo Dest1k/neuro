@@ -1,0 +1,6 @@
+   Compiling cp-proof-ffi v0.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/rust/cp-proof-ffi)
+note: link against the following native artifacts when linking against this static library. The order and any duplication can be significant on some platforms
+
+note: native-static-libs: -lgcc_s -lutil -lrt -lpthread -lm -ldl -lc
+
+    Finished `release` profile [optimized] target(s) in 1.71s

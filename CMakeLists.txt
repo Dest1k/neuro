@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(NEURO_BUILD_CPU_CHECKS "Build offline CPU component checks" ON)
 option(NEURO_ENABLE_CUDA "Build bounded CUDA arithmetic kernels and probes (not a miner)" OFF)
+option(NEURO_ENABLE_PROOF "Build genuine Rust-backed offline Pearl proof tools" OFF)
 
 include(CTest)
 set(CPPMINER "${CMAKE_CURRENT_SOURCE_DIR}/upstream/cppminer")
@@ -43,6 +44,10 @@ add_library(neuro_fullk_reference STATIC native/reference/fullk_reference.cpp)
 target_include_directories(neuro_fullk_reference PUBLIC native/include native)
 add_library(neuro_fullk_warp STATIC native/reference/fullk_warp.cpp)
 target_include_directories(neuro_fullk_warp PUBLIC native/include native)
+
+if(NEURO_ENABLE_PROOF)
+  include(cmake/Proof.cmake)
+endif()
 
 if(NEURO_BUILD_CPU_CHECKS)
   if(NOT EXISTS "${CPPMINER}/include/cp_config.h")

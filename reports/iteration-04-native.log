@@ -1,0 +1,59 @@
+COMMAND ['/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake', '-S', '.', '-B', 'build/proof-cmake', '-U', 'NEURO_PROOF_LIBRARY', '-DCMAKE_BUILD_TYPE=Release', '-DNEURO_ENABLE_PROOF=ON']
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /workspace/scratch/ee2def0b7c52/neuro/build/proof-cmake
+COMMAND ['/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake', '--build', 'build/proof-cmake', '-j', '2']
+[  7%] Built target neuro_fullk_reference
+[ 10%] Built target neuro_blake3
+[ 14%] Built target neuro_cli_test
+[ 18%] Built target neuro_fullk_warp
+[ 21%] Built target neuro_mma_layout_test
+[ 32%] Built target neuro_protocol_test
+[ 36%] Built target neuro_fullk_test
+[ 40%] Built target neuro_blake3_vectors_test
+[ 47%] Built target neuro_math_probe
+[ 58%] Built target neuro_fullk_upstream_test
+[ 65%] Built target neuro_pearl_donor
+[ 69%] Built target neuro_pearl_input
+[ 72%] Built target neuro_pearl_alignment_test
+[ 74%] Building CXX object CMakeFiles/neuro_pearl_proof.dir/native/proof/pearl_proof.cpp.o
+[ 78%] Built target neuro_pearl_input_test
+[ 89%] Built target neuro_pearl_upstream_test
+[ 90%] Linking CXX static library libneuro_pearl_proof.a
+[ 92%] Built target neuro_pearl_proof
+[ 94%] Building CXX object CMakeFiles/neuro_pearl_proof_test.dir/native/tests/pearl_proof_test.cpp.o
+[ 96%] Linking CXX executable neuro_pearl_proof
+[ 98%] Built target neuro_pearl_proof_cli
+[100%] Linking CXX executable neuro_pearl_proof_test
+[100%] Built target neuro_pearl_proof_test
+COMMAND ['/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest', '--test-dir', 'build/proof-cmake', '--output-on-failure']
+Internal ctest changing into directory: /workspace/scratch/ee2def0b7c52/neuro/build/proof-cmake
+Test project /workspace/scratch/ee2def0b7c52/neuro/build/proof-cmake
+      Start  1: neuro_pearl_proof
+ 1/11 Test  #1: neuro_pearl_proof ................   Passed    0.29 sec
+      Start  2: neuro_cli
+ 2/11 Test  #2: neuro_cli ........................   Passed    0.00 sec
+      Start  3: neuro_protocol
+ 3/11 Test  #3: neuro_protocol ...................   Passed    0.00 sec
+      Start  4: neuro_mma_layout
+ 4/11 Test  #4: neuro_mma_layout .................   Passed    0.00 sec
+      Start  5: neuro_fullk
+ 5/11 Test  #5: neuro_fullk ......................   Passed    0.04 sec
+      Start  6: neuro_blake3_vectors
+ 6/11 Test  #6: neuro_blake3_vectors .............   Passed    0.00 sec
+      Start  7: neuro_pearl_alignment
+ 7/11 Test  #7: neuro_pearl_alignment ............   Passed    0.01 sec
+      Start  8: neuro_pearl_input
+ 8/11 Test  #8: neuro_pearl_input ................   Passed    0.75 sec
+      Start  9: neuro_math
+ 9/11 Test  #9: neuro_math .......................   Passed    0.35 sec
+      Start 10: neuro_fullk_upstream
+10/11 Test #10: neuro_fullk_upstream .............   Passed    1.37 sec
+      Start 11: neuro_pearl_upstream
+11/11 Test #11: neuro_pearl_upstream .............   Passed    0.89 sec
+
+100% tests passed, 0 tests failed out of 11
+
+Total Test time (real) =   3.71 sec
+COMMAND ['python', 'tools/check_pearl_proofs.py']
+{"schema": "neuro.proof_crosscheck.v1", "passed": true, "proofs_generated": 6, "verification_checks": 66, "expected_acceptances": 6, "expected_rejections": 60, "error": null}

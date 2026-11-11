@@ -1,0 +1,221 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 4,
+  "date": "2026-11-11",
+  "passed": true,
+  "scope": "offline_dense_PlainProof_generation_witness_and_official_verification",
+  "parent_commit": "e8294bc0104145a85bf1b88109e47a4c098f86dc",
+  "environment": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "cxx": "g++ (Debian 14.2.0-19) 14.2.0",
+    "rust": {
+      "rustc": {
+        "binary": "rustc",
+        "commit-hash": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+        "commit-date": "2026-10-13",
+        "host": "x86_64-unknown-linux-gnu",
+        "release": "1.99.1",
+        "LLVM version": "23.1.1"
+      },
+      "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)"
+    }
+  },
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "proof_sources": {
+    "builder": "CPPminer@5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+    "official_reference": "pearl-research-labs/pearl@0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+    "source_patches": false,
+    "proof_stub_used": false,
+    "kind": "PlainProof"
+  },
+  "independent_expected_data": {
+    "fixture_cases": 3,
+    "tiles_examined": 512,
+    "selected_winners": 3,
+    "selected_losers": 3,
+    "all_selected_tiles_reveal_changed_row": true,
+    "generator_check_observed": true,
+    "target_selected_before_search": true,
+    "unscaled_target": "2^235",
+    "scaled_target": "2^254",
+    "factor": 524288,
+    "compact_nbits": "0x1e080000"
+  },
+  "checks": {
+    "rust_ffi_unit_tests": {
+      "passed": 20,
+      "failed": 0
+    },
+    "native_ctest": {
+      "passed": 11,
+      "failed": 0
+    },
+    "python_controls": {
+      "passed": 45,
+      "failed": 0
+    },
+    "native_proof": {
+      "fixtures": 3,
+      "selected_tiles": 6,
+      "tile_evaluations": 1024,
+      "transcript_words": 16384,
+      "message_words": 96,
+      "hash_bytes": 192,
+      "proof_b64_bytes": 803552,
+      "witness_equal_bytes": 401776,
+      "verify_calls": 46,
+      "rejected_cases": 69,
+      "real_semantic_rejections": 37
+    },
+    "crossprocess": {
+      "proofs_generated": 6,
+      "verification_checks": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "gzip": [
+      {
+        "case": "legacy_zero_b_winner",
+        "passed": true,
+        "plain_bytes": 100432,
+        "gzip_bytes": 4781
+      },
+      {
+        "case": "legacy_zero_b_loser",
+        "passed": true,
+        "plain_bytes": 100432,
+        "gzip_bytes": 4852
+      },
+      {
+        "case": "v3_zero_b_winner",
+        "passed": true,
+        "plain_bytes": 100432,
+        "gzip_bytes": 4835
+      },
+      {
+        "case": "v3_zero_b_loser",
+        "passed": true,
+        "plain_bytes": 100432,
+        "gzip_bytes": 4781
+      },
+      {
+        "case": "v3_rectangular_zero_b_winner",
+        "passed": true,
+        "plain_bytes": 100464,
+        "gzip_bytes": 4818
+      },
+      {
+        "case": "v3_rectangular_zero_b_loser",
+        "passed": true,
+        "plain_bytes": 100464,
+        "gzip_bytes": 4876
+      }
+    ]
+  },
+  "source_provenance": {
+    "vendored_file_comparisons": 349,
+    "identical_contents": 321,
+    "changed_contents": 28,
+    "donor_registry_archives_checked": 189,
+    "donor_registry_archives_matching_lock": 189,
+    "official_checker_shared_registry_packages": 184,
+    "notice": "third_party/notices/pearl-ISC.LICENSE",
+    "complete_binary_notice_bundle": false
+  },
+  "build_target_override_check": {
+    "inherited_CARGO_BUILD_TARGET": "aarch64-unknown-linux-gnu",
+    "explicit_target": "x86_64-unknown-linux-gnu",
+    "observed_pass": true
+  },
+  "artifacts": {
+    "proof_library": {
+      "path": "build/proof-target/x86_64-unknown-linux-gnu/release/libcp_proof_ffi.a",
+      "bytes": 45805354,
+      "sha256": "aaf9a7db9fa6d036f36aff8598358b3e7849ec0136b2d24dcb2e179554da54f6"
+    },
+    "reference_checker": {
+      "path": "build/proof-target/x86_64-unknown-linux-gnu/release/pearl-proof-check",
+      "bytes": 1491696,
+      "sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+    }
+  },
+  "source_sha256": {
+    ".github/workflows/offline.yml": "3a82115ae82e253f26ee3aa91ea8b2b44138044781aa53ab03c5c454e29fe8c8",
+    "AGENTS.md": "fad9fdeb462a302612b91dc72990c6337df912b7f9a7d8f6bdfcd3579b145514",
+    "CMakeLists.txt": "8ae5d3d40906fcbbd17c9fe79e2c60a17d1bad271a0ddab64a7e628e763239d3",
+    "cmake/Proof.cmake": "edb9f8ef871cb3293b30a77ef883fe7be90bef236da26b4f0514e088d41fe7cd",
+    "configs/proof-build.json": "299b49972a2e19d0654f5a55ab6f0d4f04daece06035203e29d35b51485e9e1c",
+    "docs/architecture.md": "8b56c1d5900637ac4da60476303e1029bc24402c5b66d6440634a324db0c8af4",
+    "docs/development.md": "a437873f953c917c589d88d290ec091d0e7b5bd8bc1d06c22cc6697213ea6350",
+    "docs/iterations/04.md": "3bc69a902848def17ff310a8422f986d9a15c47f2a6bb0158a6d27e3dc4fa21d",
+    "docs/proof-provenance.md": "2dc43b85ee8d52627921010e3992a1c8e9ff7acaed5e5e2df7d6f744fa4e3230",
+    "docs/proof.md": "81057c1675f1d149fa038587c75a8470542c8c0e422b014461b462cec2157ca2",
+    "docs/roadmap.md": "cb00e073ab9e0ab4a7fa601644f5d3847ba107de4ea610ddaf0a2efabd6fe2ec",
+    "native/fixtures/proof_golden.hpp": "d70ce86d4b0766acabd5322b14849dd6d53b2291f86b51de4e5a2cbbd96d1ad4",
+    "native/fixtures/proof_manifest.json": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa",
+    "native/include/neuro/pearl_proof.hpp": "0035ac1fd93696e73c683f0dbb293ff6555c5a00d06ac42acd6bb7db9ff9a4a2",
+    "native/proof/pearl_proof.cpp": "fce94ef2577f8c2184098d938bb2e6670b93f3c70625e92e4deba29c3eca85ac",
+    "native/proof/pearl_proof_cli.cpp": "cf4ca33bb9bb6086ca52166fc488d68d81eef439fd04111fac94f7619ec9f1ff",
+    "native/proof/pearl_proof_internal.hpp": "f97baf1da3ef01e0f2e4569739e8faf4471b85f86f67e59e26ab7151ab2ced15",
+    "native/proof/pearl_witness.cpp": "151e4ac0d97fc83b68feda89ccb7c483090a5480e882584b9c6bfee4f989a835",
+    "native/tests/pearl_proof_test.cpp": "4eea7821b57282c338a148f890af4e1d9354bfb900274994ab5d4c0bcc284c7f",
+    "rust/pearl-proof-check/Cargo.lock": "78711222bd48509ba382cfbaa5e8ae5482978937932a78b4b502ada3fcbceba0",
+    "rust/pearl-proof-check/Cargo.toml": "ef3418d850a99692aaa8a8c39a0339e5c59aab81194186f9ee27d8758dbd42c9",
+    "rust/pearl-proof-check/src/main.rs": "4aa15236a9052d17daf8362a50f4c23146928e5d50e3246bde6f9aaaaad8040b",
+    "state/current.json": "87506a755b9c1fbe8a09327204599481eee828692c55050a4e203f481d9c298f",
+    "third_party/notices/pearl-ISC.LICENSE": "a59c285e9720924e7e293837faa76ed8ed0a5bedcc5f3a858ddc905741550ecc",
+    "third_party/notices/pearl-proof-differences.md": "4d1742205e8e2cd25f51a9e29012df945d30a586660962567ff8d9bc7a364d54",
+    "third_party/notices/pearl-proof-provenance.json": "3d0094ad2e38a48976a003d1d8a8e3dc58c23e6d55d486359fc37b05a26b2fea",
+    "tools/build_pearl_proof.py": "64e2012241b8b945809f8900cfa1e9757571b76a5ac31cc93444d7693f2a760a",
+    "tools/check_pearl_proofs.py": "f127f3ed4f0ac25f240816b1aa40b3775059073f3b7ba02b84f63b54eea8f2dd",
+    "tools/generate_proof_fixtures.py": "d5761423dae073e79b060d3c52dfef695bdb67c929e10c33548862e474c38bed"
+  },
+  "evidence_sha256": {
+    "reports/iteration-04-proof-build.json": "f7b8e66e49c66b5cf0a7eabe61a9b2492d1978b754dcb54a4a92e8392ab3a1f3",
+    "reports/iteration-04-proof-check.json": "6eb85d98ac657405996c30b08d905558e7a08c2f7a8895a131b9f6f963cefa4b",
+    "reports/iteration-04-native.log": "ad3ee3fb5e007a69a4392b99c9d8321a2f51e7cf7133cc25dd002eaa98795814",
+    "reports/iteration-04-ctest.log": "a52c34eeb81fa48d5acd77e7063afd99443b751dc91c3b22db6fb895fb25b62b",
+    "reports/iteration-04-python-tests.log": "5ee61afe76234cda6263064958f7d5bc4e7221433f5b44cedce9dd9e15b0715c",
+    "reports/iteration-04-rust-build.log": "0c1108aa31a79794343d960a8bb83a4826c6fe964553cca03560ccd10fc23c15",
+    "reports/iteration-04-rust-unit-tests.log": "2dd91339b02eebb7a6fa274ebb9c5722dd031b0d1c80b53b422fb1c32435a0e0",
+    "reports/iteration-04-rust-reference.log": "329fe9a56edbf095d11c1ac91304814d34c3b5fc3b72eb0779c7356a5a722ba9",
+    "reports/iteration-04-rust-native-libs.log": "09532129e3154f0de8db1f63c47ea9ae3896f81aefa2eb5af57c3896507ab4f9"
+  },
+  "readme_bytes": 0,
+  "paid_reseller_api_calls": 0,
+  "ci_workflow": ".github/workflows/offline.yml",
+  "ci_evidence_location": "GitHub Actions run for the published commit; this report records local pre-commit execution",
+  "next_iteration": 5,
+  "unverified": [
+    "gpu_execution",
+    "windows_execution",
+    "recursive_stark_generation",
+    "live_pool_acceptance",
+    "real_network_work",
+    "dsh_api_integration",
+    "provider_cache_billing"
+  ]
+}

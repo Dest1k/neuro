@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 3,
+  "preparation_iteration": 4,
   "preparation_total": 10,
-  "status": "iteration_3_complete_ready_for_iteration_4",
+  "status": "iteration_4_complete_ready_for_iteration_5",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/03.md"
+    "docs/iterations/04.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
     "gpu": "CUDA_C++17_inline_PTX_as_needed",
     "host": "reuse_CPPminer",
-    "proof": "reuse_existing_Rust",
+    "proof": "pinned_Rust_PlainProof_and_separate_official_Pearl_verifier",
     "executor": "openai/gpt-6.1-sol",
     "executor_selection": "provisional",
     "challenger": "minimax/minimax-m3",
@@ -28,7 +28,7 @@
     "cuda_compilation": "passed_sm120_pearl_consumer_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
     "windows_execution": "not_run",
-    "full_proof": "not_built",
+    "full_proof": "plainproof_built_and_verified_stark_not_generated",
     "pool_shares": "not_run",
     "dsh_api_integration": "not_implemented",
     "provider_cache_billing": "not_verified",
@@ -41,15 +41,24 @@
     "cpu_pearl_full_builders": "passed_3670016_noisy_bytes_against_actual_donor_builders",
     "cpu_blake3": "passed_105_official_known_answer_modes",
     "cpu_job_cancellation": "passed_13_real_donor_component_checks_without_pool_connection",
-    "cpu_native": "passed_10_tests_direct_and_cmake",
+    "cpu_native": "passed_11_CMake_tests_with_optional_real_proof_mode",
     "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
-    "gpu_pearl_execution": "not_run_no_gpu"
+    "gpu_pearl_execution": "not_run_no_gpu",
+    "plain_proof": "passed_6_full_signal_proofs_and_3_byte_identical_witness_proofs",
+    "proof_rust_unit_tests": "passed_20_tests_real_ffi_no_stubs",
+    "proof_native": "passed_46_verifier_calls_and_69_rejected_cases_including_37_real_semantic_rejections",
+    "proof_official_verification": "passed_66_crossprocess_checks_6_acceptances_60_rejections_across_two_verifiers",
+    "proof_gzip": "passed_6_exact_raw_proof_roundtrips",
+    "proof_expected_values": "passed_independent_python_512_tiles_and_exact_target_boundaries",
+    "proof_provenance": "official_Pearl_ISC_notice_and_349_file_comparisons_plus_locked_registry_inventory",
+    "proof_windows_build": "not_run_Linux_x86_64_only",
+    "stark_proof": "not_generated"
   },
   "next_iteration": {
-    "number": 4,
-    "goal": "Build genuine Rust proof generation and independent verification with negative cases",
-    "first_step": "Read docs/pearl-input.md and the pinned donor proof FFI/build files; reconcile the vendored Rust dependency origins/notices, build the real implementation without cp_proof_stub, then verify valid and deliberately invalid cases using the retained preprocessing baseline",
-    "avoid": "Do not replace proof work with another agent framework or count a stub/static link as a verified proof"
+    "number": 5,
+    "goal": "Connect host/backend job lifecycle to the real PlainProof path and exercise an offline pool replay",
+    "first_step": "Read docs/proof.md and the donor job/notify/submit code. Add an offline work-to-result-to-proof adapter with explicit job generation identity, stale-work cancellation and submit payload replay; preserve the independent proof gates and bounded native profile.",
+    "avoid": "Do not treat synthetic proof acceptance as live pool shares; do not replace host integration with another model framework or require a human CUDA programmer."
   },
   "handoff": {
     "target_iteration": 10,
@@ -57,7 +66,7 @@
     "archive_created": false,
     "must_include_submodule_contents": true
   },
-  "validation_report": "reports/iteration-03-validation.json",
+  "validation_report": "reports/iteration-04-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points."
   }

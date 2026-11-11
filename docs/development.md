@@ -77,9 +77,48 @@ with a compatible CUDA toolkit. Multi-configuration generators put executables
 under `build/cuda/Release/` and append `.exe`. Windows compilation/execution
 remains untested here. See `docs/fullk-kernel.md` for bounded physical GPU checks.
 
+## Real proof build and separate official verifier
+
+The iteration-4 optional proof build requires Linux x86_64, Rust/Cargo 1.99.1,
+and Python 3.11.8+ or 3.12+. The complete contract and limitations are in
+`docs/proof.md`; dependency origins are in `docs/proof-provenance.md`.
+
+```bash
+rustup toolchain install 1.99.1 --profile minimal
+python tools/build_pearl_proof.py
+cmake -S . -B build/proof-cmake -DCMAKE_BUILD_TYPE=Release -DNEURO_ENABLE_PROOF=ON
+cmake --build build/proof-cmake -j 2
+RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure
+python tools/check_pearl_proofs.py
+```
+
+This builds actual `cp-proof-ffi` in a generated source copy, executes its 20
+unit tests, and builds an official Pearl verifier from a separate pinned Git
+dependency. CMake's proof option checks the successful build report and static
+library hash. Missing real Rust output is an error; no stub is available.
+The Linux native CTest set now has eleven entries with proof mode enabled.
+Ordinary ten-test CPU builds remain independent of Cargo.
+
+The corpus check generates six proofs and performs 66 checks across the native
+FFI and official verifier, including expected losing tiles and structured
+corruptions. It checks the actual Rust gzip payload as well. No command in this
+section connects to a pool or invokes a GPU. The proof link recipe has not been
+validated on Windows.
+
+With the previously installed hash-locked Python fixture binding, check the
+independent jackpot/target expectations separately:
+
+```bash
+python tools/generate_proof_fixtures.py --check
+```
+
+The builder and checks save JSON evidence under `artifacts/`. The GitHub proof
+job runs the same workflow and uploads the logs. Initial dependency download is
+required; subsequent builds reuse Cargo's cache.
+
 ## Evidence and fixture changes
 
-`reports/iteration-03-validation.json` records the checked source hashes and
+`reports/iteration-04-validation.json` records the checked source hashes and
 coverage. Reports from earlier iterations describe their historical inputs.
 
 `tools/generate_fullk_fixtures.py` defaults to read-only verification. Its
@@ -90,7 +129,9 @@ Python's standard library and does not invoke the native implementation.
 
 `generate_pearl_fixtures.py` follows the same check-by-default rule. Its separate
 manifest records synthetic jobs passed through the protocol preparation formulas.
-The jobs are not network-issued work and do not establish a valid proof.
+The jobs are not network-issued work. Their input checks alone do not establish
+a valid proof; the separate iteration-4 proof suite supplies that evidence for
+the selected fixtures.
 `generate_blake3_vectors.py` copies published expected hashes from the pinned
 official JSON; it never derives answers by calling the C library under test.
 Native libraries can be reused without importing either generator into GPU work.

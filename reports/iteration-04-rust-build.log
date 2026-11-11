@@ -1,0 +1,99 @@
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling zerocopy v0.8.54
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.2.17
+   Compiling crossbeam-utils v0.8.21
+   Compiling rand_core v0.6.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling num-traits v0.2.19
+   Compiling rand_chacha v0.3.1
+   Compiling serde v1.0.228
+   Compiling rayon-core v1.13.0
+   Compiling rand v0.8.7
+   Compiling crossbeam-epoch v0.9.18
+   Compiling either v1.16.0
+   Compiling static_assertions v1.1.0
+   Compiling crunchy v0.2.4
+   Compiling crossbeam-deque v0.8.6
+   Compiling num-integer v0.1.46
+   Compiling memchr v2.8.1
+   Compiling byteorder v1.5.0
+   Compiling hex v0.4.3
+   Compiling anyhow v1.0.102
+   Compiling uint v0.9.5
+   Compiling aho-corasick v1.1.4
+   Compiling num-bigint v0.4.8
+   Compiling rayon v1.12.0
+   Compiling regex-syntax v0.8.11
+   Compiling getrandom v0.3.4
+   Compiling tiny-keccak v2.0.2
+   Compiling ahash v0.8.12
+   Compiling blake3 v1.8.5
+   Compiling regex-automata v0.4.15
+   Compiling num-rational v0.4.2
+   Compiling const-random v0.1.18
+   Compiling num-iter v0.1.46
+   Compiling fixed-hash v0.7.0
+   Compiling num-complex v0.4.6
+   Compiling atty v0.2.14
+   Compiling arrayref v0.3.9
+   Compiling constant_time_eq v0.4.2
+   Compiling arrayvec v0.7.6
+   Compiling once_cell v1.21.4
+   Compiling cpufeatures v0.3.0
+   Compiling unicode-width v0.1.14
+   Compiling log v0.4.32
+   Compiling textwrap v0.11.0
+   Compiling num v0.4.3
+   Compiling primitive-types v0.10.1
+   Compiling regex v1.13.0
+   Compiling itertools v0.11.0
+   Compiling termcolor v1.4.1
+   Compiling plonky2_util v1.0.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/plonky2/util)
+   Compiling bitflags v1.3.2
+   Compiling vec_map v0.8.2
+   Compiling humantime v2.4.0
+   Compiling strsim v0.8.0
+   Compiling ansi_term v0.12.1
+   Compiling clap v2.34.0
+   Compiling plonky2_field v1.0.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/plonky2/field)
+   Compiling zmij v1.0.21
+   Compiling tikv-jemalloc-sys v0.6.1+5.3.0-1-ge13ca993e8ccb9ba9847cc330696e02839f328f7
+   Compiling rand_core v0.9.5
+   Compiling keccak-hash v0.8.0
+   Compiling hashbrown v0.14.5
+   Compiling plonky2_maybe_rayon v1.0.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/plonky2/maybe_rayon)
+   Compiling lazy_static v1.5.0
+   Compiling web-time v1.1.0
+   Compiling rustc-hex v2.1.0
+   Compiling thiserror v1.0.69
+   Compiling fixed-hash v0.8.0
+   Compiling plonky2 v1.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/plonky2/plonky2)
+   Compiling serde_json v1.0.150
+   Compiling structopt v0.3.26
+   Compiling crc32fast v1.5.2
+   Compiling serde_with v3.21.0
+   Compiling rand_chacha v0.9.0
+   Compiling env_logger v0.9.3
+   Compiling impl-serde v0.4.0
+   Compiling bincode v1.3.3
+   Compiling is-terminal v0.4.17
+   Compiling sorted-vec v0.8.10
+   Compiling itoa v1.0.18
+   Compiling simd-adler32 v0.3.10
+   Compiling adler2 v2.0.1
+   Compiling miniz_oxide v0.9.1
+   Compiling starky v1.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/plonky2/starky)
+   Compiling env_logger v0.10.2
+   Compiling primitive-types v0.12.2
+   Compiling rand v0.9.5
+   Compiling pearl-blake3 v0.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/pearl-blake3)
+   Compiling itertools v0.14.0
+   Compiling layout-macro v0.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/zk-pow/src/circuit/layout_macro)
+   Compiling base64 v0.21.7
+   Compiling flate2 v1.1.10
+   Compiling tikv-jemallocator v0.6.1
+   Compiling zk-pow v0.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/third_party/zk-pow)
+   Compiling cp-proof-ffi v0.1.0 (/workspace/scratch/ee2def0b7c52/neuro/build/proof-source/rust/cp-proof-ffi)
+    Finished `release` profile [optimized] target(s) in 1m 47s

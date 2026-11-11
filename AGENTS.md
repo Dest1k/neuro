@@ -51,8 +51,12 @@ The Pearl input adapter additionally checks real signal/commitment/noise code on
 synthetic fixed jobs; `docs/pearl-input.md` records its limited first-attempt scope.
 Its independent fixture regeneration uses the hash-locked Python binding in
 `requirements-fixtures.txt`. The native runtime uses separately pinned BLAKE3 C.
-Full proof, pool acceptance, sustained GPU operation and Windows execution need
-their own observed evidence. Upstream proof stubs must never satisfy a proof gate.
+The real PlainProof/witness path and separate official verifier are described in
+`docs/proof.md`. Use `tools/build_pearl_proof.py`, CMake proof mode and
+`tools/check_pearl_proofs.py` for that gate. The build pins Rust and both lockfiles;
+independent jackpot fixtures default to check-only. Pool acceptance, recursive
+STARK generation, sustained GPU operation and Windows execution need their own
+observed evidence. Upstream proof stubs must never satisfy a proof gate.
 
 An optimization is useful only if exact results remain correct and repeated
 measurements under comparable conditions support it. Keep independent expected

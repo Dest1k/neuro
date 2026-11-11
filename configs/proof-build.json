@@ -1,0 +1,19 @@
+{
+  "schema": "neuro.proof_build_config.v1",
+  "platform": "x86_64-unknown-linux-gnu",
+  "rust_toolchain": "1.99.1",
+  "rustc_commit": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+  "cargo_version": "1.99.1",
+  "cppminer_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+  "donor_lock_sha256": "562277c9eaac079a308b9fa54d923a69b61c0494ae77eefcae14ebb26de21895",
+  "reference_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+  "reference_lock_sha256": "78711222bd48509ba382cfbaa5e8ae5482978937932a78b4b502ada3fcbceba0",
+  "jobs": 2,
+  "command_timeout_seconds": 900,
+  "source_paths": [
+    "rust/cp-proof-ffi",
+    "third_party/zk-pow",
+    "third_party/pearl-blake3",
+    "third_party/plonky2"
+  ]
+}
