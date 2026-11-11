@@ -34,10 +34,12 @@ if (-not ('Neuro.Windows.BoundedProcess' -as [type])) {
 }
 $Phases = [Collections.Generic.List[object]]::new()
 $Record = [ordered]@{
-    schema = 'neuro.windows_action.v1'; action = $Action; passed = $false
+    schema = 'neuro.windows_action.v2'; action = $Action; passed = $false
     started_at = [DateTime]::UtcNow.ToString('o'); windows_execution = $true
     gpu_execution = $false; live_pool = $false; error = $null
-    source_fingerprint = $null; artifacts = @{}; phases = $Phases
+    source_fingerprint = $null; source_fingerprint_kind = 'complete_candidate_manifest_v1'
+    candidate_files = $null; candidate_bytes = $null
+    gpu_handoff = $null; gpu_handoff_error = $null; artifacts = @{}; phases = $Phases
 }
 $ReportPath = Join-Path $Evidence ($Action + '.json')
 if ($Action -like 'build-*') { $ReportPath = Join-Path $Evidence 'build.json' }
@@ -87,33 +89,32 @@ function Enter-CompilerEnvironment {
 }
 
 function Source-Fingerprint {
-    $paths = [Collections.Generic.List[string]]::new()
-    foreach ($directory in @('native', 'cmake', 'rust', 'patches')) {
-        Get-ChildItem (Join-Path $Repo $directory) -File -Recurse | ForEach-Object { $paths.Add($_.FullName) }
+    $result = Invoke-Checked 'fingerprint complete candidate' $Python @(
+        '-I', 'tools/candidate_manifest.py', 'fingerprint', '--root', $Repo) 120
+    $payload = $result.Stdout | ConvertFrom-Json
+    if ($payload.schema -cne 'neuro.candidate.fingerprint.v1' -or $payload.passed -ne $true -or
+        $payload.candidate_sha256 -cnotmatch '^[a-f0-9]{64}$') {
+        throw 'Missing complete candidate fingerprint.'
     }
-    foreach ($directory in @('tools', 'tests')) {
-        Get-ChildItem (Join-Path $Repo $directory) -File -Recurse -Filter '*.py' |
-            ForEach-Object { $paths.Add($_.FullName) }
-    }
-    foreach ($name in @('CMakeLists.txt', 'configs/proof-build.json', 'upstream/sources.lock.json',
-                         'windows/ci.ps1', 'windows/BoundedProcess.cs')) {
-        $paths.Add((Join-Path $Repo $name))
-    }
-    $rows = foreach ($path in ($paths | Sort-Object)) {
-        $relative = $path.Substring($Repo.Length + 1).Replace('\', '/')
-        $relative + ':' + (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
-    }
-    $digest = [Security.Cryptography.SHA256]::Create()
-    try {
-        $bytes = [Text.Encoding]::UTF8.GetBytes(($rows -join "`n"))
-        return ([BitConverter]::ToString($digest.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
-    } finally { $digest.Dispose() }
+    $Record.candidate_files = $payload.files
+    $Record.candidate_bytes = $payload.bytes
+    return $payload.candidate_sha256
 }
 
 function Binary-Inventory([bool]$Cuda) {
-    $names = @('neuro_pearl_proof.exe', 'neuro_pool_replay_client.exe')
-    if ($Cuda) { $names += @('neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe', 'neuro_pool_replay_client_cuda.exe') }
-    $files = @($names | ForEach-Object { Join-Path $Build $_ }) + @($Reference)
+    $required = @('neuro_pearl_proof.exe', 'neuro_pearl_proof_test.exe', 'neuro_pool_replay_client.exe',
+        'neuro_mining_job_test.exe', 'neuro_pool_wire_test.exe', 'neuro_cli_test.exe',
+        'neuro_protocol_test.exe', 'neuro_mma_layout_test.exe', 'neuro_fullk_test.exe',
+        'neuro_blake3_vectors_test.exe', 'neuro_pearl_alignment_test.exe', 'neuro_pearl_input_test.exe')
+    if ($Cuda) { $required += @('neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe',
+        'neuro_pool_replay_client_cuda.exe', 'neuro_mining_cuda_host_test.exe') }
+    foreach ($name in $required) {
+        if (-not [IO.File]::Exists((Join-Path $Build $name))) { throw ('Missing built artifact: ' + $name) }
+    }
+    # Cover every native executable, including new test targets, and the actual
+    # official verifier. Build products stay outside the source manifest.
+    $files = @(Get-ChildItem -LiteralPath $Build -File -Filter 'neuro_*.exe' |
+        ForEach-Object { $_.FullName }) + @($Reference)
     $inventory = @{}
     foreach ($file in $files) {
         $relative = $file.Substring($Repo.Length + 1).Replace('\', '/')
@@ -122,16 +123,21 @@ function Binary-Inventory([bool]$Cuda) {
     return $inventory
 }
 
-function Require-MatchingEvidence([string]$Path, [bool]$NeedCuda) {
+function Require-MatchingEvidence([string]$Path, [bool]$NeedCuda, [string[]]$ExpectedActions) {
     if (-not [IO.File]::Exists($Path)) { throw ('Missing prior gate: ' + $Path) }
     $prior = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json
-    if ($prior.passed -ne $true -or $prior.source_fingerprint -ne $Record.source_fingerprint) {
+    if ($prior.schema -cne 'neuro.windows_action.v2' -or
+        $prior.source_fingerprint_kind -cne 'complete_candidate_manifest_v1' -or
+        $prior.windows_execution -ne $true -or $ExpectedActions -cnotcontains $prior.action -or
+        $prior.passed -ne $true -or $prior.source_fingerprint -ne $Record.source_fingerprint) {
         throw ('Prior gate failed or its source changed: ' + $Path)
     }
     if ($NeedCuda -and $prior.cuda_enabled -ne $true) { throw 'Build evidence has no CUDA backend.' }
-    foreach ($property in $prior.artifacts.PSObject.Properties) {
-        $file = Join-Path $Repo $property.Name
-        if ((Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLowerInvariant() -ne $property.Value) {
+    $current = Binary-Inventory ([bool]$prior.cuda_enabled)
+    $properties = @($prior.artifacts.PSObject.Properties)
+    if ($properties.Count -ne $current.Count) { throw 'Built executable inventory changed after its gate.' }
+    foreach ($property in $properties) {
+        if (-not $current.ContainsKey($property.Name) -or $current[$property.Name] -cne $property.Value) {
             throw ('Built artifact changed after its gate: ' + $property.Name)
         }
     }
@@ -161,32 +167,65 @@ try {
         $Record.cuda_enabled = $withCuda
         $Record.artifacts = Binary-Inventory $withCuda
     } else {
-        $buildEvidence = Require-MatchingEvidence (Join-Path $Evidence 'build.json') ($Action -eq 'run-cuda')
+        $buildEvidence = Require-MatchingEvidence (Join-Path $Evidence 'build.json') ($Action -eq 'run-cuda') @('build-cpu', 'build-probes')
         $Record.cuda_enabled = $buildEvidence.cuda_enabled
         $Record.artifacts = Binary-Inventory $buildEvidence.cuda_enabled
         if ($Action -eq 'run-cpu') {
             $null = Invoke-Checked 'Python controls' $Python @('-m', 'unittest', 'discover', '-s', 'tests', '-v') 180
-            $null = Invoke-Checked 'native Windows CPU tests' 'ctest' @('--test-dir', 'build/windows', '-C', 'Release', '--output-on-failure') 180
+            $null = Invoke-Checked 'native Windows CPU tests' 'ctest' @('--test-dir', 'build/windows', '-C', 'Release', '--output-on-failure', '--no-tests=error') 180
             $null = Invoke-Checked 'official proof corruption corpus' $Python @('tools/check_pearl_proofs.py', '--output', 'artifacts/windows/proof-check.json') 180
             $null = Invoke-Checked 'real Windows loopback lifecycle' $Python @('tools/replay_pool.py', '--backend', 'cpu', '--output', 'artifacts/windows/pool-replay.json') 180
         } else {
-            $null = Require-MatchingEvidence (Join-Path $Evidence 'run-cpu.json') $true
-            foreach ($name in @('neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe')) {
-                $run = Invoke-Checked ('GPU correctness ' + $name) (Join-Path $Build $name) @('--device', [string]$Device) 60
-                $payload = $run.Stdout | ConvertFrom-Json
-                if ($payload.status -ne 'PASS' -or $payload.exact -ne $true -or $payload.gpu_execution_observed -ne $true) {
-                    throw ('Missing exact physical GPU evidence from ' + $name)
+            $null = Require-MatchingEvidence (Join-Path $Evidence 'run-cpu.json') $true @('run-cpu')
+            . (Join-Path $PSScriptRoot 'gpu_lease.ps1')
+            $gpuLease = $null
+            $gpuFailure = $null
+            try {
+                # Stop the configured owner miner only after its interactive
+                # restoration watchdog is ready. CPU/build actions never lease it.
+                $gpuLease = Enter-NeuroGpuLease -RepositoryRoot $Repo -Device $Device
+                foreach ($name in @('neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe')) {
+                    $run = Invoke-Checked ('GPU correctness ' + $name) (Join-Path $Build $name) @('--device', [string]$Device) 60
+                    $payload = $run.Stdout | ConvertFrom-Json
+                    if ($payload.status -ne 'PASS' -or $payload.exact -ne $true -or $payload.gpu_execution_observed -ne $true) {
+                        throw ('Missing exact physical GPU evidence from ' + $name)
+                    }
+                    $Record.gpu_execution = $true
                 }
-                $Record.gpu_execution = $true
+                $null = Invoke-Checked 'GPU loopback lifecycle' $Python @('tools/replay_pool.py', '--native',
+                    'build/windows/neuro_pool_replay_client_cuda.exe', '--backend', 'cuda', '--device', [string]$Device,
+                    '--work-dir', 'artifacts/windows/pool-replay-gpu', '--output', 'artifacts/windows/pool-replay-gpu.json') 300
+                $gpuReplay = Get-Content (Join-Path $Evidence 'pool-replay-gpu.json') -Raw | ConvertFrom-Json
+                if ($gpuReplay.passed -ne $true -or $gpuReplay.gpu_execution -ne $true) { throw 'GPU replay has no verified execution.' }
+            } catch {
+                $gpuFailure = $_.Exception.Message
+            } finally {
+                if ($null -ne $gpuLease) {
+                    try {
+                        # Every bounded child job has completed/been terminated
+                        # before release. The independent watcher also checks
+                        # that known GPU executables are absent before restart.
+                        $Record.gpu_handoff = Exit-NeuroGpuLease -Lease $gpuLease
+                        if ($Record.gpu_handoff.passed -ne $true) { throw 'Owner GPU handoff has no successful restoration verdict.' }
+                    } catch {
+                        $Record.gpu_handoff_error = $_.Exception.Message
+                    }
+                    Save-Record
+                }
             }
-            $null = Invoke-Checked 'GPU loopback lifecycle' $Python @('tools/replay_pool.py', '--native',
-                'build/windows/neuro_pool_replay_client_cuda.exe', '--backend', 'cuda', '--device', [string]$Device,
-                '--work-dir', 'artifacts/windows/pool-replay-gpu', '--output', 'artifacts/windows/pool-replay-gpu.json') 300
-            $gpuReplay = Get-Content (Join-Path $Evidence 'pool-replay-gpu.json') -Raw | ConvertFrom-Json
-            if ($gpuReplay.passed -ne $true -or $gpuReplay.gpu_execution -ne $true) { throw 'GPU replay has no verified execution.' }
+            if ($gpuFailure -or $Record.gpu_handoff_error) {
+                throw ((@($gpuFailure, $Record.gpu_handoff_error) | Where-Object { $_ }) -join '; ')
+            }
         }
     }
     if ((Source-Fingerprint) -ne $Record.source_fingerprint) { throw 'Source changed during the action.' }
+    $finalArtifacts = Binary-Inventory ([bool]$Record.cuda_enabled)
+    if ($finalArtifacts.Count -ne $Record.artifacts.Count) { throw 'Built executable inventory changed during the action.' }
+    foreach ($path in $Record.artifacts.Keys) {
+        if (-not $finalArtifacts.ContainsKey($path) -or $finalArtifacts[$path] -cne $Record.artifacts[$path]) {
+            throw ('Built artifact changed during the action: ' + $path)
+        }
+    }
     $Record.passed = $true
 } catch {
     $Record.error = $_.Exception.Message

@@ -20,6 +20,12 @@ if(NEURO_BUILD_CPU_CHECKS)
   add_test(NAME neuro_mining_job COMMAND neuro_mining_job_test)
   set_tests_properties(neuro_mining_job PROPERTIES TIMEOUT 120)
 
+  add_executable(neuro_attempt_search_test native/tests/attempt_search_test.cpp)
+  target_include_directories(neuro_attempt_search_test PRIVATE native)
+  target_link_libraries(neuro_attempt_search_test PRIVATE neuro_mining_job)
+  add_test(NAME neuro_attempt_search COMMAND neuro_attempt_search_test)
+  set_tests_properties(neuro_attempt_search PROPERTIES TIMEOUT 120)
+
   add_executable(neuro_pool_wire_test native/tests/pool_wire_test.cpp)
   target_include_directories(neuro_pool_wire_test PRIVATE native)
   target_link_libraries(neuro_pool_wire_test PRIVATE neuro_pool_wire)

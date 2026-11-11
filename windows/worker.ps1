@@ -49,10 +49,11 @@ function Read-Request {
     if ($file.PSIsContainer -or $file.Length -gt 8192) { throw 'Invalid request size' }
     $request = [IO.File]::ReadAllText($file.FullName) | ConvertFrom-Json
     $fields = @('schema_version', 'request_id', 'action', 'repo_root', 'device',
-                'timeout_s', 'max_output_bytes', 'worker_sha256', 'runner_sha256', 'entrypoint_sha256')
+                'timeout_s', 'max_output_bytes', 'worker_sha256', 'runner_sha256', 'entrypoint_sha256',
+                'manifest_tool_sha256', 'manifest_sha256', 'candidate_sha256')
     $actual = @($request.PSObject.Properties.Name)
     if (@(Compare-Object $fields $actual).Count -ne 0) { throw 'Unexpected request fields' }
-    Assert-Integer $request.schema_version 1 1 'schema_version'
+    Assert-Integer $request.schema_version 2 2 'schema_version'
     if ($request.request_id -isnot [string] -or $request.request_id -cnotmatch '^[0-9a-f]{32}$') {
         throw 'Invalid request identity'
     }
@@ -71,7 +72,7 @@ function Read-Request {
     }
     Assert-Integer $request.timeout_s 1 3600 'timeout_s'
     Assert-Integer $request.max_output_bytes 1024 262144 'max_output_bytes'
-    foreach ($field in @('worker_sha256', 'runner_sha256', 'entrypoint_sha256')) {
+    foreach ($field in @('worker_sha256', 'runner_sha256', 'entrypoint_sha256', 'manifest_tool_sha256')) {
         if ($request.$field -isnot [string] -or $request.$field -cnotmatch '^[0-9a-f]{64}$') {
             throw "Invalid hash field: $field"
         }
@@ -81,7 +82,49 @@ function Read-Request {
     if ($workerHash -cne $request.worker_sha256 -or $runnerHash -cne $request.runner_sha256) {
         throw 'Staged worker code does not match request hashes'
     }
+    if ((Get-SourceHash (Join-Path $PSScriptRoot 'candidate_manifest.py')) -cne $request.manifest_tool_sha256) {
+        throw 'Staged candidate verifier does not match request hash'
+    }
+    if ($request.action -ceq 'inventory') {
+        if ($null -ne $request.manifest_sha256 -or $null -ne $request.candidate_sha256) {
+            throw 'Inventory cannot execute a candidate'
+        }
+    } else {
+        foreach ($field in @('manifest_sha256', 'candidate_sha256')) {
+            if ($request.$field -isnot [string] -or $request.$field -cnotmatch '^[0-9a-f]{64}$') {
+                throw "Invalid candidate identity field: $field"
+            }
+        }
+        $manifest = Get-Item -LiteralPath (Join-Path $PSScriptRoot 'candidate.json')
+        if ($manifest.PSIsContainer -or $manifest.Length -gt 2097152 -or
+            (Get-SourceHash $manifest.FullName) -cne $request.manifest_sha256) {
+            throw 'Staged candidate manifest is missing, too large or differs from request'
+        }
+    }
     return $request
+}
+
+function Test-Candidate($Request) {
+    $failed = @{ passed = $false; actual_sha256 = $null }
+    if (-not ('Neuro.Windows.BoundedProcess' -as [type])) {
+        Add-Type -Path (Join-Path $PSScriptRoot 'BoundedProcess.cs')
+    }
+    $python = Get-Command python.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($null -eq $python) { return $failed }
+    $probe = [Neuro.Windows.BoundedProcess]::Run($python.Source,
+        @('-I', (Join-Path $PSScriptRoot 'candidate_manifest.py'), 'verify', '--root', $Request.repo_root,
+          '--manifest', (Join-Path $PSScriptRoot 'candidate.json'), '--expected', $Request.candidate_sha256),
+        $PSScriptRoot, 30000, 8192)
+    if ($probe.Error -or $probe.TimedOut -or -not $probe.OutputComplete -or
+        $probe.StdoutTruncated -or $probe.StderrTruncated) { return $failed }
+    try { $value = $probe.Stdout | ConvertFrom-Json } catch { return $failed }
+    if ($value.schema -cne 'neuro.candidate.verification.v1' -or
+        $value.candidate_sha256 -cne $Request.candidate_sha256) { return $failed }
+    if ($null -ne $value.actual_sha256 -and
+        ($value.actual_sha256 -isnot [string] -or $value.actual_sha256 -cnotmatch '^[0-9a-f]{64}$')) { return $failed }
+    $passed = ($probe.ExitCode -eq 0 -and $value.passed -eq $true -and
+               $value.actual_sha256 -ceq $Request.candidate_sha256)
+    return @{ passed = $passed; actual_sha256 = $value.actual_sha256 }
 }
 
 function Get-EntrypointHash($Request) {
@@ -141,11 +184,19 @@ try {
     $request = Read-Request
     $entrypointHash = Get-EntrypointHash $request
     $prerequisiteError = ''
+    $candidateBefore = $null
+    $candidateAfter = $null
+    $candidateError = ''
     if ($request.action -cne 'inventory') {
         if ($entrypointHash -cne $request.entrypoint_sha256) {
             $prerequisiteError = 'Fixed action entry point is missing or differs from the requested source'
         } elseif ((Get-RepoRunnerHash $request) -cne $request.runner_sha256) {
             $prerequisiteError = 'Repository runner is missing or differs from the requested source'
+        } else {
+            $candidateBefore = Test-Candidate $request
+            if (-not $candidateBefore.passed) {
+                $prerequisiteError = 'Complete candidate source does not match the requested manifest'
+            }
         }
     }
     if ($Execute) {
@@ -179,7 +230,9 @@ try {
             Stdout = ''; Stderr = ''; Error = $prerequisiteError
         }
     } else {
-        Add-Type -Path (Join-Path $PSScriptRoot 'BoundedProcess.cs')
+        if (-not ('Neuro.Windows.BoundedProcess' -as [type])) {
+            Add-Type -Path (Join-Path $PSScriptRoot 'BoundedProcess.cs')
+        }
         $powershell = Join-Path $PSHOME 'powershell.exe'
         if (-not (Test-Path -LiteralPath $powershell -PathType Leaf)) { $powershell = Join-Path $PSHOME 'pwsh.exe' }
         $arguments = @('-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
@@ -187,8 +240,16 @@ try {
         $result = [Neuro.Windows.BoundedProcess]::Run($powershell, $arguments, $PSScriptRoot,
             ([int]$request.timeout_s * 1000), [int]$request.max_output_bytes)
     }
+    if ($request.action -cne 'inventory') {
+        # Recheck even when the action fails or times out. A result computed
+        # while source changed cannot be used to rank this candidate.
+        $candidateAfter = Test-Candidate $request
+        if (-not $candidateAfter.passed) {
+            $candidateError = 'Complete candidate source changed or could not be verified after the action'
+        }
+    }
     $status = 'failed'; $workerExit = 1
-    if ($result.Error.Length -gt 0 -or -not $result.OutputComplete) {
+    if ($candidateError -or $result.Error.Length -gt 0 -or -not $result.OutputComplete) {
         $status = 'worker_error'; $workerExit = 2
     } elseif ($result.TimedOut) {
         $status = 'timeout'; $workerExit = 124
@@ -198,13 +259,18 @@ try {
         $status = 'passed'; $workerExit = 0
     }
     $report = [ordered]@{
-        schema = 'neuro.remote.worker.v1'
+        schema = 'neuro.remote.worker.v2'
         request_id = $request.request_id
         action = $request.action
         worker_sha256 = $request.worker_sha256
         runner_sha256 = $request.runner_sha256
         entrypoint_sha256 = $request.entrypoint_sha256
         entrypoint_actual_sha256 = $entrypointHash
+        manifest_tool_sha256 = $request.manifest_tool_sha256
+        manifest_sha256 = $request.manifest_sha256
+        candidate_sha256 = $request.candidate_sha256
+        candidate_before_sha256 = $(if ($null -ne $candidateBefore) { $candidateBefore.actual_sha256 } else { $null })
+        candidate_after_sha256 = $(if ($null -ne $candidateAfter) { $candidateAfter.actual_sha256 } else { $null })
         status = $status
         exit_code = $result.ExitCode
         timed_out = $result.TimedOut
@@ -217,7 +283,7 @@ try {
         stderr_truncated = $result.StderrTruncated
         stdout = $result.Stdout
         stderr = $result.Stderr
-        error = $result.Error
+        error = $(if ($candidateError) { $candidateError } else { $result.Error })
     }
     $json = $report | ConvertTo-Json -Depth 8 -Compress
     [IO.File]::WriteAllText($reportFile, $json, (New-Object Text.UTF8Encoding($false)))

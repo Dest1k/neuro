@@ -15,5 +15,6 @@ __pycache__/
 *token*.txt
 /configs/local.json
 /configs/remote.local.json
+/configs/gpu-owner.local.json
 /start/
 /dist/

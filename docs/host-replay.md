@@ -13,6 +13,10 @@ iteration-5 Linux runs. The iteration-6 Windows CPU/proof/loopback gates passed
 on an actual GitHub Windows runner; its separate evidence is recorded in
 `reports/iteration-06-validation.json`. Physical GPU execution remains unobserved.
 
+Iteration 7 adds bounded cumulative attempts and four additional real TCP
+scenarios. `docs/attempt-search.md` specifies the seed policy, per-attempt
+identity, independent expected results and continuation/limit behavior.
+
 ## Source and reuse boundary
 
 The wire dialect comes from CPPminer commit
@@ -62,8 +66,8 @@ every losing tile or prove a claimed miss correct.
 The real Rust verifier must accept the raw proof before a Share can reach the
 sink. A private verified-result identity prevents public result-field edits
 from turning an error, foreign result or modified proof into an accepted Share.
-Generation validation and handoff share a mutex with publication. Each ticket
-can invoke the sink at most once, including failed/throwing sends. The sink must
+Generation validation and handoff share a mutex with publication. Each immutable
+attempt ticket can invoke the sink at most once, including failed/throwing sends. The sink must
 be bounded and must not reenter the coordinator.
 
 Freshness is local to already processed notifications. New remote work or bytes
@@ -120,7 +124,7 @@ verifier pinned at `0dbdb2ffd8b81193a5079bb67a59aecc10ad501c`. Success requires 
 zero, `verified:true`, the expected verification stage and the correct source
 pin. A crash, panic, argument error or timeout fails the replay.
 
-The 15 scenarios cover:
+The original 15 scenarios cover:
 
 | Scenario | Observed condition |
 |---|---|
@@ -139,8 +143,14 @@ The 15 scenarios cover:
 | Lost acknowledgement | verified wire proof followed by EOF remains unacknowledged |
 | Silent peer | connection stays open without an ACK; native response timeout records uncertainty |
 
-The first table row is two separate scenarios. The full run receives 17 actual
-proof submissions because each explicit-rejection scenario submits twice.
+The first table row is two separate scenarios. These original cases receive
+17 actual proof submissions because each explicit-rejection scenario submits twice.
+Iteration 7 adds `multi_attempt`, `miss_then_found`, `attempt_limit` and
+`cancel_later_attempt`: the complete run now contains 19 scenarios and 23 wire
+proofs. The peer also compares authenticated proof roots and selected rows with
+independently expected attempt identities; a valid old proof cannot be relabelled
+as a new attempt. Details and the deliberately selected miss-then-found target
+are in `docs/attempt-search.md`.
 Native stdout events coordinate deterministic checkpoints and explain ordering;
 TCP payloads, the independent ledger and verifier establish proof correctness.
 Checkpoint waits occur only in explicitly requested replay scenarios. They
@@ -166,7 +176,7 @@ RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure
 python tools/replay_pool.py --output artifacts/pool-replay.json
 ```
 
-Proof mode now has 13 native tests on GCC/Linux. The replay additionally checks
+Proof mode now has 14 native tests on GCC/Linux. The replay additionally checks
 the actual peer exchanges. Its default backend is CPU; `--scenario NAME` selects
 individual cases. `--native` and `--reference` select explicit built executables.
 Reports retain events, issued-job identities, payload fingerprints, real verifier
@@ -240,9 +250,10 @@ Prerequisites, output paths and bounded remote invocation are documented in
 
 ## Bounded operation and remaining work
 
-The replay client performs one deterministic first-zero-B attempt per generation,
-using a fixed synthetic seed and small 128/256 dimensions. It is not a continuous
-production seed/search scheduler. The peer exercises 128x128 jobs. Real pool
+The replay client defaults to one deterministic zero-B attempt per generation;
+`--max-attempts 1..64` enables a bounded cumulative sequence. It uses a fixed
+synthetic root seed and small 128/256 dimensions. It is not a continuous
+production entropy/search scheduler. The peer exercises 128x128 jobs. Real pool
 configuration, production work scheduling and performance tuning remain separate
 tasks. Iteration 6 implements local model-cost reservations and reconciliation
 in `neuroctl budget`; actual DSH/provider dispatch and billing still need their

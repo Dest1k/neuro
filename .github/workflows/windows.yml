@@ -42,6 +42,12 @@ jobs:
         run: ./windows/test_worker.ps1
       - name: Verify fixed remote worker reports and identity checks
         run: ./windows/test_remote_worker.ps1
+      - name: Reject stale or mislabelled Windows prerequisite evidence
+        shell: powershell
+        run: ./windows/test_ci_evidence.ps1
+      - name: Verify GPU ownership and visible miner restoration boundaries
+        shell: powershell
+        run: ./windows/test_gpu_lease.ps1 -InteractiveSmoke
       - name: Build real Rust and native Windows proof targets
         id: build
         # Keep independent compiler evidence when a worker fixture fails.

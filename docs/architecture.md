@@ -1,6 +1,6 @@
 # Architecture and current implementation
 
-Current preparation: iteration 6 of 10. Read `state/current.json` for the next
+Current preparation: iteration 7 of 10. Read `state/current.json` for the next
 task and the latest entry in `docs/iterations/` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
@@ -114,14 +114,33 @@ are recorded separately in `reports/iteration-06-validation.json`.
 The worker dispatches only inventory, build-probes, run-cpu and run-cuda actions.
 A Windows Job Object owns each action's descendants, output and lifetime. Saved
 source/binary fingerprints bind later CPU/GPU gates to the successful build.
-This binds actions within the remote checkout; it does not yet bind the caller's
-complete candidate tree to that checkout. Full deployment/result candidate
-identity is part of iteration 7.
+Iteration 7 extends the source fingerprint to the complete public candidate:
+exact file bytes, dirty source additions/deletions and all pinned source files.
+The SSH request and pre/post action checks bind this identity across both hosts.
+Private settings, generated output and installed toolchains have their separate
+boundaries. Source deployment must still preposition the complete checkout.
+See `docs/candidate-identity.md` for the precise manifest and exclusions.
 A lost SSH session is an uncertain outcome until a matching result is retrieved;
 it never triggers an automatic duplicate GPU run. These components are
 implemented, but the owner's laptop connection and physical GPU execution
-still need their own observations. Continuous search scheduling, large-panel
-staging and performance tuning remain ahead.
+still need their own observations.
+
+The miner now supports a reproducible bounded sequence of up to 64 cumulative
+zero-B attempts per generation. It retains prior A-row mutations, derives each
+later row seed from a fixed root seed and counter, and seals the work and attempt
+identity into each verified result. Misses advance the search; cancellation,
+one handoff per attempt and independent proof checks remain in force. The old
+attempt-zero fixtures remain unchanged. `docs/attempt-search.md` describes the
+independent corpus and real TCP continuation cases. Sustained production search,
+large-panel staging and performance tuning remain ahead.
+
+Physical GPU actions additionally acquire a bounded ownership lease for the
+owner's SRBMiner. A separate interactive watchdog prepares restoration before
+stopping its exact configured processes; once test processes have exited, an
+independent interactive task starts the existing `guided-setup.bat` in a visible
+console. CPU/build actions do not acquire this lease. Actual owner-desktop and
+miner restoration require observations on that host; CI fixtures are separate.
+The private profile and recovery contract are in `docs/gpu-miner-handoff.md`.
 
 ## Measurement policy
 

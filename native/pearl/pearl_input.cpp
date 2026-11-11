@@ -2,7 +2,9 @@
 #include "neuro/pearl_input.hpp"
 
 #include "cp_noise.h"
+#include "blake3.h"
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -37,9 +39,33 @@ void validate_request(const Request& request) {
     if (request.tile_rows != fullk::hash_rows || request.tile_cols != fullk::hash_cols) {
         throw std::invalid_argument("Pearl input requires contiguous 8x16 transcript tiles");
     }
+    if (request.attempt_index >= max_attempts) {
+        throw std::invalid_argument("Pearl attempt index must be in [0,63]");
+    }
 }
 
 }  // namespace
+
+Digest derive_row_seed(const std::vector<std::uint8_t>& root_seed, std::uint32_t index) {
+    if (root_seed.size() != attempt_seed_bytes || index >= max_attempts)
+        throw std::invalid_argument("row seed requires root seed32 and attempt index in [0,63]");
+    Digest result{};
+    if (index == 0) {
+        std::copy(root_seed.begin(), root_seed.end(), result.begin());
+        return result;
+    }
+    constexpr char domain[] = "neuro/zero-b/row-seed/v1";
+    std::array<std::uint8_t, 4> counter{};
+    for (unsigned i = 0; i < counter.size(); ++i)
+        counter[i] = static_cast<std::uint8_t>(index >> (8 * i));
+    blake3_hasher hasher;
+    blake3_hasher_init(&hasher);
+    blake3_hasher_update(&hasher, domain, sizeof(domain) - 1);
+    blake3_hasher_update(&hasher, root_seed.data(), root_seed.size());
+    blake3_hasher_update(&hasher, counter.data(), counter.size());
+    blake3_hasher_finalize(&hasher, result.data(), result.size());
+    return result;
+}
 
 PreparedInput prepare_zero_b(const Request& request) {
     // All untrusted dimensions/configuration are rejected before any donor call.
@@ -69,11 +95,15 @@ PreparedInput prepare_zero_b(const Request& request) {
     pearl_set_contiguous_tile_shape(fullk::hash_rows, fullk::hash_cols);
 
     pearl_job_key(request.header.data(), header_bytes, result.job_key.data());
-    if (pearl_fill_random_a_row(request.seed.data(), attempt_seed_bytes,
+    for (std::uint32_t index = 0; index <= request.attempt_index; ++index) {
+        result.row_seed = derive_row_seed(request.seed, index);
+        if (pearl_fill_random_a_row(result.row_seed.data(), attempt_seed_bytes,
                                 request.shape.rows, fullk::inner,
                                 result.signal_a.data(), &result.changed_row) != 0 ||
         result.changed_row < 0 || result.changed_row >= request.shape.rows) {
-        throw std::runtime_error("donor failed to construct the first zero-B A row");
+            throw std::runtime_error("donor failed to mutate a zero-B A row");
+        }
+        result.mutation_rows.push_back(result.changed_row);
     }
 
     // Commit the signal matrices, before adding noise. K and supported dimensions

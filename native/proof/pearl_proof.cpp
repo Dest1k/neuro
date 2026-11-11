@@ -157,6 +157,8 @@ void validate_request(const pearl::Request& request) {
     if (request.tile_rows != fullk::hash_rows || request.tile_cols != fullk::hash_cols) {
         throw std::invalid_argument("proof harness requires contiguous 8x16 tiles");
     }
+    if (request.attempt_index >= pearl::max_attempts)
+        throw std::invalid_argument("proof request exceeds bounded attempt sequence");
 }
 
 void validate_tile(fullk::Shape shape, Tile tile) {

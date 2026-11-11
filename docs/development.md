@@ -139,7 +139,7 @@ or change drivers. From Windows PowerShell or PowerShell 7 in the checkout:
 `build-cpu` builds the real donor Rust library and separate official checker,
 then the native CPU/proof/host targets. `run-cpu` requires matching build evidence
 and runs Python controls, native CTest, the 66-case proof corpus and complete
-15-scenario loopback replay. Windows omits the three GCC/Linux donor arithmetic
+19-scenario loopback replay, including cumulative attempt continuation. Windows omits the three GCC/Linux donor arithmetic
 differentials. The iteration-6 Windows CI passed this full sequence on an actual
 Windows runner. `reports/iteration-06-validation.json` records the tested commit,
 per-platform counts and CI URL. Owner-laptop and GPU execution remain separate.
@@ -200,6 +200,20 @@ component tests. The Python replay is an additional process-level gate included
 in both platform workflows. Native failure in an expected disconnect or
 ACK-timeout scenario counts as a replay pass only when its exact unresolved
 result and zero accepted/rejected counters are observed.
+
+The client now accepts an explicit bounded attempt sequence. Read
+`docs/attempt-search.md` for the cumulative row mutation rule, preserved
+attempt-zero vectors and the new miss/continuation/cancellation cases. Verify
+their separate expected values with
+`python tools/generate_attempt_fixtures.py --check` after installing the pinned
+fixture binding. The default replay still uses one attempt unless a scenario
+explicitly requests more; this keeps historical checks comparable.
+
+For remote Windows GPU checks, read `docs/windows-worker.md`,
+`docs/candidate-identity.md` and `docs/gpu-miner-handoff.md`. Configure the owner
+miner privately before `run-cuda`; build and CPU checks do not stop it.
+Candidate manifests cover the complete public checkout, so finish source and
+documentation edits before a build/CPU/GPU gate sequence.
 
 ## Local model budget boundary
 

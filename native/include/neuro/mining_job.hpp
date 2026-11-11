@@ -8,6 +8,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 
 namespace neuro::host {
@@ -24,12 +25,20 @@ struct Job {
     std::uint64_t connection = 0;
 };
 
+using Seed = std::array<std::uint8_t, pearl::attempt_seed_bytes>;
+struct AttemptIdentity {
+    Seed root_seed{};
+    std::uint32_t index = 0;
+};
+
 struct Ticket {
     std::uint64_t generation = 0;
     std::shared_ptr<const Job> job;
+    // publish returns a job ticket without an attempt. Execution results own
+    // an immutable seed/index identity, sealed together with the verified share.
+    std::shared_ptr<const AttemptIdentity> attempt;
 };
 
-using Seed = std::array<std::uint8_t, pearl::attempt_seed_bytes>;
 using Compute = std::function<fullk::Result(const fullk::Input&)>;
 enum class Stage { before_prepare, after_prepare, before_compute, after_compute,
                    before_proof, after_proof, after_verify };
@@ -74,7 +83,8 @@ public:
     bool current(const Ticket& ticket) const;
     bool cancelled(const Ticket& ticket) const { return !current(ticket); }
 
-    // One bounded first-zero-B attempt. Compute must finish using its input
+    // Compatibility entry for attempt0; it consumes that attempt once.
+    // Compute must finish using its input
     // before returning: a CUDA callback owns/synchronizes its buffers even if
     // the captured ticket becomes stale. No stage is forcefully preempted.
     // A Compute exception remains an error even after concurrent invalidation;
@@ -84,9 +94,16 @@ public:
     Result run_one(const Ticket& ticket, const Seed& seed, const Compute& compute,
                    const Checkpoint& checkpoint = {});
 
+    // Sequential, single-use indices 0..63 in one generation, with a root seed
+    // pinned by the first attempt. No concurrent arithmetic attempts per job.
+    // Signal A retains earlier row mutations; reconstruction is deterministic.
+    // An error consumes a claimed index; cancellation/new work resets the plan.
+    Result run_attempt(const Ticket& job_ticket, const Seed& root_seed, std::uint32_t index,
+                       const Compute& compute, const Checkpoint& checkpoint = {});
+
     // A local handoff, not a pool acknowledgement. The bounded sink executes
     // under the publication mutex and must not reenter this Coordinator.
-    // At most one sink invocation per ticket, including a failed/throwing sink.
+    // At most one sink invocation per attempt, including a failed/throwing sink.
     // Exceptions propagate after the ticket is consumed. Stale, forged and
     // repeated results return false without calling the sink.
     bool commit(const Result& result, const Sink& sink);
@@ -97,7 +114,10 @@ private:
     mutable std::mutex mutex_;
     std::uint64_t generation_ = 0;
     std::shared_ptr<const Job> job_;
-    bool committed_ = false;
+    std::uint64_t committed_ = 0;
+    std::optional<Seed> root_seed_;
+    std::uint32_t next_attempt_ = 0;
+    bool running_ = false;
 };
 
 } // namespace neuro::host

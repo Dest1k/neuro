@@ -53,7 +53,15 @@ void event(const char* name, const std::string& fields = "") {
 std::string identity(const host::Ticket& ticket) {
     return ",\"connection\":" + std::to_string(ticket.job ? ticket.job->connection : 0) +
            ",\"generation\":" + std::to_string(ticket.generation) +
-           ",\"job_id\":" + quote(ticket.job ? ticket.job->job_id : "");
+           ",\"job_id\":" + quote(ticket.job ? ticket.job->job_id : "") +
+           ",\"attempt_index\":" + (ticket.attempt ? std::to_string(ticket.attempt->index) : "null");
+}
+
+template <class Bytes> std::string hex(const Bytes& bytes) {
+    constexpr char digits[] = "0123456789abcdef";
+    std::string out;
+    for (auto byte : bytes) { out += digits[byte >> 4]; out += digits[byte & 15]; }
+    return out;
 }
 
 const char* stage_name(host::Stage stage) {
@@ -93,6 +101,8 @@ host::Seed seed_from_hex(const std::string& text) {
 
 struct Options {
     int port = 0, deadline_ms = 8000, max_connections = 2, max_submissions = 1, device = 0;
+    int max_attempts = 1, pause_attempt_index = 0;
+    bool stop_on_attempt_limit = false;
     neuro::fullk::Shape shape{128, 128};
     std::filesystem::path report = "artifacts/pool-client.json";
     std::string backend = "cpu", pause_stage, pause_job_id;
@@ -114,6 +124,8 @@ Options options(int argc, char** argv) {
         else if (flag == "--deadline-ms") result.deadline_ms = integer(value, 500, 30000, flag);
         else if (flag == "--max-connections") result.max_connections = integer(value, 1, 4, flag);
         else if (flag == "--max-submissions") result.max_submissions = integer(value, 1, 8, flag);
+        else if (flag == "--max-attempts") result.max_attempts = integer(value, 1, neuro::pearl::max_attempts, flag);
+        else if (flag == "--stop-on-attempt-limit") result.stop_on_attempt_limit = integer(value, 0, 1, flag) != 0;
         else if (flag == "--rows") result.shape.rows = integer(value, 128, 256, flag);
         else if (flag == "--cols") result.shape.cols = integer(value, 128, 256, flag);
         else if (flag == "--seed-hex") result.seed = seed_from_hex(value);
@@ -122,6 +134,7 @@ Options options(int argc, char** argv) {
         else if (flag == "--device") result.device = integer(value, 0, 15, flag);
         else if (flag == "--pause-stage") result.pause_stage = value;
         else if (flag == "--pause-job-id") result.pause_job_id = value;
+        else if (flag == "--pause-attempt-index") result.pause_attempt_index = integer(value, 0, neuro::pearl::max_attempts - 1, flag);
         else throw std::invalid_argument("Unknown option: " + flag);
     }
     if (!result.port || result.shape.rows % 128 || result.shape.cols % 128)
@@ -139,11 +152,15 @@ Options options(int argc, char** argv) {
         throw std::invalid_argument("Unsupported replay checkpoint stage");
     if (result.pause_stage.empty() != result.pause_job_id.empty())
         throw std::invalid_argument("A replay checkpoint requires both --pause-stage and --pause-job-id");
+    if ((seen.count("--pause-attempt-index") && result.pause_stage.empty()) ||
+        result.pause_attempt_index >= result.max_attempts)
+        throw std::invalid_argument("Pause attempt must belong to the bounded requested search");
     return result;
 }
 
 struct Counts {
     std::size_t connections = 0, jobs_received = 0, jobs_started = 0, attempts_finished = 0;
+    std::size_t attempts_started = 0;
     std::size_t cancelled = 0, misses = 0, errors = 0, duplicates = 0, protocol_errors = 0;
     std::size_t unmatched_responses = 0, submissions = 0, accepted = 0, rejected = 0, pending_lost = 0;
     std::string json(std::size_t checkpoints) const {
@@ -151,6 +168,7 @@ struct Counts {
         out << "{";
 #define COUNT(name) out << "\"" #name "\":" << name << ",";
         COUNT(connections) COUNT(jobs_received) COUNT(jobs_started) COUNT(attempts_finished)
+        COUNT(attempts_started)
         COUNT(cancelled) COUNT(misses) COUNT(errors) COUNT(duplicates) COUNT(protocol_errors)
         COUNT(unmatched_responses) COUNT(submissions) COUNT(accepted) COUNT(rejected) COUNT(pending_lost)
 #undef COUNT
@@ -168,6 +186,7 @@ int run(const Options& opt) {
     host::Ticket latest;
     std::future<host::Result> worker;
     std::uint64_t started_generation = 0, connection = 0;
+    std::uint32_t next_attempt = 0;
     std::unique_ptr<wire::LoopbackPool> pool;
     std::optional<double> difficulty;
     std::map<int, Pending> pending;
@@ -283,7 +302,9 @@ int run(const Options& opt) {
     host::Checkpoint checkpoint = [&](host::Stage stage, const host::Ticket& ticket) {
         const std::string stage_text = stage_name(stage);
         event("stage", identity(ticket) + ",\"stage\":" + quote(stage_text));
-        if (stage_text == opt.pause_stage && ticket.job->job_id == opt.pause_job_id && !pause_used.exchange(true)) {
+        if (stage_text == opt.pause_stage && ticket.job->job_id == opt.pause_job_id &&
+            ticket.attempt && ticket.attempt->index == static_cast<std::uint32_t>(opt.pause_attempt_index) &&
+            !pause_used.exchange(true)) {
             ++checkpoints;
             event("checkpoint", identity(ticket) + ",\"stage\":" + quote(stage_text));
             const auto limit = Clock::now() + 3s;
@@ -359,15 +380,24 @@ int run(const Options& opt) {
                     completed = true; reason = "submission_limit"; break;
                 }
             }
-            if (pool && pool->authorized() && latest.job && !worker.valid() &&
-                started_generation != latest.generation &&
+            if (pool && pool->authorized() && latest.job && !worker.valid() && pending.empty() &&
                 counts.submissions < static_cast<std::size_t>(opt.max_submissions) && !fatal) {
                 const auto ticket = latest;
-                started_generation = ticket.generation;
-                ++counts.jobs_started;
-                worker = std::async(std::launch::async, [&, ticket] {
-                    return coordinator.run_one(ticket, opt.seed, compute, checkpoint);
-                });
+                if (started_generation != ticket.generation) {
+                    started_generation = ticket.generation;
+                    next_attempt = 0;
+                    ++counts.jobs_started;
+                }
+                if (next_attempt < static_cast<std::uint32_t>(opt.max_attempts)) {
+                    const auto index = next_attempt++;
+                    ++counts.attempts_started;
+                    event("attempt_started", identity(ticket) + ",\"index\":" + std::to_string(index));
+                    worker = std::async(std::launch::async, [&, ticket, index] {
+                        return coordinator.run_attempt(ticket, opt.seed, index, compute, checkpoint);
+                    });
+                } else if (opt.stop_on_attempt_limit && counts.pending_lost == 0) {
+                    completed = true; reason = "attempt_limit"; break;
+                }
             }
         }
     } catch (const std::exception& error) {
@@ -396,6 +426,9 @@ int run(const Options& opt) {
     const std::string document = "{\n  \"schema\":\"neuro.pool_client.v1\",\n  \"completed\":" +
         std::string(completed && !fatal ? "true" : "false") + ",\n  \"reason\":" + quote(reason) +
         ",\n  \"backend\":" + quote(opt.backend) + ",\n  \"elapsed_ms\":" + std::to_string(elapsed) +
+        ",\n  \"root_seed_hex\":" + quote(hex(opt.seed)) +
+        ",\n  \"attempt_limit_per_generation\":" + std::to_string(opt.max_attempts) +
+        ",\n  \"attempt_seed_policy\":\"neuro/zero-b/row-seed/v1\"" +
         ",\n  \"cpu_execution\":" + (cpu_computations.load() ? "true" : "false") +
         ",\n  \"gpu_execution\":" + (gpu_computations.load() ? "true" : "false") +
         ",\n  \"live_pool\":false,\n  \"synthetic_work\":true,\n  \"error\":" + quote(last_error) +

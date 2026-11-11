@@ -30,13 +30,15 @@ jobs:
         run: python -m pip install --require-hashes -r requirements-fixtures.txt
       - name: Verify independent Pearl input fixtures
         run: python tools/generate_pearl_fixtures.py --check
+      - name: Verify independent cumulative attempt fixtures
+        run: python tools/generate_attempt_fixtures.py --check
       - name: Compile and run CPU component checks
         run: python tools/neuroctl.py cpu-check --output artifacts/cpu-check.json
       - name: Exercise CMake build definition
         run: |
           cmake -S . -B build/cmake -DCMAKE_BUILD_TYPE=Release
           cmake --build build/cmake -j 2
-          ctest --test-dir build/cmake --output-on-failure
+          ctest --test-dir build/cmake --output-on-failure --no-tests=error
   proof:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -69,7 +71,7 @@ jobs:
         run: |
           cmake -S . -B build/proof-cmake -DCMAKE_BUILD_TYPE=Release -DNEURO_ENABLE_PROOF=ON
           cmake --build build/proof-cmake -j 2
-          RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure
+          RAYON_NUM_THREADS=2 ctest --test-dir build/proof-cmake --output-on-failure --no-tests=error
       - name: Verify proof corpus and controlled corruption with both implementations
         run: python tools/check_pearl_proofs.py
       - name: Exercise real loopback job lifecycle and independently verify submissions

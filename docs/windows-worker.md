@@ -80,8 +80,19 @@ the small MMA, full-K and Pearl-input probes, then exercises the same TCP replay
 with the explicit CUDA backend. It requires actual successful GPU evidence,
 not merely an executable exit code.
 
-Successful build and CPU reports record current source and binary fingerprints.
-Changing a checked source or executable invalidates the prerequisite for the
+GPU actions also require the ignored `configs/gpu-owner.local.json` profile.
+Follow `docs/gpu-miner-handoff.md` to bind the existing miner executable and
+the owner's exact `guided-setup.bat` to their hashes and Windows owner SID.
+Before stopping that miner, the worker establishes an independent interactive
+recovery task and observes a temporary visible console in the owner's session.
+After GPU test processes exit, recovery launches the configured batch through
+an independent visible console and checks both its window and miner process.
+A miner already stopped at entry remains stopped. Build and CPU actions do
+not acquire this lease or interrupt the owner's miner.
+
+Successful version-2 build and CPU reports record the complete public candidate
+identity and all native executable hashes, including the separate official checker.
+Changing a public source, document or executable invalidates the prerequisite for the
 next action. Reports live under `artifacts/windows/`; a new action starts with
 an unsuccessful report marker, so interruption cannot leave the previous success
 standing in for the current run. These remain synthetic correctness checks,
@@ -107,7 +118,9 @@ See the [Microsoft Job Object contract](https://learn.microsoft.com/en-us/window
 Each fixed action runs under this outer job. Internal Python tools retain their
 own subprocess limits; their Windows `taskkill` fallback alone does not promise
 containment after a process leader exits. The outer Job Object supplies that
-boundary. No action kills unrelated miners or processes. An OS or driver hang
+boundary. The GPU recovery and restart tasks run outside that worker job, so
+its cancellation cannot kill the restored owner miner. Only the configured
+miner and its verified batch launcher are stopped. An OS or driver hang
 which stops Windows itself cannot be recovered by an SSH watchdog.
 
 The C# self-test starts real Windows child processes to check exit propagation,
@@ -133,8 +146,9 @@ python tools/remote_worker.py --profile configs/remote.local.json run-cuda --dev
 
 The current controller runs on Linux and requires OpenSSH 9+ for SFTP-based
 `scp`. The Windows checkout must already be present and its submodules populated.
-The controller stages only its worker, runner and structured request into a
-unique work directory. Source distribution and the complete handoff archive
+The controller stages its worker, runner, standalone candidate verifier,
+candidate manifest and structured version-2 request into a unique work directory.
+Source distribution and the complete handoff archive
 remain part of the later packaging work.
 
 The SSH invocation uses argv without a local shell, no agent forwarding,
@@ -150,19 +164,20 @@ EncodedCommand. Native executable arguments use Win32 quoting without cmd.exe.
 
 ## Reports, stale files and lost SSH
 
-Each request has a unique ID and hashes of the worker, runner and action entry
-point. Before build/run the remote checkout must contain the expected entry
-point and runner bytes. The controller accepts only the matching report and
-consistent outcome fields. `inventory` may inspect a missing checkout without
-pretending a build action ran.
+Each version-2 request has a unique ID and hashes of the worker, runner, action
+entry point and staged verifier, plus a manifest file hash and expected complete
+public candidate identity. Before build/run the remote checkout must match that
+manifest. A separate verification in the action process closes the gap before
+entrypoint execution; another follows termination, including failed actions.
+The controller requires matching pre/post identities and consistent outcome
+fields. Changed kernels, added inputs, partial deployment and mismatched reports
+cannot satisfy this boundary. `inventory` can still inspect a missing checkout
+without pretending a candidate or build action was verified.
 
-These request hashes cover the worker protocol and entry point. They do not
-assert that every kernel/source file on the target matches the Linux caller's
-checkout. The current dispatcher assumes a correctly prepositioned repository;
-its source/binary fingerprints enforce consistency between actions on that
-target. Before using remote results to rank different candidates, the experiment
-loop must bind a full candidate manifest to deployment and returned evidence.
-That cross-host candidate identity belongs to the next iteration's search loop.
+`docs/candidate-identity.md` specifies exact-byte serialization, private/generated
+exclusions, pinned-source checking and the existing source-deployment boundary.
+The manifest is not a filesystem snapshot against adversarial edits and restores;
+keep the checkout fixed while an action runs.
 
 The wrapper distinguishes passed, failed, timeout, output limit and worker error.
 Process success is only one prerequisite: the fixed entry point also enforces
@@ -178,6 +193,8 @@ that uncertainty before another GPU run is launched.
 
 The owner provided access information in iteration 6 for the final DSH directive.
 The private note `neuro-owner-handoff-iteration06.json` retains those details.
+Its iteration-7 update also preserves the owner's exact batch path and the
+requirement to restore a visible console after each GPU test group.
 Neither it nor private keys belong in the public source archive. The final
 directive should reference the existing key location on the owner VM and carry
 the owner-specific connection instructions separately.

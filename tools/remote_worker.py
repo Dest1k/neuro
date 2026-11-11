@@ -20,11 +20,12 @@ import tempfile
 import uuid
 
 from neuroctl.experiments import run_command
+from candidate_manifest import CandidateError, canonical_bytes, create_manifest, validate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 ACTIONS = ("inventory", "build-probes", "run-cpu", "run-cuda")
 DEFAULT_TIMEOUTS = {"inventory": 90, "build-probes": 1800,
-                    "run-cpu": 300, "run-cuda": 300}
+                    "run-cpu": 300, "run-cuda": 900}
 MAX_CAPTURE = 262144
 
 
@@ -186,7 +187,7 @@ def ssh_options(profile: Profile) -> list[str]:
             "-o", "ServerAliveCountMax=2"]
 
 
-def make_request(profile: Profile, action: str, device: int, request_id: str) -> dict:
+def make_request(profile: Profile, action: str, device: int, request_id: str, *, candidate=None) -> dict:
     if action not in ACTIONS:
         raise RemoteError("unsupported action")
     _integer(device, 0, 15, "device")
@@ -196,26 +197,42 @@ def make_request(profile: Profile, action: str, device: int, request_id: str) ->
         raise RemoteError("invalid request identity")
     files = {"worker_sha256": ROOT / "windows/worker.ps1",
              "runner_sha256": ROOT / "windows/BoundedProcess.cs",
-             "entrypoint_sha256": ROOT / "windows/ci.ps1"}
+             "entrypoint_sha256": ROOT / "windows/ci.ps1",
+             "manifest_tool_sha256": ROOT / "tools/candidate_manifest.py"}
     try:
         hashes = {key: hashlib.sha256(path.read_bytes()).hexdigest() for key, path in files.items()}
     except OSError as exc:
         raise RemoteError("local worker source is missing") from exc
-    return {"schema_version": 1, "request_id": request_id, "action": action,
+    if action != "inventory":
+        try:
+            candidate = validate_manifest(candidate if candidate is not None else create_manifest(ROOT))
+        except CandidateError as exc:
+            raise RemoteError("local candidate identity could not be established") from exc
+        source = {row["path"]: row["sha256"] for row in candidate["files"]}
+        if any(source.get(path.relative_to(ROOT).as_posix()) != hashes[key] for key, path in files.items()):
+            raise RemoteError("local worker files changed after candidate capture")
+    elif candidate is not None:
+        raise RemoteError("inventory does not execute a candidate")
+    return {"schema_version": 2, "request_id": request_id, "action": action,
             "repo_root": profile.remote_repo, "device": device,
             "timeout_s": profile.timeouts[action], "max_output_bytes": profile.max_output_bytes,
+            "candidate_sha256": candidate["candidate_sha256"] if candidate else None,
+            "manifest_sha256": hashlib.sha256(canonical_bytes(candidate) + b"\n").hexdigest() if candidate else None,
             **hashes}
 
 
 def validate_report(report: dict, request: dict) -> dict:
     fields = {"schema", "request_id", "action", "worker_sha256", "runner_sha256",
               "entrypoint_sha256", "entrypoint_actual_sha256", "status",
+              "manifest_tool_sha256", "manifest_sha256", "candidate_sha256",
+              "candidate_before_sha256", "candidate_after_sha256",
               "exit_code", "timed_out", "output_complete", "duration_ms", "process_id",
               "stdout_bytes", "stderr_bytes", "stdout_truncated", "stderr_truncated",
               "stdout", "stderr", "error"}
-    if set(report) != fields or report["schema"] != "neuro.remote.worker.v1":
+    if set(report) != fields or report["schema"] != "neuro.remote.worker.v2":
         raise RemoteError("unexpected worker report schema")
-    for field in ("request_id", "action", "worker_sha256", "runner_sha256", "entrypoint_sha256"):
+    for field in ("request_id", "action", "worker_sha256", "runner_sha256", "entrypoint_sha256",
+                  "manifest_tool_sha256", "manifest_sha256", "candidate_sha256"):
         if report[field] != request[field]:
             raise RemoteError("worker report is not for this request and staged code")
     actual_entry = report["entrypoint_actual_sha256"]
@@ -225,6 +242,19 @@ def validate_report(report: dict, request: dict) -> dict:
     if (request["action"] != "inventory" and actual_entry != request["entrypoint_sha256"]
             and report["process_id"] != 0):
         raise RemoteError("fixed action ran without the requested entrypoint source")
+    for field in ("candidate_before_sha256", "candidate_after_sha256"):
+        value = report[field]
+        if value is not None and (not isinstance(value, str) or re.fullmatch(r"[0-9a-f]{64}", value) is None):
+            raise RemoteError("invalid actual candidate identity")
+        if request["action"] == "inventory" and value is not None:
+            raise RemoteError("inventory cannot claim candidate verification")
+    if request["action"] != "inventory":
+        if report["process_id"] != 0 and report["candidate_before_sha256"] != request["candidate_sha256"]:
+            raise RemoteError("fixed action ran without the requested candidate source")
+        if report["status"] == "passed" and report["candidate_after_sha256"] != request["candidate_sha256"]:
+            raise RemoteError("candidate source changed or was not verified after the action")
+        if report["candidate_after_sha256"] != request["candidate_sha256"] and report["status"] != "worker_error":
+            raise RemoteError("a missing or changed final candidate must invalidate the action result")
     _integer(report["exit_code"], -(2 ** 31), 2 ** 31 - 1, "exit_code")
     _integer(report["duration_ms"], 0, request["timeout_s"] * 1000 + 30000, "duration_ms")
     _integer(report["process_id"], 0, 2 ** 32 - 1, "process_id")
@@ -268,10 +298,14 @@ def dispatch(profile: Profile, action: str, device: int = 0, *, runner=run_comma
     if not ssh or not scp:
         raise RemoteError("OpenSSH ssh and scp are required")
     request_id = uuid.uuid4().hex
-    request = make_request(profile, action, device, request_id)
-    report = {"schema": "neuro.remote.dispatch.v1", "request_id": request_id,
+    try:
+        candidate = create_manifest(ROOT) if action != "inventory" else None
+    except CandidateError as exc:
+        raise RemoteError("local candidate identity could not be established") from exc
+    request = make_request(profile, action, device, request_id, candidate=candidate)
+    report = {"schema": "neuro.remote.dispatch.v2", "request_id": request_id,
               "action": action, "status": "not_started", "remote_execution": "not_started",
-              "transport": [], "worker": None}
+              "candidate_sha256": request["candidate_sha256"], "transport": [], "worker": None}
 
     def invoke(stage, argv, timeout, cap=8192):
         result = runner(argv, timeout_s=timeout, max_log_bytes=cap, stage=stage)
@@ -307,10 +341,16 @@ def dispatch(profile: Profile, action: str, device: int = 0, *, runner=run_comma
     with tempfile.TemporaryDirectory(prefix="neuro-worker-") as temporary:
         request_path = Path(temporary) / "request.json"
         request_path.write_text(json.dumps(request, separators=(",", ":")) + "\n", encoding="utf-8")
+        candidate_paths = []
+        if candidate is not None:
+            manifest_path = Path(temporary) / "candidate.json"
+            manifest_path.write_bytes(canonical_bytes(candidate) + b"\n")
+            candidate_paths.append(str(manifest_path))
         # Modern scp uses SFTP. No -O fallback and no shell metacharacters in
         # remote transfer paths. Only our worker/request files are staged.
         upload = [scp, *options, "-S", ssh, "-P", str(profile.port), "-B",
                   str(ROOT / "windows/worker.ps1"), str(ROOT / "windows/BoundedProcess.cs"),
+                  str(ROOT / "tools/candidate_manifest.py"), *candidate_paths,
                   str(request_path), destination + ":" + remote_dir + "/"]
         ok, _ = invoke("upload", upload, 60)
         if not ok:
@@ -321,7 +361,7 @@ def dispatch(profile: Profile, action: str, device: int = 0, *, runner=run_comma
                   "exit $LASTEXITCODE")
         report["remote_execution"] = "unknown"
         launch_ok, launched = invoke("execute", [*ssh_base, *encoded_command(launch)],
-                                     request["timeout_s"] + 30)
+                                     request["timeout_s"] + 100)
         # Fetch even after a lost SSH connection, but never re-execute the work.
         # Reading through SSH enforces a local capture cap as well as remote size
         # check; a hostile/partial report cannot cause an unbounded scp download.
@@ -364,7 +404,7 @@ def main(argv=None) -> int:
     except (RemoteError, OSError) as exc:
         # The category is actionable without exposing a private path/value.
         message = str(exc) if isinstance(exc, RemoteError) else "local I/O failure"
-        report = {"schema": "neuro.remote.dispatch.v1", "action": args.action,
+        report = {"schema": "neuro.remote.dispatch.v2", "action": args.action,
                   "status": "invalid_input", "remote_execution": "not_started", "error": message}
     try:
         args.output.parent.mkdir(parents=True, exist_ok=True)

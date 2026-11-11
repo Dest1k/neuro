@@ -16,8 +16,13 @@ bool same_job(const Job& left, const Job& right) {
 }
 
 bool same_ticket(const Ticket& left, const Ticket& right) {
-    return left.generation == right.generation && left.job == right.job;
+    return left.generation == right.generation && left.job == right.job && left.attempt == right.attempt;
 }
+
+struct ScopeExit {
+    std::function<void()> finish;
+    ~ScopeExit() { finish(); }
+};
 
 void validate(const Job& job) {
     if (job.job_id.empty() || job.job_id.size() > 127 ||
@@ -76,7 +81,10 @@ Ticket Coordinator::publish(Job job) {
     if (job_ && same_job(*job_, *immutable)) return {generation_, job_};
     advance_locked();
     job_ = std::move(immutable);
-    committed_ = false;
+    committed_ = 0;
+    root_seed_.reset();
+    next_attempt_ = 0;
+    running_ = false;
     return {generation_, job_};
 }
 
@@ -90,7 +98,10 @@ void Coordinator::invalidate() {
     std::lock_guard<std::mutex> lock(mutex_);
     advance_locked();
     job_.reset();
-    committed_ = false;
+    committed_ = 0;
+    root_seed_.reset();
+    next_attempt_ = 0;
+    running_ = false;
 }
 
 bool Coordinator::disconnect(std::uint64_t connection) {
@@ -98,7 +109,10 @@ bool Coordinator::disconnect(std::uint64_t connection) {
     if (!job_ || job_->connection != connection) return false;
     advance_locked();
     job_.reset();
-    committed_ = false;
+    committed_ = 0;
+    root_seed_.reset();
+    next_attempt_ = 0;
+    running_ = false;
     return true;
 }
 
@@ -113,8 +127,21 @@ bool Coordinator::current(const Ticket& ticket) const {
 
 Result Coordinator::run_one(const Ticket& ticket, const Seed& seed, const Compute& compute,
                             const Checkpoint& checkpoint) {
+    return run_attempt(ticket, seed, 0, compute, checkpoint);
+}
+
+Result Coordinator::run_attempt(const Ticket& job_ticket, const Seed& seed, std::uint32_t index,
+                                const Compute& compute, const Checkpoint& checkpoint) {
+    Ticket ticket = job_ticket;
     Result result;
     result.ticket = ticket;
+    bool claimed = false;
+    ScopeExit release{[&] {
+        if (claimed) {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (current_locked(ticket)) running_ = false;
+        }
+    }};
     const auto stale = [&] {
         if (current(ticket)) return false;
         result.status = Status::cancelled;
@@ -127,13 +154,28 @@ Result Coordinator::run_one(const Ticket& ticket, const Seed& seed, const Comput
         return !stale();
     };
     try {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (!current_locked(ticket)) { result.status = Status::cancelled; return result; }
+            if (ticket.attempt) throw std::invalid_argument("run_attempt requires an unbound job ticket");
+            if (index >= pearl::max_attempts) throw std::invalid_argument("attempt index exceeds 63");
+            if (running_) throw std::invalid_argument("an attempt is already running for this generation");
+            if (index != next_attempt_) throw std::invalid_argument("attempt indices must be consecutive and single-use");
+            if (root_seed_ && *root_seed_ != seed) throw std::invalid_argument("root seed differs from the pinned generation plan");
+            ticket.attempt = std::make_shared<const AttemptIdentity>(AttemptIdentity{seed, index});
+            result.ticket = ticket;
+            root_seed_ = seed;
+            ++next_attempt_;
+            running_ = claimed = true;
+        }
         if (!step(Stage::before_prepare)) return result;
         if (!compute) throw std::invalid_argument("missing arithmetic backend");
         pearl::Request request;
         request.shape = ticket.job->shape;
         request.header.assign(ticket.job->header.begin(), ticket.job->header.end());
-        request.seed.assign(seed.begin(), seed.end());
+        request.seed.assign(ticket.attempt->root_seed.begin(), ticket.attempt->root_seed.end());
         request.cert_version = ticket.job->cert_version;
+        request.attempt_index = index;
         auto prepared = pearl::prepare_zero_b(request);
         if (!step(Stage::after_prepare) || !step(Stage::before_compute)) return result;
         fullk::Result arithmetic;
@@ -208,9 +250,13 @@ bool Coordinator::commit(const Result& result, const Sink& sink) {
     if (result.status != Status::found || !result.share ||
         result.share != result.verified_share_ ||
         !same_ticket(result.ticket, result.share->ticket) ||
-        !current_locked(result.ticket) || committed_ || !sink)
+        !current_locked(result.ticket) || !result.ticket.attempt ||
+        result.ticket.attempt->index >= pearl::max_attempts || !root_seed_ ||
+        result.ticket.attempt->root_seed != *root_seed_ || !sink)
         return false;
-    committed_ = true;
+    const auto mask = std::uint64_t{1} << result.ticket.attempt->index;
+    if (committed_ & mask) return false;
+    committed_ |= mask;
     return sink(*result.share);
 }
 

@@ -9,6 +9,8 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import shutil
+import subprocess
 import unittest
 from unittest.mock import patch
 
@@ -25,10 +27,14 @@ def process_result(**changes):
 
 
 def worker_result(request, **changes):
-    value = {"schema": "neuro.remote.worker.v1", "request_id": request["request_id"],
+    value = {"schema": "neuro.remote.worker.v2", "request_id": request["request_id"],
              "action": request["action"], "worker_sha256": request["worker_sha256"],
              "runner_sha256": request["runner_sha256"], "entrypoint_sha256": request["entrypoint_sha256"],
              "entrypoint_actual_sha256": request["entrypoint_sha256"], "status": "passed",
+             "manifest_tool_sha256": request["manifest_tool_sha256"],
+             "manifest_sha256": request["manifest_sha256"], "candidate_sha256": request["candidate_sha256"],
+             "candidate_before_sha256": request["candidate_sha256"],
+             "candidate_after_sha256": request["candidate_sha256"],
              "exit_code": 0, "timed_out": False, "output_complete": True,
              "duration_ms": 120, "process_id": 1234, "stdout_bytes": 2,
              "stderr_bytes": 0, "stdout_truncated": False, "stderr_truncated": False,
@@ -44,11 +50,14 @@ class FakeTransport:
         self.raw_report = raw_report
         self.calls = []
         self.request = None
+        self.manifest = None
 
     def __call__(self, argv, *, timeout_s, max_log_bytes, stage):
         self.calls.append((stage, list(argv), timeout_s, max_log_bytes))
         if stage == "upload":
             self.request = json.loads(Path(argv[-2]).read_text(encoding="utf-8"))
+            if self.request["candidate_sha256"] is not None:
+                self.manifest = json.loads(Path(argv[-3]).read_text(encoding="utf-8"))
         if stage in self.results:
             return process_result(**self.results[stage])
         if stage == "client_version":
@@ -79,6 +88,18 @@ class RemoteWorkerTest(unittest.TestCase):
         self.profile_file = self.root / "private-profile.json"
         self.write_profile()
         self.profile = remote.load_profile(self.profile_file)
+        self.candidate_root = self.root / "public-candidate"
+        self.candidate_root.mkdir()
+        for name in ("windows/worker.ps1", "windows/BoundedProcess.cs", "windows/ci.ps1", "tools/candidate_manifest.py"):
+            destination = self.candidate_root / name
+            destination.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(remote.ROOT / name, destination)
+        (self.candidate_root / "upstream").mkdir()
+        (self.candidate_root / "upstream/sources.lock.json").write_text('{"schema_version":1,"sources":[]}\n')
+        subprocess.run(["git", "init", "-q", str(self.candidate_root)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        patcher = patch.object(remote, "ROOT", self.candidate_root)
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def write_profile(self):
         self.profile_file.write_text(json.dumps(self.values), encoding="utf-8")
@@ -189,7 +210,7 @@ class RemoteWorkerTest(unittest.TestCase):
         uploaded = fake.calls[2][1]
         self.assertEqual(uploaded[0], "/usr/bin/scp")
         self.assertIn("-S", uploaded)
-        self.assertEqual(fake.calls[3][2], self.profile.timeouts["inventory"] + 30)
+        self.assertEqual(fake.calls[3][2], self.profile.timeouts["inventory"] + 100)
         text = json.dumps(result)
         for private in (str(self.key), str(self.known_hosts), self.profile.host, self.profile.user,
                         "KEY_CONTENT_MUST_NOT_BE_OPENED"):
@@ -239,7 +260,8 @@ class RemoteWorkerTest(unittest.TestCase):
     def test_stale_or_mismatched_code_report_is_rejected(self):
         for field, value in (("request_id", "b" * 32), ("action", "run-cuda"),
                              ("worker_sha256", "0" * 64), ("runner_sha256", "1" * 64),
-                             ("entrypoint_sha256", "2" * 64)):
+                             ("entrypoint_sha256", "2" * 64), ("manifest_tool_sha256", "3" * 64),
+                             ("manifest_sha256", "4" * 64), ("candidate_sha256", "5" * 64)):
             with self.subTest(field=field):
                 result = self.dispatch(FakeTransport(worker={field: value}))
                 self.assertEqual(result["status"], "invalid_report")
@@ -259,6 +281,48 @@ class RemoteWorkerTest(unittest.TestCase):
         result = self.dispatch(FakeTransport(worker={"entrypoint_actual_sha256": None}))
         self.assertEqual(result["status"], "passed")
         self.assertIsNone(result["worker"]["entrypoint_actual_sha256"])
+
+    def test_fixed_action_transfers_manifest_and_binds_complete_candidate_result(self):
+        fake = FakeTransport()
+        result = self.dispatch(fake, "run-cpu")
+        self.assertEqual(result["status"], "passed")
+        self.assertEqual(fake.request["schema_version"], 2)
+        self.assertEqual(fake.manifest["candidate_sha256"], result["candidate_sha256"])
+        self.assertEqual(result["worker"]["candidate_after_sha256"], result["candidate_sha256"])
+        uploaded = fake.calls[2][1]
+        self.assertIn(str(self.candidate_root / "tools/candidate_manifest.py"), uploaded)
+
+    def test_wrong_candidate_before_or_after_cannot_be_success(self):
+        for field in ("candidate_before_sha256", "candidate_after_sha256"):
+            for value in (None, "0" * 64, True):
+                with self.subTest(field=field, value=value):
+                    self.assertEqual(self.dispatch(FakeTransport(worker={field: value}), "run-cpu")["status"], "invalid_report")
+
+    def test_source_mismatch_before_launch_is_bound_rejection(self):
+        changed = {"status": "worker_error", "exit_code": -1, "process_id": 0,
+                   "output_complete": False, "error": "candidate mismatch",
+                   "candidate_before_sha256": "0" * 64, "candidate_after_sha256": "0" * 64}
+        result = self.dispatch(FakeTransport(results={"execute": {"returncode": 2}}, worker=changed), "run-cpu")
+        self.assertEqual(result["status"], "worker_error")
+        self.assertEqual(result["worker"]["process_id"], 0)
+
+    def test_mutation_after_failed_action_still_invalidates_candidate(self):
+        changed = {"status": "worker_error", "exit_code": 7, "error": "candidate changed after action",
+                   "candidate_after_sha256": "0" * 64}
+        result = self.dispatch(FakeTransport(results={"execute": {"returncode": 2}}, worker=changed), "run-cpu")
+        self.assertEqual(result["status"], "worker_error")
+        self.assertEqual(result["worker"]["exit_code"], 7)
+
+    def test_private_owner_profile_is_not_part_of_uploaded_manifest(self):
+        configs = self.candidate_root / "configs"
+        configs.mkdir()
+        private = configs / "gpu-owner.local.json"
+        private.write_text("PRIVATE_OWNER_CONFIG_CONTENT")
+        fake = FakeTransport()
+        result = self.dispatch(fake, "run-cpu")
+        self.assertEqual(result["status"], "passed")
+        self.assertNotIn("gpu-owner.local.json", json.dumps(fake.manifest))
+        self.assertNotIn("PRIVATE_OWNER_CONFIG_CONTENT", json.dumps(result))
 
     def test_inconsistent_pass_flags_bytes_and_process_are_rejected(self):
         for change in ({"exit_code": 7}, {"timed_out": True}, {"output_complete": False},

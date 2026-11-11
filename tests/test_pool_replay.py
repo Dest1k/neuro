@@ -2,6 +2,8 @@
 import base64
 import gzip
 import os
+import copy
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -10,7 +12,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from replay_pool import (Job, JSONLines, PeerLedger, ReplayError, backend_arguments,
                          decode_proof, require_backend_execution,
-                         require_official_acceptance, stop_child, strict_object)
+                         require_official_acceptance, require_attempt_submission, stop_child, strict_object)
 
 
 class StrictProtocolTests(unittest.TestCase):
@@ -156,6 +158,29 @@ class OfficialResponseTests(unittest.TestCase):
                        {"stage": "verification_panic"}, {"upstream_commit": "other"}):
             with self.subTest(change=change), self.assertRaises(ReplayError):
                 require_official_acceptance(process, {**payload, **change}, "pinned")
+
+
+class AttemptProofIdentityTests(unittest.TestCase):
+    def setUp(self):
+        data = json.loads((Path(__file__).resolve().parents[1] / "native/fixtures/attempt_manifest.json").read_text())
+        self.first, self.second = data["cases"][:2]
+        tile = self.first["first_easy_winner"]
+        self.decoded = {"m": 128, "n": 128,
+                        "a": {"root_hex": self.first["digests"]["commitment_a"],
+                              "row_indices": list(range(tile["row"], tile["row"] + 8))},
+                        "bt": {"root_hex": self.first["digests"]["commitment_b"],
+                               "row_indices": list(range(tile["col"], tile["col"] + 16))}}
+
+    def test_relabelled_old_valid_proof_cannot_satisfy_the_next_attempt(self):
+        require_attempt_submission(self.decoded, self.first, self.first["first_easy_winner"])
+        with self.assertRaisesRegex(ReplayError, "different cumulative attempt"):
+            require_attempt_submission(self.decoded, self.second, self.second["first_easy_winner"])
+
+    def test_matching_roots_do_not_allow_an_unexpected_tile(self):
+        altered = copy.deepcopy(self.decoded)
+        altered["a"]["row_indices"][0] += 8
+        with self.assertRaisesRegex(ReplayError, "expected winning tile"):
+            require_attempt_submission(altered, self.first, self.first["first_easy_winner"])
 
 
 class CleanupTests(unittest.TestCase):

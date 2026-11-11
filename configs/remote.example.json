@@ -11,7 +11,7 @@
     "inventory": 90,
     "build-probes": 1800,
     "run-cpu": 300,
-    "run-cuda": 300
+    "run-cuda": 900
   },
   "max_output_bytes": 65536
 }

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "owner_sid": "S-1-5-21-REPLACE-WITH-LOCAL-OWNER-SID",
+  "miner_executable": "C:/Users/WINDOWS_USER/Desktop/srb/SRBMiner-MULTI.exe",
+  "miner_sha256": "REPLACE_WITH_LOWERCASE_SHA256_OF_CONFIGURED_MINER",
+  "restart_batch": "C:/Users/WINDOWS_USER/Desktop/srb/guided-setup.bat",
+  "restart_batch_sha256": "REPLACE_WITH_LOWERCASE_SHA256_OF_EXISTING_BATCH"
+}

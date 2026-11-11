@@ -237,6 +237,21 @@ def require_official_acceptance(process: dict, result: dict, commit: str) -> Non
             "Submitted proof was not accepted by the pinned official verifier")
 
 
+def require_attempt_submission(decoded: dict, expected: dict, tile: dict) -> None:
+    """Bind actual proof bytes to independent cumulative-attempt expectations.
+
+    Native event labels do not establish which mutation sequence was mined.
+    The authenticated Merkle roots and selected rows must match the peer's gold.
+    """
+    require(decoded.get("m") == 128 and decoded.get("n") == 128 and
+            decoded["a"]["root_hex"] == expected["digests"]["commitment_a"] and
+            decoded["bt"]["root_hex"] == expected["digests"]["commitment_b"],
+            "Wire proof belongs to a different cumulative attempt or job")
+    require(decoded["a"]["row_indices"] == list(range(tile["row"], tile["row"] + 8)) and
+            decoded["bt"]["row_indices"] == list(range(tile["col"], tile["col"] + 16)),
+            "Wire proof did not reveal the independently expected winning tile")
+
+
 def backend_arguments(backend: str, device: int | None) -> list[str]:
     require(backend in ("cpu", "cuda"), "Backend must be cpu or cuda")
     if backend == "cpu":
@@ -262,6 +277,8 @@ class Scenario:
     pause_stage: str | None = None
     connections: int = 1
     submissions: int = 1
+    attempts: int = 1
+    pause_attempt_index: int = 0
 
 
 SCENARIOS = (
@@ -280,6 +297,11 @@ SCENARIOS = (
     Scenario("authorize_rejected_reconnect", connections=2),
     Scenario("unacknowledged_submit"),
     Scenario("ack_timeout"),
+    Scenario("multi_attempt", submissions=3, attempts=3),
+    Scenario("miss_then_found"),  # Limit/target come from independent attempt gold.
+    Scenario("attempt_limit", submissions=0, attempts=3),
+    Scenario("cancel_later_attempt", pause_stage="after_compute", submissions=2, attempts=3,
+             pause_attempt_index=1),
 )
 
 
@@ -325,11 +347,14 @@ def stop_child(process: subprocess.Popen, *, grace: float = 1.0) -> None:
 class ReplayCase:
     def __init__(self, scenario: Scenario, *, native: Path, reference: Path,
                  commit: str, fixture: dict, work: Path, deadline_ms: int,
-                 backend: str = "cpu", device: int | None = None):
+                 backend: str = "cpu", device: int | None = None, attempt_fixtures: dict | None = None):
         self.scenario, self.native, self.reference, self.commit = scenario, native, reference, commit
         self.fixture, self.work, self.deadline_ms = fixture, work, deadline_ms
         self.backend = backend
         self.backend_argv = backend_arguments(backend, device)
+        self.attempt_fixtures = attempt_fixtures
+        if scenario.name == "miss_then_found":
+            self.scenario = replace(scenario, attempts=attempt_fixtures["miss_then_found"]["winning_attempt"] + 1)
         self.work.mkdir(parents=True, exist_ok=True)
         self.ledger = PeerLedger()
         self.events: list[dict] = []
@@ -346,6 +371,11 @@ class ReplayCase:
         self.event_thread: threading.Thread | None = None
         self.initial_job = Job(f"{scenario.name}-job", fixture["header_hex"],
                                cert_version=scenario.cert_version)
+        if scenario.name == "miss_then_found":
+            expected = attempt_fixtures["miss_then_found"]
+            self.initial_job = replace(self.initial_job, target_hex=expected["target_be_hex"], nbits=expected["nbits"])
+        if scenario.name == "attempt_limit":
+            self.initial_job = replace(self.initial_job, target_hex="00" * 32, nbits="0x00000000")
         self.native_report = self.work / "native-report.json"
 
     def later(self, delay: float, callback: Callable) -> None:
@@ -446,7 +476,7 @@ class ReplayCase:
                               cwd=ROOT, timeout_s=15, max_log_bytes=16384,
                               stage="loopback-submitted-proof-verification")
         result = strict_object(process["stdout"].encode(), limit=16384)
-        planned_rejection = self.scenario.submissions == 2 and not self.proofs
+        planned_rejection = self.scenario.name in ("wrong_id_then_reject", "stale_response") and not self.proofs
         no_ack = self.scenario.name in ("unacknowledged_submit", "ack_timeout")
         record = {"connection": context.epoch, "id": request_id, "revision": issued.revision,
                   "job_id": issued.job.job_id, "cert_version": issued.job.cert_version,
@@ -454,8 +484,21 @@ class ReplayCase:
                   "target_be_hex": issued.job.target_hex, "gzip": context.gzip,
                   "wire_bytes": len(wire), "raw_bytes": len(raw),
                   "wire_sha256": sha256(wire), "proof_sha256": sha256(raw),
+                  "proof_signal_commitment_a": decoded["a"]["root_hex"],
                   "official_verifier": result, "official_process_returncode": process["returncode"],
                   "synthetic_peer_accepted": None}
+        if self.scenario.name in ("multi_attempt", "miss_then_found", "cancel_later_attempt"):
+            index = (len(self.proofs) if self.scenario.name == "multi_attempt" else
+                     self.attempt_fixtures["miss_then_found"]["winning_attempt"]
+                     if self.scenario.name == "miss_then_found" else 0)
+            expected = next((case for case in self.attempt_fixtures["cases"]
+                             if case["index"] == index and case["header_hex"] == issued.job.header_hex), None)
+            require(expected is not None, "Peer lacks independent gold for the submitted work/attempt")
+            tile = (self.attempt_fixtures["miss_then_found"] if self.scenario.name == "miss_then_found"
+                    else expected["first_easy_winner"])
+            require_attempt_submission(decoded, expected, tile)
+            record.update(expected_attempt_index=index, attempt_identity_independently_checked=True,
+                          expected_commitment_a=expected["digests"]["commitment_a"])
         self.proofs.append(record)
         require_official_acceptance(process, result, self.commit)
         if no_ack:
@@ -482,7 +525,8 @@ class ReplayCase:
         if event["event"] == "checkpoint":
             self.checkpoints += 1
             require(self.checkpoints == 1 and event.get("stage") == self.scenario.pause_stage and
-                    event.get("job_id") == self.initial_job.job_id,
+                    event.get("job_id") == self.initial_job.job_id and
+                    event.get("attempt_index") == self.scenario.pause_attempt_index,
                     "Unexpected native checkpoint")
             context = self.ledger.connections[event["connection"]]
             if self.scenario.name == "reconnect_after_verify":
@@ -491,7 +535,7 @@ class ReplayCase:
             job = self.initial_job
             if self.scenario.name == "cancel_before_compute":
                 job = replace(job, job_id=job.job_id + "-replacement")
-            elif self.scenario.name == "cancel_after_compute_header":
+            elif self.scenario.name in ("cancel_after_compute_header", "cancel_later_attempt"):
                 header = bytearray.fromhex(job.header_hex)
                 header[75] ^= 1
                 job = replace(job, header_hex=header.hex())
@@ -502,7 +546,7 @@ class ReplayCase:
             else:
                 raise ReplayError("Checkpoint in a scenario without a cancellation action")
             self.send_job(context, job)
-        if (event["event"] == "share_response" and self.scenario.submissions == 2 and
+        if (event["event"] == "share_response" and self.scenario.name in ("wrong_id_then_reject", "stale_response") and
                 not self.continuation_sent and self.proofs and event.get("id") == self.proofs[0]["id"]):
             require(event.get("accepted") is False, "Native client counted a planned rejection as accepted")
             context = self.ledger.connections[event["connection"]]
@@ -554,6 +598,9 @@ class ReplayCase:
             require(returncode == 1 and report.get("completed") is False and
                     report.get("reason") == "connection_limit",
                     "Unacknowledged submission was incorrectly counted as a completed goal")
+        elif self.scenario.name == "attempt_limit":
+            require(returncode == 0 and report.get("completed") is True and report.get("reason") == "attempt_limit",
+                    "A bounded sequence of actual misses did not terminate at its attempt cap")
         else:
             require(returncode == 0 and report.get("completed") is True and
                     report.get("reason") == "submission_limit",
@@ -563,14 +610,23 @@ class ReplayCase:
         require(type(counters) is dict, "Native report has no counters")
         require(all(type(value) is int and value >= 0 for value in counters.values()),
                 "Native counters must be nonnegative integers")
+        rejected = int(self.scenario.name in ("wrong_id_then_reject", "stale_response"))
         expected = {"connections": self.scenario.connections, "submissions": self.scenario.submissions,
-                    "accepted": 0 if no_ack else 1, "rejected": self.scenario.submissions - 1,
+                    "accepted": 0 if no_ack else self.scenario.submissions - rejected, "rejected": rejected,
                     "pending_lost": int(no_ack), "errors": 0,
                     "duplicates": int(self.scenario.name == "duplicate_notify"),
                     "unmatched_responses": int(self.scenario.name == "wrong_id_then_reject"),
                     "cancelled": int(self.scenario.pause_stage is not None),
                     "checkpoints": int(self.scenario.pause_stage is not None),
                     "jobs_started": len(self.ledger.issued)}
+        expected["misses"] = (self.attempt_fixtures["miss_then_found"]["misses"]
+                              if self.scenario.name == "miss_then_found" else
+                              self.scenario.attempts if self.scenario.name == "attempt_limit" else 0)
+        expected_attempts = (self.scenario.attempts if self.scenario.name in
+                            ("multi_attempt", "miss_then_found", "attempt_limit") else
+                            3 if self.scenario.name == "cancel_later_attempt" else len(self.ledger.issued))
+        expected["attempts_started"] = expected_attempts
+        expected["attempts_finished"] = expected_attempts
         for key, value in expected.items():
             require(counters.get(key) == value, f"Unexpected native counter {key}: {counters.get(key)} != {value}")
         if self.scenario.name == "malformed_notify_recovery":
@@ -586,6 +642,10 @@ class ReplayCase:
         require(len(self.proofs) == self.scenario.submissions, "Unexpected number of wire submissions")
         require(len(self.ledger.connections) == self.scenario.connections, "Unexpected TCP connection count")
         require(self.checkpoints == int(self.scenario.pause_stage is not None), "Missing cancellation checkpoint")
+        require(report.get("root_seed_hex") == self.fixture["seed_hex"] and
+                report.get("attempt_seed_policy") == "neuro/zero-b/row-seed/v1" and
+                report.get("attempt_limit_per_generation") == self.scenario.attempts,
+                "Native report omitted or changed the reproducible search policy")
 
         generations = {}
         for epoch in self.ledger.connections:
@@ -609,6 +669,9 @@ class ReplayCase:
                     "Missing or duplicate native submit/response identity")
             require(matches[0].get("generation") == generations[proof["connection"], proof["revision"]] and
                     matches[0].get("job_id") == proof["job_id"], "Stale generation reached the wire")
+            require(matches[0].get("attempt_index") == proof.get("expected_attempt_index", 0) and
+                    (not replies or replies[0].get("attempt_index") == matches[0]["attempt_index"]),
+                    "Wire proof and native response lost their attempt identity")
             if no_ack:
                 unresolved = [event for event in self.events if event["event"] == "share_unresolved" and
                               event.get("id") == proof["id"] and event.get("connection") == proof["connection"]]
@@ -619,8 +682,23 @@ class ReplayCase:
         if self.scenario.pause_stage:
             checkpoint = next(event for event in self.events if event["event"] == "checkpoint")
             require(any(event["event"] == "attempt_finished" and event.get("status") == "cancelled" and
-                        event.get("generation") == checkpoint["generation"] for event in self.events),
+                        event.get("generation") == checkpoint["generation"] and
+                        event.get("attempt_index") == checkpoint["attempt_index"] for event in self.events),
                     "The paused old generation did not finish as cancelled")
+        started = [event for event in self.events if event["event"] == "attempt_started"]
+        identities = [(event.get("connection"), event.get("generation"), event.get("index")) for event in started]
+        require(len(started) == expected_attempts and len(set(identities)) == expected_attempts,
+                "An attempt was skipped or dispatched more than once")
+        for epoch, generation, index in identities:
+            require(type(index) is int and 0 <= index < self.scenario.attempts,
+                    "Attempt event escaped the configured sequence bound")
+            require([key[2] for key in identities if key[:2] == (epoch, generation)] ==
+                    list(range(sum(key[:2] == (epoch, generation) for key in identities))),
+                    "Generation attempts were not consecutive from zero")
+        if self.scenario.name == "multi_attempt":
+            require(len({item["proof_sha256"] for item in self.proofs}) == self.scenario.submissions and
+                    len({item["proof_signal_commitment_a"] for item in self.proofs}) == self.scenario.submissions,
+                    "Several attempt labels reused one proof or one signal commitment")
 
     def run(self) -> dict:
         started = time.monotonic()
@@ -634,10 +712,14 @@ class ReplayCase:
         argv = [str(self.native), "--port", str(listener.getsockname()[1]),
                 "--report", str(self.native_report), "--deadline-ms", str(self.deadline_ms),
                 "--max-connections", str(self.scenario.connections),
-                "--max-submissions", str(self.scenario.submissions), "--rows", "128", "--cols", "128",
+                "--max-submissions", str(max(1, self.scenario.submissions)),
+                "--max-attempts", str(self.scenario.attempts), "--rows", "128", "--cols", "128",
                 "--seed-hex", self.fixture["seed_hex"], *self.backend_argv]
         if self.scenario.pause_stage:
-            argv += ["--pause-stage", self.scenario.pause_stage, "--pause-job-id", self.initial_job.job_id]
+            argv += ["--pause-stage", self.scenario.pause_stage, "--pause-job-id", self.initial_job.job_id,
+                     "--pause-attempt-index", str(self.scenario.pause_attempt_index)]
+        if self.scenario.name == "attempt_limit":
+            argv += ["--stop-on-attempt-limit", "1"]
         env = os.environ.copy()
         env["RAYON_NUM_THREADS"] = "2"
         try:
@@ -739,6 +821,16 @@ def replay(args) -> dict:
     fixture_path = ROOT / "native/fixtures/proof_manifest.json"
     fixtures = json.loads(fixture_path.read_text())
     fixture = next(item for item in fixtures["cases"] if item["name"] == "v3_zero_b")
+    attempt_path = ROOT / "native/fixtures/attempt_manifest.json"
+    attempt_fixtures = json.loads(attempt_path.read_text())
+    require(attempt_fixtures.get("schema") == "neuro.attempt_fixtures.v1" and
+            attempt_fixtures.get("root_seed_hex") == fixture["seed_hex"] and
+            attempt_fixtures.get("historical_attempt0_exact") is True,
+            "Unexpected independent attempt fixture manifest")
+    require(all(sha256((ROOT / name).read_bytes()) == digest
+                for name, digest in attempt_fixtures["sources_sha256"].items()) and
+            sha256((ROOT / "native/fixtures/attempt_golden.hpp").read_bytes()) == attempt_fixtures["header_sha256"],
+            "Attempt fixture sources changed; check the independent generator")
     require(fixtures["pool_target_be_hex"] == TARGET and fixtures["pool_target_nbits"] == "0x1e080000" and
             fixture["shape"] == {"rows": 128, "cols": 128, "inner": 4096}, "Unexpected independent replay fixture")
     require(len(bytes.fromhex(fixture["header_hex"])) == 76 and len(bytes.fromhex(fixture["seed_hex"])) == 32,
@@ -751,7 +843,7 @@ def replay(args) -> dict:
         case = ReplayCase(scenario, native=native, reference=reference,
                           commit=config["reference_commit"], fixture=fixture,
                           work=args.work_dir.resolve() / scenario.name, deadline_ms=args.deadline_ms,
-                          backend=args.backend, device=args.device)
+                          backend=args.backend, device=args.device, attempt_fixtures=attempt_fixtures)
         result = case.run()
         results.append(result)
         print(json.dumps({"scenario": result["name"], "passed": result["passed"],
@@ -763,6 +855,7 @@ def replay(args) -> dict:
             "submitted_proofs_checked": sum(len(item["submitted_proofs"]) for item in results),
             "official_reference_commit": config["reference_commit"],
             "fixture_manifest_sha256": sha256(fixture_path.read_bytes()),
+            "attempt_fixture_manifest_sha256": sha256(attempt_path.read_bytes()),
             "binaries": {"native_sha256": sha256(native.read_bytes()), "official_sha256": sha256(reference.read_bytes())},
             "external_pool_connection": False, "live_pool_acceptance": False,
             "model_api_calls": False,

@@ -48,7 +48,9 @@ regenerate expected values to make a failing candidate pass. The CUDA probes
 cover an instruction and the full K=4096 arithmetic/transcript component. Their
 CPU emulators and compilation do not establish GPU execution or a working miner.
 The Pearl input adapter additionally checks real signal/commitment/noise code on
-synthetic fixed jobs; `docs/pearl-input.md` records its limited first-attempt scope.
+synthetic fixed jobs; `docs/pearl-input.md` records the original first-attempt
+baseline and `docs/attempt-search.md` the bounded cumulative sequence added in
+iteration 7. Preserve attempt-zero fixtures and the independent later-attempt gold.
 Its independent fixture regeneration uses the hash-locked Python binding in
 `requirements-fixtures.txt`. The native runtime uses separately pinned BLAKE3 C.
 The real PlainProof/witness path and separate official verifier are described in
@@ -106,6 +108,20 @@ evidence are different observations. The owner supplied private SSH access
 details in iteration 6 for inclusion in the iteration-10 directive; retrieve
 `neuro-owner-handoff-iteration06.json` privately or use that conversation message.
 Do not copy the private connection profile or key into the public repository.
+The same private note was updated in iteration 7 with the owner's existing
+SRBMiner and exact `guided-setup.bat` launch requirement.
+
+The test GPU is shared with the owner's running SRBMiner. Before physical GPU
+checks, acquire the exclusive GPU lease, verify the configured process/launcher
+identities and a working interactive restoration path, then stop that owned
+miner. After test processes release the GPU, restore its prior running state by
+launching the exact privately configured `guided-setup.bat` with a visible owner
+desktop window. Preserve a miner that was already stopped. CPU checks and builds
+do not stop SRBMiner. Keep GPU ownership settings in ignored
+`configs/gpu-owner.local.json`; use `docs/gpu-miner-handoff.md` for the bounded
+watchdog and recovery contract. Record launch, visible window and observed miner
+process separately; successful SSH/Task Scheduler calls alone are not restoration
+evidence. Do not start a replacement miner while test processes may still use GPU.
 
 Use bounded subprocesses and small GPU jobs first. After a CUDA context error,
 restart the worker. Do not retry a hanging candidate forever. Preserve the
