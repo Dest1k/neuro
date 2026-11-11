@@ -3,12 +3,13 @@
   "project": "neuro",
   "preparation_iteration": 7,
   "preparation_total": 10,
-  "status": "iteration_7_local_search_complete_Windows_handoff_validation_and_GitHub_publication_pending",
-  "updated_moscow_date": "2026-11-11",
+  "status": "iteration_7_local_work_preserved_GitHub_suspension_review_local_Actions_definitions_disabled",
+  "updated_moscow_date": "2026-11-12",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/07.md"
+    "docs/iterations/07.md",
+    "docs/incidents/2026-11-12-github-suspension.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
@@ -74,9 +75,9 @@
   },
   "next_iteration": {
     "number": 8,
-    "goal": "Resume the unpublished iteration-7 checkpoint, execute pending Windows gates when access returns, and add durable bounded-search recovery",
-    "first_step": "If the remote main still ends at c864e1eaf513ccefcf786f412d0b0ac151d2b983, restore neuro-iteration07-checkpoint.zip rather than discarding this local work. Read reports/iteration-07-validation.json and docs/iterations/07.md. Resolve the GitHub account suspension through the account owner before publishing; do not substitute credentials or bypass the restriction. Run the current Windows fixtures/build/CPU gates when execution is available. Then persist complete job identity, root seed, next attempt and terminal/uncertain submission outcomes, with real restart/loopback tests. Only use the guarded owner GPU path after its Windows preflight is actually validated.",
-    "avoid": "Do not treat iteration6 Windows evidence as a pass for iteration7 changes. Do not invent owner SSH, console restoration, GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner work with another agent framework."
+    "goal": "Resume the incident-mitigated iteration-7 checkpoint, run pending Windows gates directly on owner hardware, and add durable bounded-search recovery",
+    "first_step": "Read docs/incidents/2026-11-12-github-suspension.md and the current execution_policy before continuing. Use neuro-iteration07-ci-paused.zip from neuro-github-recovery-20261112.zip, which includes the incident mitigation. If restoring the older neuro-iteration07-checkpoint.zip, remove its active GitHub Actions definitions before any future publication; account reinstatement alone must not reactivate them. Resolve the suspension through the owner and GitHub Support without alternate credentials or bypass. Run pending Windows fixtures/build/CPU gates directly on the owner test host when available, not through Actions. Then persist complete job identity, root seed, next attempt and terminal/uncertain submission outcomes, with bounded local restart/loopback tests. Use the guarded owner GPU path only after its actual Windows preflight is validated.",
+    "avoid": "Do not treat iteration6 Windows evidence as a pass for iteration7 changes. Do not invent owner SSH, console restoration, GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner work with another agent framework. Do not restore GitHub Actions triggers or move the same workloads to self-hosted Actions as a workaround."
   },
   "handoff": {
     "target_iteration": 10,
@@ -99,7 +100,33 @@
     "status": "blocked_GitHub_HTTP_403_account_suspended",
     "remote_main_last_observed": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
     "local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
-    "recovery_checkpoint": "neuro-iteration07-checkpoint.zip",
-    "iteration7_CI_not_started": true
+    "recovery_checkpoint": "neuro-iteration07-ci-paused.zip",
+    "iteration7_CI_not_started": true,
+    "older_checkpoint_requires_ci_mitigation": true,
+    "remote_settings_changed": false,
+    "recovery_package": "neuro-github-recovery-20261112.zip",
+    "superseded_checkpoint": "neuro-iteration07-checkpoint.zip"
+  },
+  "execution_policy": {
+    "github_actions": "disabled_for_all_project_workloads_including_self_hosted_runners",
+    "verification_locations": "direct_local_development_environment_or_owner_VM_and_Windows_laptop",
+    "active_workflow_files_expected": 0,
+    "archived_definitions": "ci/disabled/*.yml.disabled",
+    "restoration_condition": "policy_issue_resolved_and_explicit_new_owner_direction",
+    "account_reinstatement_alone_reenables_actions": false,
+    "additional_approval_for_already_authorized_local_tests": false,
+    "incident_note": "docs/incidents/2026-11-12-github-suspension.md"
+  },
+  "incident": {
+    "kind": "GitHub_account_suspension",
+    "first_API_403_observed_moscow_date": "2026-11-11",
+    "owner_reported_login_suspension_moscow_date": "2026-11-12",
+    "owner_reported_explanatory_email_received": false,
+    "API_error": "Sorry. Your account was suspended",
+    "confirmed_enforcement_reason": null,
+    "relationship_to_Actions": "plausible_requires_GitHub_confirmation",
+    "local_mitigation": "both_workflows_moved_out_of_recognized_directory_without_content_changes",
+    "remote_workflows_or_account_settings_changed": false,
+    "current_iteration_advanced": false
   }
 }

@@ -26,6 +26,22 @@ The owner explicitly requested an empty root `README.md`. Keep it zero bytes;
 do not restore introductory text, badges, links, or a placeholder. Entry-point
 instructions belong in the state and documentation files.
 
+## Execution policy after the GitHub suspension (2026-11-12)
+
+Run neuro builds, arithmetic, proof generation/verification, search and GPU
+checks directly in the local development environment or on the owner's VM and
+Windows laptop. Do not run this project's workloads through GitHub Actions,
+including Actions with self-hosted runners. The preserved definitions under
+`ci/disabled/*.yml.disabled` are historical material, not runnable workflows.
+
+The account's reinstatement is not permission to restore Actions triggers.
+Keep recognized workflow files out of `.github/workflows` until the policy issue
+has been resolved and the owner gives explicit new direction. Before any future
+publication, check that an older checkpoint has not restored those triggers.
+The existing authority for bounded local and owner-hardware development remains
+in effect; this incident does not create a new approval gate for those actions.
+Read `docs/incidents/2026-11-12-github-suspension.md` for the incident boundary.
+
 ## Architecture decisions
 
 - CUDA C++17 for GPU kernels; selective inline PTX when measurement justifies it.

@@ -1,5 +1,10 @@
 # Build and verification entry point
 
+GitHub Actions is disabled for this project after the account-suspension
+incident. Run the commands below directly in the local development environment
+or on the owner's machines; the archived workflow files are not execution
+entry points. See `docs/incidents/2026-11-12-github-suspension.md`.
+
 The current project state is `state/current.json`. The root README is intentionally
 zero bytes. Run commands from the repository root; use the recorded pinned
 submodule rather than an upstream moving branch.

@@ -1,5 +1,10 @@
 # Windows build and bounded SSH worker
 
+GitHub Actions is now disabled for this project. Run the fixed Windows commands
+directly on the owner's host; historical CI results remain evidence only.
+See `docs/incidents/2026-11-12-github-suspension.md` before restoring or publishing
+any older checkpoint.
+
 The first target remains the owner's Windows RTX 5080 Laptop. The repository
 contains a native MSVC proof build, fixed Windows actions and a Linux SSH
 dispatcher. GitHub's Windows job validates CPU/proof/loopback and worker behavior
