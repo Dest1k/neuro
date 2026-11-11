@@ -121,7 +121,11 @@ def native_libraries(log: Path, target: str) -> list[str]:
     parsed = [shlex.split(entry) for entry in entries]
     if not parsed[0] or any(row != parsed[0] for row in parsed[1:]):
         raise ValueError("rustc reported missing or conflicting native link dependencies")
-    pattern = r"[A-Za-z0-9_.+-]+\.lib" if target.endswith("-msvc") else r"-l[A-Za-z0-9_.+-]+"
+    # The pinned MSVC compiler emits /defaultlib:msvcrt alongside bare .lib
+    # names. Keep this actual linker directive verbatim in the build report;
+    # Proof.cmake forwards it as an option, preserving default-library order.
+    pattern = (r"(?:[A-Za-z0-9_.+-]+\.lib|/defaultlib:[A-Za-z0-9_.+-]+)"
+               if target.endswith("-msvc") else r"-l[A-Za-z0-9_.+-]+")
     if any(not re.fullmatch(pattern, value) for value in parsed[0]):
         raise ValueError("Unexpected native library format; record and review the actual rustc output")
     return parsed[0]

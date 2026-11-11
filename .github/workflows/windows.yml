@@ -28,7 +28,8 @@ jobs:
       - name: Install the pinned native Windows Rust toolchain
         id: toolchain
         run: rustup toolchain install 1.99.1 --profile minimal
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: cargo_cache
         with:
           path: |
             C:\nc\registry
@@ -46,10 +47,21 @@ jobs:
         # Keep independent compiler evidence when a worker fixture fails.
         # Such a failed fixture still makes the whole job fail.
         if: ${{ !cancelled() && steps.toolchain.outcome == 'success' }}
+        shell: powershell
         run: ./windows/ci.ps1 -Action build-cpu
       - name: Run Windows CPU correctness, proofs and actual TCP replay
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        shell: powershell
         run: ./windows/ci.ps1 -Action run-cpu
+      - name: Retain reusable Cargo inputs even after a later failed gate
+        if: ${{ !cancelled() && steps.cargo_cache.outputs.cache-primary-key != '' && steps.cargo_cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            C:\nc\registry
+            C:\nc\git
+            build/proof-target
+          key: ${{ steps.cargo_cache.outputs.cache-primary-key }}
       - name: Retain Windows evidence
         if: always()
         uses: actions/upload-artifact@v4

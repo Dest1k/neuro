@@ -9,8 +9,33 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
+# CreateProcess does not apply PowerShell 7's special WinPSModulePath rewrite.
+# A native Windows PowerShell child must not autoload incompatible PS7 modules.
+# This changes only this worker's environment and its descendants.
+if ($PSVersionTable.PSVersion.Major -le 5) {
+    $workerModulePaths = @(
+        [IO.Path]::Combine($PSHOME, 'Modules'),
+        [IO.Path]::Combine([Environment]::GetFolderPath('ProgramFiles'), 'WindowsPowerShell\Modules')
+    )
+    $workerDocuments = [Environment]::GetFolderPath('MyDocuments')
+    if ($workerDocuments) {
+        $workerModulePaths += [IO.Path]::Combine($workerDocuments, 'WindowsPowerShell\Modules')
+    }
+    $env:PSModulePath = $workerModulePaths -join [IO.Path]::PathSeparator
+}
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
 $OutputEncoding = [Console]::OutputEncoding
+
+function Get-SourceHash([string]$Path) {
+    # Identity checks do not depend on module discovery or Get-FileHash aliases.
+    $algorithm = [Security.Cryptography.SHA256]::Create()
+    try {
+        $stream = [IO.File]::OpenRead($Path)
+        try {
+            return ([BitConverter]::ToString($algorithm.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+        } finally { $stream.Dispose() }
+    } finally { $algorithm.Dispose() }
+}
 
 function Assert-Integer($Value, [long]$Minimum, [long]$Maximum, [string]$Name) {
     if (($Value -isnot [int] -and $Value -isnot [long]) -or
@@ -51,8 +76,8 @@ function Read-Request {
             throw "Invalid hash field: $field"
         }
     }
-    $workerHash = (Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant()
-    $runnerHash = (Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'BoundedProcess.cs') -Algorithm SHA256).Hash.ToLowerInvariant()
+    $workerHash = Get-SourceHash $PSCommandPath
+    $runnerHash = Get-SourceHash (Join-Path $PSScriptRoot 'BoundedProcess.cs')
     if ($workerHash -cne $request.worker_sha256 -or $runnerHash -cne $request.runner_sha256) {
         throw 'Staged worker code does not match request hashes'
     }
@@ -62,13 +87,13 @@ function Read-Request {
 function Get-EntrypointHash($Request) {
     $entry = Join-Path $Request.repo_root 'windows/ci.ps1'
     if (-not (Test-Path -LiteralPath $entry -PathType Leaf)) { return $null }
-    return (Get-FileHash -LiteralPath $entry -Algorithm SHA256).Hash.ToLowerInvariant()
+    return (Get-SourceHash $entry)
 }
 
 function Get-RepoRunnerHash($Request) {
     $runner = Join-Path $Request.repo_root 'windows/BoundedProcess.cs'
     if (-not (Test-Path -LiteralPath $runner -PathType Leaf)) { return $null }
-    return (Get-FileHash -LiteralPath $runner -Algorithm SHA256).Hash.ToLowerInvariant()
+    return (Get-SourceHash $runner)
 }
 
 function Inventory($Request) {

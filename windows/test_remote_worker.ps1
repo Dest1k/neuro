@@ -97,7 +97,12 @@ try {
     Check ($null -ne $payload.tools.python -and $null -ne $payload.tools.git) 'inventory probes actual installed tools'
     Check ($null -eq $inventory.Report.entrypoint_actual_sha256) 'inventory reports missing entrypoint without executing it'
 
-    Write-Fixture "[Console]::Write('fixture success');exit 0"
+    Write-Fixture @'
+$probeHash = (Get-FileHash -LiteralPath (Join-Path $PSScriptRoot 'BoundedProcess.cs') -Algorithm SHA256).Hash
+if ($probeHash.Length -ne 64) { throw 'Windows PowerShell module discovery failed' }
+[Console]::Write('fixture success')
+exit 0
+'@
     $success = Invoke-Worker 'run-cpu'
     Check ($success.Process.ExitCode -eq 0 -and $success.Report.status -ceq 'passed' -and
            $success.Report.exit_code -eq 0 -and $success.Report.stdout -ceq 'fixture success') 'fixed-action success propagates'
