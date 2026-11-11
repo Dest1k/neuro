@@ -6,8 +6,8 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 
 | Iteration | Main delivery | Evidence / boundary |
 |---|---|---|
-| 1 | Pinned reusable source, executable CPU checks, initial Tensor Core probe, model-cost accounting | Local execution and honest GPU/toolchain status |
-| 2 | Standalone full-K INT8 CUDA kernel with transcript interface | Compile for SM120; compare every milestone with CPU oracle when hardware is available |
+| 1 — complete | Pinned reusable source, executable CPU checks, initial Tensor Core probe, model-cost accounting | 45 Python checks; CPU checks pass; SM120 compile/link; GPU unrun |
+| 2 — complete within offline boundary | Standalone full-K INT8 CUDA kernel with transcript interface | Independent fixed vectors, C++ oracle, warp emulator, donor differential; SM120 compile/link; physical GPU comparison pending |
 | 3 | Matrix/noise/commitment integration and deterministic vectors | Exact intermediate values; no proof stub substitutes |
 | 4 | Rust proof build and independent verification path | Valid and deliberately invalid proof cases |
 | 5 | Miner host/backend adapter, job cancellation and offline pool replay | Complete offline job lifecycle and error recovery |

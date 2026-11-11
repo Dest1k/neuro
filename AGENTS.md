@@ -2,7 +2,7 @@
 
 ## Read on entry
 
-Read `README.md`, `state/current.json`, and the latest entry in
+Read `state/current.json`, `docs/architecture.md`, and the latest entry in
 `docs/iterations/`. Read other documents only when needed. Do not reload the
 whole repository, raw logs, dependency trees, or this entire project history
 into every model request. The repository is the durable project memory.
@@ -16,10 +16,15 @@ ordinary engineering changes, run bounded local tests, fix failures, and keep
 useful changes without repeatedly asking the owner to select implementation
 details. User instructions override this file.
 
-The current preparation is iteration 1 of 10 in web chat. Iteration 10 must
+The current preparation iteration is recorded in `state/current.json` (10 total).
+Iteration 10 must
 deliver a complete archive for `/home/jericho/neuro/start/` and a DSH starting
 directive. Before then, record the completed iteration and the next concrete
 task. Do not describe a plan, an unrun probe, or a CPU test as a working GPU miner.
+
+The owner explicitly requested an empty root `README.md`. Keep it zero bytes;
+do not restore introductory text, badges, links, or a placeholder. Entry-point
+instructions belong in the state and documentation files.
 
 ## Architecture decisions
 
@@ -37,10 +42,13 @@ task. Do not describe a plan, an unrun probe, or a CPU test as a working GPU min
 ## Correctness and useful progress
 
 Run `python tools/neuroctl.py source-check` and the relevant checks after code
-changes. `cpu-check` is offline and does not connect to a pool. Our GPU probe
-only checks an instruction and its data layout; it is not a miner. Full proof,
-pool acceptance, sustained GPU operation and Windows execution need their own
-observed evidence. Upstream proof stubs must never satisfy a proof gate.
+changes. `cpu-check` is offline and does not connect to a pool. Verify committed
+arithmetic fixtures with `python tools/generate_fullk_fixtures.py --check`; do not
+regenerate expected values to make a failing candidate pass. The CUDA probes
+cover an instruction and the full K=4096 arithmetic/transcript component. Their
+CPU emulators and compilation do not establish GPU execution or a working miner.
+Full proof, pool acceptance, sustained GPU operation and Windows execution need
+their own observed evidence. Upstream proof stubs must never satisfy a proof gate.
 
 An optimization is useful only if exact results remain correct and repeated
 measurements under comparable conditions support it. Keep independent expected

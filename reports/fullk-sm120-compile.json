@@ -1,0 +1,59 @@
+{
+  "schema": "neuro.cuda_compile.v1",
+  "iteration": 2,
+  "observed_at_utc": "2026-11-11T12:37:16.393013+00:00",
+  "target": "sm_120",
+  "compiler_version": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Mon_Oct_12_19:25:48_PDT_2026\nCuda compilation tools, release 13.5, V13.5.37\nBuild cuda_13.5.r13.5/compiler.39125733_0",
+  "command": [
+    "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+    "-std=c++17",
+    "-O3",
+    "-arch=sm_120",
+    "-lineinfo",
+    "-Xptxas=-v",
+    "-I",
+    "native/include",
+    "-c",
+    "native/cuda/fullk_kernel.cu",
+    "-o",
+    "build/fullk_sm120.o"
+  ],
+  "exit_code": 0,
+  "status": "PASS_COMPILE_ONLY",
+  "log": "reports/fullk-sm120-compile.log",
+  "resources": {
+    "registers": 80,
+    "stack_bytes": 0,
+    "spill_store_bytes": 0,
+    "spill_load_bytes": 0,
+    "barriers": 0
+  },
+  "full_linux_cmake_link": {
+    "observed": true,
+    "targets": [
+      "neuro_fullk_cuda",
+      "neuro_fullk_probe"
+    ],
+    "configuration": "Release",
+    "host_compiler": "GNU 14.2.0",
+    "cmake_version": "3.31.6",
+    "configure_command": "cmake -S . -B build/cuda -DNEURO_BUILD_CPU_CHECKS=OFF -DNEURO_ENABLE_CUDA=ON -DCMAKE_CUDA_COMPILER=<isolated nvcc 13.5.37> -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=120",
+    "build_command": "cmake --build build/cuda -j 2",
+    "host_validation_command": "ctest --test-dir build/cuda --output-on-failure",
+    "host_validation_tests_passed": 1
+  },
+  "gpu_execution_observed": false,
+  "windows_build_observed": false,
+  "mining_evidence": false,
+  "hashrate": null,
+  "source_sha256": {
+    "native/cuda/fullk_kernel.cu": "a8bd682e454bd21e81253a8f7aee7f7acc100b23a54a93b5ff799aa42df79d37",
+    "native/cuda/fullk_probe.cu": "7d40027b1ee9a40bc86a5d4e734e59e1c4130c72e8d61240e3a2b0413b1a49b1",
+    "native/include/neuro/fullk.hpp": "588078751744ab4fcd3a2365193bf69b4a9de87a4d5c5aa772726f6734b1eca7",
+    "native/include/neuro/fullk_cuda.cuh": "6bacb34b9dec8e4d4c03ef895f91fe49fb5b5e3e475b046d8e2b672102655c5d",
+    "native/include/neuro/mma_layout.hpp": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540",
+    "native/reference/fullk_reference.cpp": "351f94fbb823f3302de1b15be74def5ba26fafdc19b9406d4623699a50c704f8",
+    "native/fixtures/fullk_golden.hpp": "3d65f45a10905868ebcc44c057ce1f044d79758ddd5af3bbca4f1e6baf475162",
+    "CMakeLists.txt": "526a306b6284fc01660c0e65028ad7034b1308b8d4e2bbad7c36b3d49d25a2d8"
+  }
+}

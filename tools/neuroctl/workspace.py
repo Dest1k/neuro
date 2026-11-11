@@ -108,7 +108,7 @@ def cpu_check(root=ROOT, cxx=None):
         result["reason"] = "GCC g++ required for the checked LTO math-probe recipe"
         return result
     if os.name == "nt":
-        result["reason"] = "Direct CPU recipe is Linux/GCC; use CMake for Windows CLI/protocol/layout checks"
+        result["reason"] = "Direct CPU recipe is Linux/GCC; use CMake for Windows CLI/protocol/layout/full-K checks"
         return result
     build = root / "build" / "cpu"
     build.mkdir(parents=True, exist_ok=True)
@@ -125,6 +125,16 @@ def cpu_check(root=ROOT, cxx=None):
             ["-I", str(upstream / "src/cpu/gemm"), "-flto", "-ffunction-sections",
              "-fdata-sections", "-Wl,--gc-sections"]),
         ("mma_layout", [root / "native/tests/mma_layout_test.cpp"], []),
+        ("fullk", [root / "native/tests/fullk_test.cpp",
+            root / "native/reference/fullk_reference.cpp",
+            root / "native/reference/fullk_warp.cpp"], ["-I", str(root / "native")]),
+        ("fullk_upstream", [root / "native/tests/fullk_upstream_test.cpp",
+            root / "native/reference/fullk_reference.cpp",
+            root / "native/reference/fullk_warp.cpp",
+            upstream / "src/cpu/gemm/case33_gemm_xor.cpp",
+            upstream / "src/cpu/gemm/case33_cpu_features.cpp"],
+            ["-I", str(root / "native"), "-I", str(upstream / "src/cpu/gemm"),
+             "-flto", "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections"]),
     ]
     for name, sources, extra in targets:
         executable = build / name

@@ -1,0 +1,19 @@
+Start testing: Nov 11 13:34 CET
+----------------------------------------------------------
+1/1 Testing: neuro_fullk_host_validation
+1/1 Test: neuro_fullk_host_validation
+Command: "/workspace/scratch/ee2def0b7c52/neuro/build/cuda/neuro_fullk_probe" "--host-validation"
+Directory: /workspace/scratch/ee2def0b7c52/neuro/build/cuda
+"neuro_fullk_host_validation" start time: Nov 11 13:34 CET
+Output:
+----------------------------------------------------------
+{"schema":"neuro.fullk_host_validation.v1","status":"PASS","checks":12,"gpu_execution_observed":false,"mining_evidence":false}
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"neuro_fullk_host_validation" end time: Nov 11 13:34 CET
+"neuro_fullk_host_validation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 11 13:34 CET

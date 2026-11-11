@@ -1,0 +1,180 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 2,
+  "observed_at_utc": "2026-11-11T12:38:00.288893+00:00",
+  "base_commit": "a905dc7705937fdd5a26d2ed112dee85b80e9701",
+  "upstream_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+  "upstream_clean": true,
+  "root_readme_bytes": 0,
+  "python": {
+    "command": "python -m unittest discover -s tests -v",
+    "exit_code": 0,
+    "tests_passed": 45,
+    "observed_duration_s": 1.534
+  },
+  "fixtures": {
+    "command": "python tools/generate_fullk_fixtures.py --check",
+    "exit_code": 0,
+    "result": {
+      "cases": 6,
+      "final_c_values": 4096,
+      "gpu_execution_observed": false,
+      "mining_evidence": false,
+      "mismatches": [],
+      "mode": "check",
+      "schema": "neuro.fullk_fixture_check.v1",
+      "status": "PASS",
+      "transcript_words": 1024
+    },
+    "manifest": "native/fixtures/fullk_manifest.json"
+  },
+  "cpu": {
+    "command": "python tools/neuroctl.py cpu-check --output artifacts/iteration-02-cpu-check.json",
+    "passed": true,
+    "checks": [
+      {
+        "name": "cppminer_cli",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      {
+        "name": "cppminer_pool_protocol",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: missing, empty or over-long job_id\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: unsupported cert_version\n[pool] mining.notify rejected: missing, empty or over-long job_id\n",
+        "stderr": ""
+      },
+      {
+        "name": "cppminer_math_probe",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "PASS zero M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=0\nPASS signed-int7-boundaries M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS signed-int8-extremes M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=4096\nPASS rank-boundaries-cumulative M=128 N=128 K=4096 milestones=32 compared=4096 nonzero=32\nPASS rectangular-two-macros M=128 N=256 K=4096 milestones=32 compared=8192 nonzero=8192\nAll scalar GEMM/milestone-XOR component checks passed. No proof, GPU, pool, or hashrate validation performed.\n",
+        "stderr": ""
+      },
+      {
+        "name": "mma_layout",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.mma_layout_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_layout_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"checked_values\":1024}\n",
+        "stderr": ""
+      },
+      {
+        "name": "fullk",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.fullk_cpu_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_reference_and_warp_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"fixture_count\":6,\"reference_checked_values\":5120,\"emulation_checked_values\":5120,\"checked_values\":10240,\"invalid_inputs_rejected\":51}\n",
+        "stderr": ""
+      },
+      {
+        "name": "fullk_upstream",
+        "build_exit_code": 0,
+        "verification_exit_code": 0,
+        "stdout": "{\"schema\":\"neuro.fullk_upstream_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_scalar_differential\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"fixture_count\":4,\"reference_upstream_transcript_words\":24576,\"emulation_upstream_transcript_words\":24576,\"reference_emulation_final_values\":98304,\"checked_values\":147456}\n",
+        "stderr": ""
+      }
+    ],
+    "fullk": {
+      "schema": "neuro.fullk_cpu_test.v1",
+      "status": "PASS",
+      "kind": "cpu_reference_and_warp_emulation",
+      "gpu_execution_observed": false,
+      "mining_evidence": false,
+      "fixture_count": 6,
+      "reference_checked_values": 5120,
+      "emulation_checked_values": 5120,
+      "checked_values": 10240,
+      "invalid_inputs_rejected": 51
+    },
+    "fullk_upstream": {
+      "schema": "neuro.fullk_upstream_test.v1",
+      "status": "PASS",
+      "kind": "cpu_scalar_differential",
+      "gpu_execution_observed": false,
+      "mining_evidence": false,
+      "fixture_count": 4,
+      "reference_upstream_transcript_words": 24576,
+      "emulation_upstream_transcript_words": 24576,
+      "reference_emulation_final_values": 98304,
+      "checked_values": 147456
+    }
+  },
+  "cmake_cpu": {
+    "configure_build_exit_code": 0,
+    "ctest_tests_passed": 6,
+    "ctest_tests_failed": 0,
+    "version": "3.31.6",
+    "host_compiler": "GNU 14.2.0",
+    "log": "reports/iteration-02-cmake-cpu.log"
+  },
+  "cuda": {
+    "status": "PASS_COMPILE_LINK_AND_HOST_ARGUMENT_VALIDATION_ONLY",
+    "target": "sm_120",
+    "compiler": "13.5.37",
+    "full_linux_link": true,
+    "receipt": "reports/fullk-sm120-compile.json",
+    "ctest_log": "reports/iteration-02-cmake-cuda.log",
+    "host_validation": {
+      "schema": "neuro.fullk_host_validation.v1",
+      "status": "PASS",
+      "checks": 12,
+      "gpu_execution_observed": false,
+      "mining_evidence": false
+    }
+  },
+  "sanitizers": {
+    "compiler": "GNU 14.2.0",
+    "build_command": "g++ -std=c++17 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I native/include -I native native/reference/fullk_reference.cpp native/reference/fullk_warp.cpp native/tests/fullk_test.cpp -o build/iteration2-reference/fullk_test_sanitized",
+    "run_command": "ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 ./build/iteration2-reference/fullk_test_sanitized",
+    "exit_code": 0,
+    "stdout": "{\"schema\":\"neuro.fullk_cpu_test.v1\",\"status\":\"PASS\",\"kind\":\"cpu_reference_and_warp_emulation\",\"gpu_execution_observed\":false,\"mining_evidence\":false,\"fixture_count\":6,\"reference_checked_values\":5120,\"emulation_checked_values\":5120,\"checked_values\":10240,\"invalid_inputs_rejected\":51}\n",
+    "stderr": "",
+    "address_sanitizer_passed": true,
+    "undefined_behavior_sanitizer_passed": true,
+    "leak_sanitizer_run": false,
+    "leak_sanitizer_reason": "Initial leak-enabled run terminated: LeakSanitizer does not work under ptrace. Captured passing run disables leak detection."
+  },
+  "coverage_limits": {
+    "gpu_execution": false,
+    "windows_build": false,
+    "windows_execution": false,
+    "pearl_matrix_noise_commitment_integration": false,
+    "full_pearl_proof": false,
+    "pool_shares": false,
+    "miner_hashrate_measured": false,
+    "reseller_api_calls": 0,
+    "cache_billing_verified": false,
+    "dsh_budget_enforced": false
+  },
+  "source_hashes": {
+    ".github/workflows/offline.yml": "fa9beb9a1edf428535628367197ce1a19a4a88db017a255513f4d01c0a8202c0",
+    "CMakeLists.txt": "526a306b6284fc01660c0e65028ad7034b1308b8d4e2bbad7c36b3d49d25a2d8",
+    "native/cuda/fullk_kernel.cu": "a8bd682e454bd21e81253a8f7aee7f7acc100b23a54a93b5ff799aa42df79d37",
+    "native/cuda/fullk_probe.cu": "7d40027b1ee9a40bc86a5d4e734e59e1c4130c72e8d61240e3a2b0413b1a49b1",
+    "native/cuda/mma_probe.cu": "6172c20044e9f35b5be5e2f527d3887a41ffcb647066301b4c76bf404acd6b4c",
+    "native/fixtures/fullk_golden.hpp": "3d65f45a10905868ebcc44c057ce1f044d79758ddd5af3bbca4f1e6baf475162",
+    "native/fixtures/fullk_manifest.json": "bcb5234fa5086bc2aa1e5c243299f223dbb9e117b6993a4e58ad2b0e813d09ca",
+    "native/include/neuro/fullk.hpp": "588078751744ab4fcd3a2365193bf69b4a9de87a4d5c5aa772726f6734b1eca7",
+    "native/include/neuro/fullk_cuda.cuh": "6bacb34b9dec8e4d4c03ef895f91fe49fb5b5e3e475b046d8e2b672102655c5d",
+    "native/include/neuro/mma_layout.hpp": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540",
+    "native/reference/fullk_reference.cpp": "351f94fbb823f3302de1b15be74def5ba26fafdc19b9406d4623699a50c704f8",
+    "native/reference/fullk_warp.cpp": "9f6d8c5a746a67a8cb4d050fdd1f438df74e2af313033741a0cb55ed1feda82f",
+    "native/tests/cppminer_math_probe.cpp": "597e8e241d2513c7efeae8f2ec16658b187c9185b3a4610cf6ddcf4e908928ed",
+    "native/tests/fullk_test.cpp": "268bbf23f6bd25d8d4633b79f8dad2f0990556ae924aa42373b8453c0cac86bc",
+    "native/tests/fullk_upstream_test.cpp": "c484e097f36c53aa55bc218dcbda3ca03a1fc8c68c861ca673d58f1a317267d3",
+    "native/tests/mma_layout_test.cpp": "fcd221929755fc8ce080c30a96246e7c017e7ac9a9075941dd72759e0ca87e38",
+    "tests/test_cli.py": "0a03e30bd635fb1ad2b8cecab3a05b7a307457eb844b74bee1a67834617a077a",
+    "tests/test_cost.py": "deab9c8d23f3b7323c994533058e58cd72df4d72907dd608e6c5dc61d0a2ea64",
+    "tests/test_experiments.py": "ed5bb174e1ac9c73782df56a2d4514338451b1f0747bac94e5c4fcc95dda1506",
+    "tools/generate_fullk_fixtures.py": "269d1d029049fc7317fcddd8a5d4cf71bc4c51ad3f0087eb746c3de25fe7cdcb",
+    "tools/neuroctl.py": "df198630b72411edf308c615554138b0914cdf2334c6fa1a209b76c3ce66755b",
+    "tools/neuroctl/__init__.py": "6c995c328b823f126333b0800e18459f79c5ecd5081a7c95fe84cf58328572be",
+    "tools/neuroctl/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "tools/neuroctl/cli.py": "bdceaf2052542757513fef3a82b146a13937558f184574fc454dd574e2dfeade",
+    "tools/neuroctl/cost.py": "96a22a3c82a5d50801995f1e91672d3539ee696daf2c1b95e65004ee46466655",
+    "tools/neuroctl/experiments.py": "1c6498a0a8a3ac2329356515609ee2064ee14ed7582c66f0fa631f02d74168b2",
+    "tools/neuroctl/workspace.py": "b8182ccce04bbe8b2c5c31e61efdfdee364e1307d0f1847eb3911428527aa2f7",
+    "upstream/sources.lock.json": "7af06d8903a5857d6816360910af0e817c418d295a727ad1a3780d44472a1077"
+  }
+}

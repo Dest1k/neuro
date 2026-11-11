@@ -1,13 +1,14 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 1,
+  "preparation_iteration": 2,
   "preparation_total": 10,
-  "status": "iteration_1_complete_ready_for_iteration_2",
+  "status": "iteration_2_complete_ready_for_iteration_3",
   "updated_moscow_date": "2026-11-11",
   "entry_points": [
-    "README.md",
-    "docs/iterations/01.md"
+    "state/current.json",
+    "docs/development.md",
+    "docs/iterations/02.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
@@ -23,19 +24,24 @@
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
-    "cuda_compilation": "passed_sm120_linux_compile_and_link",
+    "cuda_compilation": "passed_fullk_sm120_linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
     "windows_execution": "not_run",
     "full_proof": "not_built",
     "pool_shares": "not_run",
     "dsh_api_integration": "not_implemented",
-    "provider_cache_billing": "not_verified"
+    "provider_cache_billing": "not_verified",
+    "cpu_fullk": "passed_python_gold_cpp_oracle_and_warp_emulator_10240_values",
+    "cpu_fullk_upstream": "passed_49152_transcript_comparisons_and_98304_final_cells",
+    "fullk_invalid_inputs": "passed_51_cpu_and_12_cuda_host_rejections",
+    "cuda_fullk_execution": "not_run_no_gpu",
+    "cpu_sanitizers": "passed_address_and_undefined_behavior_leak_check_unavailable"
   },
   "next_iteration": {
-    "number": 2,
-    "goal": "Build a standalone full-K INT8 CUDA kernel preserving milestone transcript",
-    "first_step": "Read iteration1 evidence, confirm pinned sources, extend the bounded MMA probe toward K=4096 and compare its transcript against the independent CPU oracle",
-    "avoid": "Do not replace miner work with another general agent framework"
+    "number": 3,
+    "goal": "Connect deterministic Pearl matrices, commitments and noise to the full-K arithmetic component",
+    "first_step": "Read docs/pearl-input-plan.md; pin portable BLAKE3, build the donor alignment tests, then a bounded M=N=128 input adapter with explicitly selected contiguous8x16 config and real noisy matrices",
+    "avoid": "Do not replace miner work with another general agent framework or count proof stubs as verification"
   },
   "handoff": {
     "target_iteration": 10,
@@ -43,5 +49,8 @@
     "archive_created": false,
     "must_include_submodule_contents": true
   },
-  "validation_report": "reports/iteration-01-validation.json"
+  "validation_report": "reports/iteration-02-validation.json",
+  "owner_preferences": {
+    "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points."
+  }
 }

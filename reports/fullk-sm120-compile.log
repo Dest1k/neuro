@@ -1,0 +1,6 @@
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function '_ZN5neuro5fullk48_GLOBAL__N__c2d973f3_15_fullk_kernel_cu_8540b7b512fullk_kernelEPKaS3_PjPiNS0_5ShapeE' for 'sm_120'
+ptxas info    : Function properties for _ZN5neuro5fullk48_GLOBAL__N__c2d973f3_15_fullk_kernel_cu_8540b7b512fullk_kernelEPKaS3_PjPiNS0_5ShapeE
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 80 registers, used 0 barriers
+ptxas info    : Compile time = 14.956 ms

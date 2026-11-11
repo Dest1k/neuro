@@ -1,4 +1,8 @@
-# Architecture decision — iteration 1
+# Architecture and current implementation
+
+Current preparation: iteration 2 of 10. Read `state/current.json` for the next
+task and `docs/iterations/02.md` for observed evidence. Build commands live in
+`docs/development.md`; the root README is intentionally empty at the owner's request.
 
 ## Goal
 
@@ -43,7 +47,7 @@ distributed-derivative license requires the original 2% fee.
 Do not rewrite functioning host or proof code just to use a new language.
 Do not implement a replacement LLM harness or a new network protocol.
 
-## First correctness targets
+## Arithmetic correctness boundary
 
 The CPU component check compares cumulative INT8 products and tile XORs against
 an independent, simple int64 oracle. It uses the pinned donor's K=4096, milestone
@@ -52,9 +56,23 @@ matrix generation, noise generation, commitments, jackpot, proof and share
 acceptance are additional checks, not implied by it.
 
 The first GPU probe exercises one warp and two `mma.sync.m16n8k32` operations.
-It checks both cumulative outputs, including signed edge cases. It does not
-benchmark mining throughput. Next, a separately testable full-K kernel will
-preserve the transcript while loading/staging data efficiently.
+The second implements the full K=4096 arithmetic component with two N8 MMA
+operations per K32 step, retaining cumulative INT32 accumulators and all 32
+milestone XORs. Its inputs are contiguous A[M][4096] and transposed Bt[N][4096].
+One warp owns a 16x16 region; M and N must be multiples of 16 in [16,1024].
+This bounded baseline has direct global loads and no performance claim.
+
+The full-K implementation has an independent Python scalar fixture generator,
+a separate C++ int64 oracle, and a CPU emulator of packing/MMA/reduction/scatter.
+The committed fixtures check both milestone words and all final matrix cells;
+XOR alone could hide element permutations. Larger CPU cases also agree with the
+pinned CPPminer scalar transcript. CUDA compilation and full Linux linking for
+SM120 pass; physical GPU execution is still unobserved. See `docs/fullk-kernel.md`.
+
+The next integration boundary is deterministic Pearl matrices, noise and
+commitments. Synthetic arithmetic fixtures do not exercise that boundary.
+Large-panel scheduling, production memory staging and performance tuning follow
+correct integration; accepting larger dimensions alone would not supply them.
 
 ## Measurement policy
 
@@ -80,7 +98,7 @@ alone. A fallback model must not silently multiply the spending budget.
 Initial proposed limits are $5 per work session and $25 for the first campaign,
 with bounded calls and context. These are configuration intentions. The DSH
 bridge must reserve a worst-case request cost and reconcile real usage before
-we can call them enforced limits. This bridge is not implemented in iteration1.
+we can call them enforced limits. This bridge is not implemented yet.
 
 ## Open inputs for the handoff
 

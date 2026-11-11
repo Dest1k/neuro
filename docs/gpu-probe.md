@@ -1,5 +1,8 @@
 # First INT8 GPU instruction probe
 
+This document records the small instruction probe from iteration 1. The full
+K=4096 component added in iteration 2 is documented in `docs/fullk-kernel.md`.
+
 **Iteration 1 status: CUDA source compiled for SM120 / GPU execution UNRUN.**
 An isolated NVIDIA CUDA 13.5.37 toolchain compiled the source successfully.
 The workspace has no accessible NVIDIA GPU. The host layout test was also

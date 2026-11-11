@@ -20,6 +20,8 @@ jobs:
         run: python tools/neuroctl.py source-check
       - name: Test cost and experiment controls
         run: python -m unittest discover -s tests -v
+      - name: Verify independent arithmetic fixtures
+        run: python tools/generate_fullk_fixtures.py --check
       - name: Compile and run CPU component checks
         run: python tools/neuroctl.py cpu-check --output artifacts/cpu-check.json
       - name: Exercise CMake build definition

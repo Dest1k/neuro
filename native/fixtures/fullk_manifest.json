@@ -1,0 +1,366 @@
+{
+  "schema": "neuro.fullk_fixture_manifest.v1",
+  "source": "synthetic arithmetic only",
+  "generator": "tools/generate_fullk_fixtures.py",
+  "generator_sha256": "269d1d029049fc7317fcddd8a5d4cf71bc4c51ad3f0087eb746c3de25fe7cdcb",
+  "header": "native/fixtures/fullk_golden.hpp",
+  "header_sha256": "3d65f45a10905868ebcc44c057ce1f044d79758ddd5af3bbca4f1e6baf475162",
+  "oracle": "independent_python_stdlib_dense_incremental_scalar",
+  "gpu_execution_observed": false,
+  "mining_evidence": false,
+  "proof_verified": false,
+  "inner": 4096,
+  "rank": 128,
+  "milestones": 32,
+  "tile_shape": [
+    8,
+    16
+  ],
+  "transcript_index": "milestone * ((rows / 8) * (cols / 16)) + tile_row * (cols / 16) + tile_col",
+  "transcript_operation": "xor uint32 representations of all 8x16 cumulative INT32 cell values after each 128 products",
+  "final_c_index": "row * cols + col",
+  "cases": [
+    {
+      "id": 0,
+      "name": "zeros",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "inner": 4096
+      },
+      "pattern": "zeros",
+      "pattern_id": 0,
+      "seed_u32": 0,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          2,
+          1
+        ],
+        "word_count": 64,
+        "byte_count": 256,
+        "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          16,
+          16
+        ],
+        "element_count": 256,
+        "byte_count": 1024,
+        "sha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+      }
+    },
+    {
+      "id": 1,
+      "name": "mixed_signed",
+      "shape": {
+        "rows": 16,
+        "cols": 32,
+        "inner": 4096
+      },
+      "pattern": "mixed_signed",
+      "pattern_id": 1,
+      "seed_u32": 0,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "b23c2d4df414de4ab92e8cedddc1bdbe3374c841bc1356c2abd6fdee43cfeaa6"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          32,
+          4096
+        ],
+        "byte_count": 131072,
+        "sha256": "4b4f3a094c54c13fc5674e8c3a7b41f9a5e9d0ee42dcf0c48a02fb700b73e381"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          2,
+          2
+        ],
+        "word_count": 128,
+        "byte_count": 512,
+        "sha256": "a20dac4f1ec187f9f978922fa4f91f05c678a7ae60c954aea101ddb5ab8f8e79"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          16,
+          32
+        ],
+        "element_count": 512,
+        "byte_count": 2048,
+        "sha256": "176c8873038483927885fdea01bb78479491f1aff0425319763f0438483b1c45"
+      }
+    },
+    {
+      "id": 2,
+      "name": "int7_edges",
+      "shape": {
+        "rows": 32,
+        "cols": 16,
+        "inner": 4096
+      },
+      "pattern": "int7_edges",
+      "pattern_id": 2,
+      "seed_u32": 0,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          32,
+          4096
+        ],
+        "byte_count": 131072,
+        "sha256": "d6a75d1ec79f89fc5d1c21c8037d80e4f5655bc0a20fce4570f711c15aee9ae6"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "b2a746197dab9398c5b3e0347916f26c22825d60a96f300d685400b9ecdcbfc1"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          4,
+          1
+        ],
+        "word_count": 128,
+        "byte_count": 512,
+        "sha256": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          32,
+          16
+        ],
+        "element_count": 512,
+        "byte_count": 2048,
+        "sha256": "762b3cb788a21b396a9319a2025224a700403bbc6b15249c5aec4858e7cc4074"
+      }
+    },
+    {
+      "id": 3,
+      "name": "int8_edges",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "inner": 4096
+      },
+      "pattern": "int8_edges",
+      "pattern_id": 3,
+      "seed_u32": 0,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "57d0576e08bc678bac34584a869b23aaa0f31275aeafb3c9f8072eebdc794293"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          16,
+          4096
+        ],
+        "byte_count": 65536,
+        "sha256": "850f17bd970cdee4225766feac0f243b6a8d24693b9a389ab8eb05b265f2d621"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          2,
+          1
+        ],
+        "word_count": 64,
+        "byte_count": 256,
+        "sha256": "5341e6b2646979a70e57653007a1f310169421ec9bdd9f1a5648f75ade005af1"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          16,
+          16
+        ],
+        "element_count": 256,
+        "byte_count": 1024,
+        "sha256": "b92318ac4ecaa1b07927ad65230e65542b8d23ec86cbe0787344ad9733deae6e"
+      }
+    },
+    {
+      "id": 4,
+      "name": "milestone_edges",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "inner": 4096
+      },
+      "pattern": "milestone_edges",
+      "pattern_id": 4,
+      "seed_u32": 0,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          32,
+          4096
+        ],
+        "byte_count": 131072,
+        "sha256": "e85e356b377a39280741ecbc39a5e85d99dfe4a0cf8815cfa87d8a94ecdb7915"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          32,
+          4096
+        ],
+        "byte_count": 131072,
+        "sha256": "fe1b95f0fd6d308af40d04c89428a386ef1b8cef7d852f3ccc49bbbb423394e0"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          4,
+          2
+        ],
+        "word_count": 256,
+        "byte_count": 1024,
+        "sha256": "f36af2445437b1f5f5694228f19fcb13fadd99ec5e3142c9a0a67b0e865b266a"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          32,
+          32
+        ],
+        "element_count": 1024,
+        "byte_count": 4096,
+        "sha256": "73b9c3844155d657a2266a224a64a1bb3fda77519887326abe7412605964e57f"
+      }
+    },
+    {
+      "id": 5,
+      "name": "coordinate_mix",
+      "shape": {
+        "rows": 32,
+        "cols": 48,
+        "inner": 4096
+      },
+      "pattern": "coordinate_mix",
+      "pattern_id": 5,
+      "seed_u32": 305419896,
+      "a": {
+        "dtype": "int8",
+        "layout": "row_major",
+        "shape": [
+          32,
+          4096
+        ],
+        "byte_count": 131072,
+        "sha256": "f8fe6b91fbf613c75549b624539fe3788cefe9058b9b932bd14eb9e77881a1e7"
+      },
+      "bt": {
+        "dtype": "int8",
+        "layout": "row_major_transposed_b",
+        "shape": [
+          48,
+          4096
+        ],
+        "byte_count": 196608,
+        "sha256": "7ebb542e767dc2c191641e8a32c93d0f9f90a22c520470ef3760835ee4b17041"
+      },
+      "transcript": {
+        "dtype": "uint32",
+        "endianness": "little",
+        "layout": "milestone_major_then_tile_row_then_tile_col",
+        "shape": [
+          32,
+          4,
+          3
+        ],
+        "word_count": 384,
+        "byte_count": 1536,
+        "sha256": "b764cd9a6954cc31ed63b48c4a5ca3a0ffb115cb55ae568fd14c7a371afb1d49"
+      },
+      "final_c": {
+        "dtype": "int32",
+        "endianness": "little",
+        "layout": "row_major",
+        "shape": [
+          32,
+          48
+        ],
+        "element_count": 1536,
+        "byte_count": 6144,
+        "sha256": "a021de5be16ebd11f47c4ed51ccda04774120c5e4d13ac6e082dfb1800404d74"
+      }
+    }
+  ]
+}
