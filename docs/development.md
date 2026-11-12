@@ -9,11 +9,21 @@ The current project state is `state/current.json`. The root README is intentiona
 zero bytes. Run commands from the repository root; use the recorded pinned
 submodule rather than an upstream moving branch.
 
+For a newly extracted handoff archive, start with `docs/handoff-runbook.md`.
+It specifies the first exact-package verification, Linux prerequisite inventory,
+fresh builds, source transfer to Windows and the remaining real DSH accounting
+integration. The flat archive already contains initialized pinned source and
+portable Git metadata; it needs no initial submodule download. The command below
+is for an ordinary Git clone whose submodules have not been initialized.
+
 ## Offline CPU work
 
-Python 3.11+, C11 and C++17 compilers are sufficient for the Python/native checks.
-The direct `cpu-check` recipe and three donor arithmetic differentials currently
-require GCC on Linux. CMake 3.24+ also builds the portable native targets.
+The basic Python checks need Python 3.11+ and Git. Basic native checks additionally
+need C11 and C++17 compilers. The direct `cpu-check` recipe and three donor
+arithmetic differentials currently require GCC on Linux. The CMake route needs
+CMake 3.24+, matching CTest and a generator build tool: GNU Make for the default
+Unix Makefiles recipe, or Ninja when explicitly selected. Rust and the optional
+Python BLAKE3 fixture binding are separate dependencies described below.
 
 ```bash
 git submodule update --init --recursive
@@ -129,6 +139,11 @@ in the local environment or on owner hardware. The Windows entry point is
 Initial dependency download is required; subsequent builds
 reuse Cargo's cache. A cached file does not replace a successful current build
 report matching the source/configuration and library hash.
+The initial download includes the official Pearl Git dependency and its CUTLASS
+submodule as well as locked registry crates. They are not bundled in the source
+handoff archive. Set `CARGO_NET_OFFLINE=true` only when the required sources are
+already cached; a missing cache entry must remain a build failure. Do not copy
+an old `artifacts/proof-build.json` or compiled library into a fresh checkout.
 
 ## Windows build and bounded remote actions
 

@@ -1,0 +1,58 @@
+{
+  "schema": "neuro.offline_checkpoint.restore.v2",
+  "passed": true,
+  "target": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "candidate_sha256": "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3",
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "modules": [
+    {
+      "path": "upstream/blake3",
+      "commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+      "shallow_boundaries": [
+        "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "f55849f89cd85083c1c9daa2c5de20766f309c00"
+      ]
+    },
+    {
+      "path": "upstream/cppminer",
+      "commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "shallow_boundaries": [
+        "5b68506af5e6433ee5c25aa9e6fbb00b537590aa"
+      ]
+    }
+  ],
+  "readme_bytes": 0,
+  "network_used": false,
+  "execution_policy": {
+    "github_actions": "disabled_for_all_project_workloads_including_self_hosted_runners",
+    "active_workflow_files": 0,
+    "policy_applies_after_restore": true,
+    "remote_origin_usable": false,
+    "restoration_does_not_publish": true
+  },
+  "build_performed": false,
+  "windows_execution": false,
+  "gpu_execution": false
+}

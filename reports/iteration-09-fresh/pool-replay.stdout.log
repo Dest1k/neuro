@@ -1,0 +1,20 @@
+{"scenario": "gzip_happy", "passed": true, "proofs": 1, "error": null}
+{"scenario": "plain_happy", "passed": true, "proofs": 1, "error": null}
+{"scenario": "wrong_id_then_reject", "passed": true, "proofs": 2, "error": null}
+{"scenario": "stale_response", "passed": true, "proofs": 2, "error": null}
+{"scenario": "duplicate_notify", "passed": true, "proofs": 1, "error": null}
+{"scenario": "cancel_before_compute", "passed": true, "proofs": 1, "error": null}
+{"scenario": "cancel_after_compute_header", "passed": true, "proofs": 1, "error": null}
+{"scenario": "cancel_after_proof_cert", "passed": true, "proofs": 1, "error": null}
+{"scenario": "cancel_after_compute_target", "passed": true, "proofs": 1, "error": null}
+{"scenario": "reconnect_after_verify", "passed": true, "proofs": 1, "error": null}
+{"scenario": "malformed_notify_recovery", "passed": true, "proofs": 1, "error": null}
+{"scenario": "malformed_frame_reconnect", "passed": true, "proofs": 1, "error": null}
+{"scenario": "authorize_rejected_reconnect", "passed": true, "proofs": 1, "error": null}
+{"scenario": "unacknowledged_submit", "passed": true, "proofs": 1, "error": null}
+{"scenario": "ack_timeout", "passed": true, "proofs": 1, "error": null}
+{"scenario": "multi_attempt", "passed": true, "proofs": 3, "error": null}
+{"scenario": "miss_then_found", "passed": true, "proofs": 1, "error": null}
+{"scenario": "attempt_limit", "passed": true, "proofs": 0, "error": null}
+{"scenario": "cancel_later_attempt", "passed": true, "proofs": 2, "error": null}
+{"schema": "neuro.pool_replay.v1", "passed": true, "scenarios_run": 19, "submitted_proofs_checked": 23, "error": null}

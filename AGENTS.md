@@ -26,6 +26,17 @@ The owner explicitly requested an empty root `README.md`. Keep it zero bytes;
 do not restore introductory text, badges, links, or a placeholder. Entry-point
 instructions belong in the state and documentation files.
 
+Iteration 9 adds `docs/handoff-runbook.md` and the flat source packager in
+`tools/package_handoff.py`. Verify a newly extracted package with its embedded
+`_work/handoff/verify.py` before builds or ordinary Git commands can update its
+index. Subsequent development uses source-check and candidate identity, not the
+unchanged-delivery manifest. The package has no active Git remote and excludes
+private profiles, runtime journals, compiler/toolchain caches and binaries.
+`tools/handoff_preflight.py` checks installed Linux prerequisites only. Keep its
+inventory result separate from actual builds, Windows/GPU execution, cache
+materialization and DSH/provider billing. Transfer selected tool paths to the
+real build commands; never reuse a prior checkout's CMake cache or success report.
+
 ## Execution policy after the GitHub suspension (2026-11-12)
 
 Run neuro builds, arithmetic, proof generation/verification, search and GPU

@@ -1,0 +1,64 @@
+{
+  "schema": "neuro.iteration09.fresh_rehearsal.preconditions.v1",
+  "archive": "/workspace/scratch/ee2def0b7c52/neuro-iteration-08-checkpoint.zip",
+  "archive_sha256": "421874b265bf892ebffc003b4e05d110401a3b3c89ad16695d7fd4826a731f71",
+  "restored_directory": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "restore_helper": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/package/neuro-iteration-08-checkpoint/restore.py",
+  "source_head": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "candidate_sha256": "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3",
+  "candidate_match_verified_by_restore": true,
+  "before_build_observations": {
+    "new_target_directory_reserved_by_restore": true,
+    "build_directory_absent": true,
+    "proof_build_report_absent": true,
+    "root_worktree_clean": true,
+    "proof_target_cache_copied": false,
+    "cmake_cache_copied": false
+  },
+  "reused_inputs": [
+    {
+      "type": "rust_toolchain",
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu",
+      "version": "1.99.1"
+    },
+    {
+      "type": "cargo_download_and_source_cache",
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_targets_reused": false
+    },
+    {
+      "type": "cmake_toolchain",
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin",
+      "version": "3.31.6"
+    },
+    {
+      "type": "system_compiler",
+      "path": "/usr/bin/g++",
+      "version": "14.2.0"
+    }
+  ],
+  "cold_dependency_download_tested": false,
+  "cargo_network_mode": "CARGO_NET_OFFLINE=true",
+  "github_actions_used": false,
+  "gpu_execution": false,
+  "ssh_used": false,
+  "windows_execution": false,
+  "readme_bytes": 0,
+  "modules": [
+    {
+      "path": "upstream/blake3",
+      "commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+      "shallow_boundaries": [
+        "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "f55849f89cd85083c1c9daa2c5de20766f309c00"
+      ]
+    },
+    {
+      "path": "upstream/cppminer",
+      "commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "shallow_boundaries": [
+        "5b68506af5e6433ee5c25aa9e6fbb00b537590aa"
+      ]
+    }
+  ]
+}

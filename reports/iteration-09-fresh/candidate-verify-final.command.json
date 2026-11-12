@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python",
+    "tools/candidate_manifest.py",
+    "verify",
+    "--root",
+    "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+    "--manifest",
+    "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/package/neuro-iteration-08-checkpoint/candidate.json",
+    "--expected",
+    "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3"
+  ],
+  "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "timeout_seconds": 120.0,
+  "declared_environment": {
+    "CARGO_NET_OFFLINE": "true",
+    "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+    "RAYON_NUM_THREADS": "2"
+  },
+  "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+  "status": "passed",
+  "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+  "compiled_target_cache_reused": false,
+  "network_enabled_for_cargo": false,
+  "returncode": 0,
+  "elapsed_seconds": 0.519
+}

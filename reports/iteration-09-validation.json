@@ -1,0 +1,100 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 9,
+  "date": "2026-11-12",
+  "generated_at": "2026-11-12T01:40:23.465886+00:00",
+  "passed": false,
+  "local_checks_passed": true,
+  "status": "native_reproduction_and_delivery_unit_gates_passed_full_project_package_qualification_pending",
+  "scope": "fresh_native_reproduction_and_portable_source_handoff_not_production_mining",
+  "base_local_commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "source_scope_note": "Native inputs match the separate freshly built checkpoint exactly; new handoff tools are validated separately. Final archive manifest binds full final committed source without a self-referential report hash.",
+  "source_files_sha256": {
+    "tools/package_handoff.py": "6d883706fbc08a669a5a4670736d14eb6a8afd3d43fabb3ebd0918b7ed19e9af",
+    "tools/handoff_preflight.py": "cbd3160d3ec00211e506e542d1276bbfc89b9db9fb3bfbe1d469dbc6cd30e8f8",
+    "tests/test_handoff_package.py": "6e41943812836cefb8ea31e44cdd13b69f34ed339aee635047f21713e566c402",
+    "tests/test_handoff_preflight.py": "45666adcf884c6a87231cdbc2d1407c956dda7dcfa6e6640b07e934c3a9f5a5a"
+  },
+  "python": {
+    "discovered": 176,
+    "passed": 175,
+    "skipped": 1,
+    "failed": 0,
+    "package_tests": 15,
+    "preflight_tests": 13
+  },
+  "fresh_native_reproduction": {
+    "passed": true,
+    "evidence": "reports/iteration-09-fresh/rehearsal-summary.json",
+    "native_input_match": "reports/iteration-09-native-scope-match.json",
+    "command_elapsed_seconds": 323.262,
+    "new_compiled_outputs": true,
+    "old_target_or_cmake_cache_copied": false,
+    "installed_compilers_reused": true,
+    "cargo_download_and_source_cache_reused": true,
+    "cold_dependency_acquisition_tested": false,
+    "cargo_offline": true,
+    "rust_tests_passed": 20,
+    "native_ctest_passed": 15,
+    "proof_crosscheck": {
+      "passed": true,
+      "proofs_generated": 6,
+      "verification_checks": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "tcp_replay": {
+      "passed": true,
+      "scenarios_run": 19,
+      "submitted_proofs_checked": 23
+    },
+    "durable_recovery": {
+      "passed": true,
+      "scenarios_run": 15,
+      "process_phases_run": 33,
+      "submitted_proofs_checked": 22
+    },
+    "journal": {
+      "passed": true,
+      "checks": 124,
+      "expected_rejections": 44
+    }
+  },
+  "flat_package": {
+    "qualification_passed": false,
+    "synthetic_real_git_tests_passed": 15,
+    "current_roundtrip_pending_until_clean_commit": true,
+    "final_archive": "neuro-iteration-09-handoff-rehearsal.zip",
+    "iteration10_launch_archive": false
+  },
+  "windows": {
+    "current_execution": false,
+    "historical_evidence": "reports/iteration-06-validation.json",
+    "historical_success_applies_to_current_changes": false,
+    "owner_VM_paths_mounted": false,
+    "owner_SSH_attempted": false
+  },
+  "cuda": {
+    "iteration9_compilation": false,
+    "unchanged_native_sources_previous_compile_evidence": "reports/iteration-08-validation.json",
+    "physical_gpu_execution": false,
+    "owner_miner_stopped": false,
+    "visible_batch_restoration_observed": false
+  },
+  "model": {
+    "executor": "minimax/minimax-m3",
+    "reseller_API_calls": 0,
+    "actual_DSH_adapter_connected": false,
+    "cache_billing_observed": false
+  },
+  "external_pool_connection": false,
+  "repository": {
+    "README_bytes": 0,
+    "active_GitHub_Actions_workflows": 0,
+    "upstreams_clean": true,
+    "new_remote_selected": false,
+    "publication_attempted": false,
+    "GitHub_Actions_used": false
+  },
+  "next_iteration": 10
+}

@@ -1,0 +1,398 @@
+{
+  "schema": "neuro.iteration09.fresh_rehearsal.input_scope.v1",
+  "source_root": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "source_commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "files_sha256": "c52bb9a0511b09d17c846350ac0fcfaaa4b4e04828a6565dcfa72d8f9adc468d",
+  "scope_summary": [
+    {
+      "scope": "CMakeLists.txt",
+      "exists": true,
+      "files": 1,
+      "bytes": 10854
+    },
+    {
+      "scope": "cmake",
+      "exists": true,
+      "files": 3,
+      "bytes": 9350
+    },
+    {
+      "scope": "native",
+      "exists": true,
+      "files": 48,
+      "bytes": 758566
+    },
+    {
+      "scope": "rust",
+      "exists": true,
+      "files": 3,
+      "bytes": 53823
+    },
+    {
+      "scope": "configs/proof-build.json",
+      "exists": true,
+      "files": 1,
+      "bytes": 1126
+    },
+    {
+      "scope": "patches",
+      "exists": true,
+      "files": 1,
+      "bytes": 760
+    },
+    {
+      "scope": "tools/build_pearl_proof.py",
+      "exists": true,
+      "files": 1,
+      "bytes": 15388
+    },
+    {
+      "scope": "tools/prepare_bounded_pool.py",
+      "exists": true,
+      "files": 1,
+      "bytes": 4557
+    },
+    {
+      "scope": "tools/check_pearl_proofs.py",
+      "exists": true,
+      "files": 1,
+      "bytes": 14358
+    },
+    {
+      "scope": "tools/replay_pool.py",
+      "exists": true,
+      "files": 1,
+      "bytes": 48676
+    },
+    {
+      "scope": "tools/replay_recovery.py",
+      "exists": true,
+      "files": 1,
+      "bytes": 33382
+    },
+    {
+      "scope": "fixtures",
+      "exists": false,
+      "files": 0,
+      "bytes": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 10854,
+      "sha256": "40c7f89ad17db65314ca8a365ee77a6a1f6d8c84281cd683132f22bcdd7dd3c1"
+    },
+    {
+      "path": "cmake/Blake3.cmake",
+      "bytes": 1125,
+      "sha256": "63443ef7d5d0ff7c867b076e00464ba8e518da20d6f2f42fe408126cfc70c941"
+    },
+    {
+      "path": "cmake/Host.cmake",
+      "bytes": 2407,
+      "sha256": "e58a75e012d1874e9dd4db96662f3648041973db09d1ef8feb6bc6c9846543b0"
+    },
+    {
+      "path": "cmake/Proof.cmake",
+      "bytes": 5818,
+      "sha256": "01fd7196937f708a408b2e501e93f620f8b85fd2d973fa5235200d6197a8db25"
+    },
+    {
+      "path": "configs/proof-build.json",
+      "bytes": 1126,
+      "sha256": "ba2f0bc5ac5ad53c6a91a13563db390e005d51eb70913ae1629c31417420f900"
+    },
+    {
+      "path": "native/cuda/fullk_kernel.cu",
+      "bytes": 4957,
+      "sha256": "a8bd682e454bd21e81253a8f7aee7f7acc100b23a54a93b5ff799aa42df79d37"
+    },
+    {
+      "path": "native/cuda/fullk_probe.cu",
+      "bytes": 9103,
+      "sha256": "7d40027b1ee9a40bc86a5d4e734e59e1c4130c72e8d61240e3a2b0413b1a49b1"
+    },
+    {
+      "path": "native/cuda/mining_cuda.cu",
+      "bytes": 3618,
+      "sha256": "f8891bb7e2ae21d895e39158e5c7608b23be257c0f89a93e7f5da0a86c0e21b8"
+    },
+    {
+      "path": "native/cuda/mma_probe.cu",
+      "bytes": 7932,
+      "sha256": "6172c20044e9f35b5be5e2f527d3887a41ffcb647066301b4c76bf404acd6b4c"
+    },
+    {
+      "path": "native/cuda/pearl_probe.cu",
+      "bytes": 11860,
+      "sha256": "50c8d3162bd64140a22d9c8a04b9c9cb53ab8066a541d92dfe3d921472a41403"
+    },
+    {
+      "path": "native/fixtures/attempt_golden.hpp",
+      "bytes": 29700,
+      "sha256": "94ca14b708c98def620348363df55c6b048e419e0b3618920c66f5545adc3c0a"
+    },
+    {
+      "path": "native/fixtures/attempt_manifest.json",
+      "bytes": 21092,
+      "sha256": "c8d6b6e6e1bb39600b5cf9d818d9ee263e42caca36615b7b36e68a01389bac68"
+    },
+    {
+      "path": "native/fixtures/blake3_vectors.hpp",
+      "bytes": 35136,
+      "sha256": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46"
+    },
+    {
+      "path": "native/fixtures/fullk_golden.hpp",
+      "bytes": 47192,
+      "sha256": "3d65f45a10905868ebcc44c057ce1f044d79758ddd5af3bbca4f1e6baf475162"
+    },
+    {
+      "path": "native/fixtures/fullk_manifest.json",
+      "bytes": 9401,
+      "sha256": "bcb5234fa5086bc2aa1e5c243299f223dbb9e117b6993a4e58ad2b0e813d09ca"
+    },
+    {
+      "path": "native/fixtures/pearl_golden.hpp",
+      "bytes": 231742,
+      "sha256": "ce22e64881daff797e5664f9e0060514ec9da30860eda13e40f0230e389de7c0"
+    },
+    {
+      "path": "native/fixtures/pearl_manifest.json",
+      "bytes": 16437,
+      "sha256": "c6c52355e16e8de5b0e6c9c74141146b5cf23de55c60586e5f7423917c483ba5"
+    },
+    {
+      "path": "native/fixtures/proof_golden.hpp",
+      "bytes": 6093,
+      "sha256": "d70ce86d4b0766acabd5322b14849dd6d53b2291f86b51de4e5a2cbbd96d1ad4"
+    },
+    {
+      "path": "native/fixtures/proof_manifest.json",
+      "bytes": 9925,
+      "sha256": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa"
+    },
+    {
+      "path": "native/host/mining_job.cpp",
+      "bytes": 12084,
+      "sha256": "52ef4969aaccd775d5526558bb929732b2f160212115f0c1ac1334a22cc0691c"
+    },
+    {
+      "path": "native/host/pool_replay_client.cpp",
+      "bytes": 31794,
+      "sha256": "9eecfed9302e2833304dc186da48601f69b5bcc87b9b8db3b927eef77cf46b25"
+    },
+    {
+      "path": "native/host/pool_wire.cpp",
+      "bytes": 20136,
+      "sha256": "e29a1a7a0a63c9f69b61374182e22eda951cbac4469e28ff62564284987888ea"
+    },
+    {
+      "path": "native/host/search_journal.cpp",
+      "bytes": 29441,
+      "sha256": "256fc9e8dbec37b0bd371426c39b1bf5eeb43cd7de271976995fdbe22c486db1"
+    },
+    {
+      "path": "native/include/neuro/fullk.hpp",
+      "bytes": 2261,
+      "sha256": "588078751744ab4fcd3a2365193bf69b4a9de87a4d5c5aa772726f6734b1eca7"
+    },
+    {
+      "path": "native/include/neuro/fullk_cuda.cuh",
+      "bytes": 825,
+      "sha256": "6bacb34b9dec8e4d4c03ef895f91fe49fb5b5e3e475b046d8e2b672102655c5d"
+    },
+    {
+      "path": "native/include/neuro/mining_cuda.hpp",
+      "bytes": 502,
+      "sha256": "e90f00c796c62121926e6b448ac003c5403f3c5742f935ecc2ca7b762b7fbedb"
+    },
+    {
+      "path": "native/include/neuro/mining_job.hpp",
+      "bytes": 5105,
+      "sha256": "7587a45e6d2157761adc7e9daf3653cf5b992f23f6142dad6072600f325dfbbb"
+    },
+    {
+      "path": "native/include/neuro/mma_layout.hpp",
+      "bytes": 4571,
+      "sha256": "9992eaaada77cc1d30f66cd9ef5d9d1da1baa1ef0820f4445cc8f70539754540"
+    },
+    {
+      "path": "native/include/neuro/pearl_input.hpp",
+      "bytes": 2273,
+      "sha256": "18b340c1d637d8f27418b58df2d65ea4ab893449a58e38a615ee804690aee28b"
+    },
+    {
+      "path": "native/include/neuro/pearl_proof.hpp",
+      "bytes": 2877,
+      "sha256": "0035ac1fd93696e73c683f0dbb293ff6555c5a00d06ac42acd6bb7db9ff9a4a2"
+    },
+    {
+      "path": "native/include/neuro/pool_wire.hpp",
+      "bytes": 2929,
+      "sha256": "773151de50d10262f147e982c7d231d4432c3d047befad602a0c41f1bb098738"
+    },
+    {
+      "path": "native/include/neuro/search_journal.hpp",
+      "bytes": 3511,
+      "sha256": "93edb89038323318fb3ded99de2cba0846eb2c8f7ff72d0784f54e415fb8be8e"
+    },
+    {
+      "path": "native/pearl/pearl_input.cpp",
+      "bytes": 7153,
+      "sha256": "35fcb1ced7874913d441cde1a0d8e9d55fee5151a43ddb6c34a6821c3be2367b"
+    },
+    {
+      "path": "native/proof/pearl_proof.cpp",
+      "bytes": 14866,
+      "sha256": "1dc1b72517ba14ba60021bdb2ab52231e3f70556598d796c0040c2e50fb726e6"
+    },
+    {
+      "path": "native/proof/pearl_proof_cli.cpp",
+      "bytes": 7774,
+      "sha256": "cf4ca33bb9bb6086ca52166fc488d68d81eef439fd04111fac94f7619ec9f1ff"
+    },
+    {
+      "path": "native/proof/pearl_proof_internal.hpp",
+      "bytes": 525,
+      "sha256": "f97baf1da3ef01e0f2e4569739e8faf4471b85f86f67e59e26ab7151ab2ced15"
+    },
+    {
+      "path": "native/proof/pearl_witness.cpp",
+      "bytes": 7085,
+      "sha256": "151e4ac0d97fc83b68feda89ccb7c483090a5480e882584b9c6bfee4f989a835"
+    },
+    {
+      "path": "native/reference/fullk_reference.cpp",
+      "bytes": 6239,
+      "sha256": "351f94fbb823f3302de1b15be74def5ba26fafdc19b9406d4623699a50c704f8"
+    },
+    {
+      "path": "native/reference/fullk_warp.cpp",
+      "bytes": 5053,
+      "sha256": "9f6d8c5a746a67a8cb4d050fdd1f438df74e2af313033741a0cb55ed1feda82f"
+    },
+    {
+      "path": "native/tests/attempt_search_test.cpp",
+      "bytes": 17867,
+      "sha256": "2e826c2bd0a90e276ba83676290ad82ad47607922933ed46eb625d49f818ecd9"
+    },
+    {
+      "path": "native/tests/blake3_vectors_test.cpp",
+      "bytes": 4092,
+      "sha256": "898fa72b72ec7c3a6b96c90d0d201bd8560250f59ce7e0108981d23926ce787e"
+    },
+    {
+      "path": "native/tests/cppminer_math_probe.cpp",
+      "bytes": 8066,
+      "sha256": "597e8e241d2513c7efeae8f2ec16658b187c9185b3a4610cf6ddcf4e908928ed"
+    },
+    {
+      "path": "native/tests/fullk_test.cpp",
+      "bytes": 6233,
+      "sha256": "268bbf23f6bd25d8d4633b79f8dad2f0990556ae924aa42373b8453c0cac86bc"
+    },
+    {
+      "path": "native/tests/fullk_upstream_test.cpp",
+      "bytes": 4930,
+      "sha256": "c484e097f36c53aa55bc218dcbda3ca03a1fc8c68c861ca673d58f1a317267d3"
+    },
+    {
+      "path": "native/tests/mining_cuda_host_test.cpp",
+      "bytes": 881,
+      "sha256": "05e5e2ac432ca5837cbcb032c6301890e8526760d7cfe101bd2605a495de88bc"
+    },
+    {
+      "path": "native/tests/mining_job_test.cpp",
+      "bytes": 19191,
+      "sha256": "19b7bc68a7ac9304b221fe196ba7a9e2bd7ee12de34e0add3f301b3b78b74f8a"
+    },
+    {
+      "path": "native/tests/mma_layout_test.cpp",
+      "bytes": 4394,
+      "sha256": "fcd221929755fc8ce080c30a96246e7c017e7ac9a9075941dd72759e0ca87e38"
+    },
+    {
+      "path": "native/tests/pearl_alignment_test.cpp",
+      "bytes": 3266,
+      "sha256": "ace9f6196c56f8304e9b1391bb631f4eebda0eec5df0b5cc53783d5660042d91"
+    },
+    {
+      "path": "native/tests/pearl_input_test.cpp",
+      "bytes": 12646,
+      "sha256": "d284d78563724e78ef314b1d65e94824fa39af91270bf4790a58fe7c49ef73c3"
+    },
+    {
+      "path": "native/tests/pearl_proof_test.cpp",
+      "bytes": 22060,
+      "sha256": "4eea7821b57282c338a148f890af4e1d9354bfb900274994ab5d4c0bcc284c7f"
+    },
+    {
+      "path": "native/tests/pearl_upstream_test.cpp",
+      "bytes": 8415,
+      "sha256": "c0e2e52cd356602151150e688a82984e4876c3f3fbc8ba74d3ff7d771db9b78e"
+    },
+    {
+      "path": "native/tests/pool_wire_test.cpp",
+      "bytes": 18380,
+      "sha256": "df90ba4557d648db2e688fb13ed47991121e000d6bd5da6487763dad438e3cdb"
+    },
+    {
+      "path": "native/tests/search_journal_test.cpp",
+      "bytes": 16953,
+      "sha256": "93c0283b5e848b0a92a4b2ef5466d1e53c8a8cb6e1d8644bf85423bb6c8d08da"
+    },
+    {
+      "path": "patches/cppminer-bounded-pool.patch",
+      "bytes": 760,
+      "sha256": "d43e18030c9178aadbc299d2243e327063ec68f08598b366efc31c4f65afec4d"
+    },
+    {
+      "path": "rust/pearl-proof-check/Cargo.lock",
+      "bytes": 46149,
+      "sha256": "78711222bd48509ba382cfbaa5e8ae5482978937932a78b4b502ada3fcbceba0"
+    },
+    {
+      "path": "rust/pearl-proof-check/Cargo.toml",
+      "bytes": 382,
+      "sha256": "ef3418d850a99692aaa8a8c39a0339e5c59aab81194186f9ee27d8758dbd42c9"
+    },
+    {
+      "path": "rust/pearl-proof-check/src/main.rs",
+      "bytes": 7292,
+      "sha256": "4aa15236a9052d17daf8362a50f4c23146928e5d50e3246bde6f9aaaaad8040b"
+    },
+    {
+      "path": "tools/build_pearl_proof.py",
+      "bytes": 15388,
+      "sha256": "caaa7346094cd5e190e61720ca3a7ed0cad7dc7f76918c52890e95cec13ffe7f"
+    },
+    {
+      "path": "tools/check_pearl_proofs.py",
+      "bytes": 14358,
+      "sha256": "6711b3e38700a95d5312097f601b225e9dc930e3a2eb1467168abb249db50a52"
+    },
+    {
+      "path": "tools/prepare_bounded_pool.py",
+      "bytes": 4557,
+      "sha256": "8034abc99a24cf5444816f5d1dfcbef73ef24a7f2ce2d79cccbeee460552ee31"
+    },
+    {
+      "path": "tools/replay_pool.py",
+      "bytes": 48676,
+      "sha256": "c6b6b0334a752af2ceab55deb71e5481660e1eedb669b2fc56f1aa0813e5d987"
+    },
+    {
+      "path": "tools/replay_recovery.py",
+      "bytes": 33382,
+      "sha256": "2a4d9fd8f1999ddc985cbee694a08342df219a03d560995c36832bb8905ae35a"
+    }
+  ],
+  "canonicalization": "JSON of sorted path records, sort_keys=True, separators=(comma,colon), UTF-8",
+  "gitlinks": {
+    "upstream/cppminer": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+    "upstream/blake3": "93a431c78a52d7ccf0f366f106467f5070e6075e"
+  },
+  "note": "Root fixtures/ is absent; native/fixtures is included by native/ scope."
+}

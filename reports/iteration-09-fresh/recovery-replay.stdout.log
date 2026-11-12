@@ -1,0 +1,16 @@
+{"scenario": "crash_before_compute", "passed": true, "phases": 2, "error": null}
+{"scenario": "crash_after_proof", "passed": true, "phases": 2, "error": null}
+{"scenario": "crash_before_send", "passed": true, "phases": 2, "error": null}
+{"scenario": "crash_after_ack", "passed": true, "phases": 2, "error": null}
+{"scenario": "received_without_ack", "passed": true, "phases": 2, "error": null}
+{"scenario": "encoding_change_restart", "passed": true, "phases": 2, "error": null}
+{"scenario": "rejected_then_restart", "passed": true, "phases": 2, "error": null}
+{"scenario": "miss_prefix_restart", "passed": true, "phases": 2, "error": null}
+{"scenario": "changed_header_return", "passed": true, "phases": 3, "error": null}
+{"scenario": "changed_target_return", "passed": true, "phases": 3, "error": null}
+{"scenario": "exhausted_restart", "passed": true, "phases": 2, "error": null}
+{"scenario": "corrupt_journal", "passed": true, "phases": 2, "error": null}
+{"scenario": "torn_journal", "passed": true, "phases": 2, "error": null}
+{"scenario": "report_path_alias", "passed": true, "phases": 3, "error": null}
+{"scenario": "exclusive_writer", "passed": true, "phases": 2, "error": null}
+{"schema": "neuro.pool_recovery.v1", "passed": true, "scenarios_run": 15, "process_phases_run": 33, "submitted_proofs_checked": 22, "error": null}

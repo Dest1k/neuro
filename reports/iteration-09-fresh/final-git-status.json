@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "argv": [
+    "git",
+    "status",
+    "--porcelain",
+    "--untracked-files=all"
+  ],
+  "stdout": "",
+  "stderr": ""
+}

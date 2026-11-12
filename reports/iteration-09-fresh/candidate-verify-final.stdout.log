@@ -1,0 +1,1 @@
+{"schema":"neuro.candidate.verification.v1","passed":true,"candidate_sha256":"5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3","actual_sha256":"5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3","files":953,"mismatched_count":0,"mismatched_paths":[],"error":null}

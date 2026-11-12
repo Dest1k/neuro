@@ -1,0 +1,1 @@
+{"schema": "neuro.proof_crosscheck.v1", "passed": true, "proofs_generated": 6, "verification_checks": 66, "expected_acceptances": 6, "expected_rejections": 60, "error": null}

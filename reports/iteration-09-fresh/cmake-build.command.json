@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+    "--build",
+    "build/proof-cmake",
+    "-j",
+    "2"
+  ],
+  "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "timeout_seconds": 600.0,
+  "declared_environment": {
+    "CARGO_NET_OFFLINE": "true",
+    "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+    "RAYON_NUM_THREADS": "2"
+  },
+  "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+  "status": "passed",
+  "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+  "compiled_target_cache_reused": false,
+  "network_enabled_for_cargo": false,
+  "returncode": 0,
+  "elapsed_seconds": 28.71
+}

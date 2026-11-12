@@ -1,0 +1,614 @@
+{
+  "schema": "neuro.iteration09.fresh_linux_rehearsal.v1",
+  "passed": true,
+  "tested_snapshot_iteration": 8,
+  "tested_commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "tested_candidate_sha256": "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3",
+  "archive": {
+    "path": "/workspace/scratch/ee2def0b7c52/neuro-iteration-08-checkpoint.zip",
+    "sha256": "421874b265bf892ebffc003b4e05d110401a3b3c89ad16695d7fd4826a731f71"
+  },
+  "root": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+  "preconditions": {
+    "schema": "neuro.iteration09.fresh_rehearsal.preconditions.v1",
+    "archive": "/workspace/scratch/ee2def0b7c52/neuro-iteration-08-checkpoint.zip",
+    "archive_sha256": "421874b265bf892ebffc003b4e05d110401a3b3c89ad16695d7fd4826a731f71",
+    "restored_directory": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+    "restore_helper": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/package/neuro-iteration-08-checkpoint/restore.py",
+    "source_head": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+    "candidate_sha256": "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3",
+    "candidate_match_verified_by_restore": true,
+    "before_build_observations": {
+      "new_target_directory_reserved_by_restore": true,
+      "build_directory_absent": true,
+      "proof_build_report_absent": true,
+      "root_worktree_clean": true,
+      "proof_target_cache_copied": false,
+      "cmake_cache_copied": false
+    },
+    "reused_inputs": [
+      {
+        "type": "rust_toolchain",
+        "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu",
+        "version": "1.99.1"
+      },
+      {
+        "type": "cargo_download_and_source_cache",
+        "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+        "compiled_targets_reused": false
+      },
+      {
+        "type": "cmake_toolchain",
+        "path": "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin",
+        "version": "3.31.6"
+      },
+      {
+        "type": "system_compiler",
+        "path": "/usr/bin/g++",
+        "version": "14.2.0"
+      }
+    ],
+    "cold_dependency_download_tested": false,
+    "cargo_network_mode": "CARGO_NET_OFFLINE=true",
+    "github_actions_used": false,
+    "gpu_execution": false,
+    "ssh_used": false,
+    "windows_execution": false,
+    "readme_bytes": 0,
+    "modules": [
+      {
+        "path": "upstream/blake3",
+        "commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "shallow_boundaries": [
+          "93a431c78a52d7ccf0f366f106467f5070e6075e",
+          "f55849f89cd85083c1c9daa2c5de20766f309c00"
+        ]
+      },
+      {
+        "path": "upstream/cppminer",
+        "commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "shallow_boundaries": [
+          "5b68506af5e6433ee5c25aa9e6fbb00b537590aa"
+        ]
+      }
+    ]
+  },
+  "native_input_scope": {
+    "manifest": "native-inputs.json",
+    "sha256": "6a98c105811144437d559b7b61621173f626db19ddb935b3fe6d43eb11fc9672",
+    "files_sha256": "c52bb9a0511b09d17c846350ac0fcfaaa4b4e04828a6565dcfa72d8f9adc468d",
+    "file_count": 62,
+    "gitlinks": {
+      "upstream/cppminer": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "upstream/blake3": "93a431c78a52d7ccf0f366f106467f5070e6075e"
+    },
+    "root_fixtures_directory_exists": false
+  },
+  "scope_for_iteration09": "Root must separately verify equality of these native input paths and pinned gitlinks with final iteration09. Full iteration09 candidate is intentionally not claimed identical.",
+  "commands": [
+    {
+      "name": "restore",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/package/neuro-iteration-08-checkpoint/restore.py",
+        "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 2.046,
+      "network_used": false
+    },
+    {
+      "name": "proof-build",
+      "argv": [
+        "python",
+        "tools/build_pearl_proof.py",
+        "--cargo",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/cargo",
+        "--rustc",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+        "--cargo-home",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 3800.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 273.75
+    },
+    {
+      "name": "cmake-configure",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "-S",
+        ".",
+        "-B",
+        "build/proof-cmake",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DNEURO_ENABLE_PROOF=ON",
+        "-DNEURO_ENABLE_CUDA=OFF",
+        "-DNEURO_BUILD_CPU_CHECKS=ON"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 180.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 2.128
+    },
+    {
+      "name": "cmake-build",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "--build",
+        "build/proof-cmake",
+        "-j",
+        "2"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 600.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 28.71
+    },
+    {
+      "name": "ctest",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest",
+        "--test-dir",
+        "build/proof-cmake",
+        "--output-on-failure"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 180.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 7.189
+    },
+    {
+      "name": "proof-check",
+      "argv": [
+        "python",
+        "tools/check_pearl_proofs.py",
+        "--output",
+        "artifacts/proof-check.json"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 180.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 0.618
+    },
+    {
+      "name": "pool-replay",
+      "argv": [
+        "python",
+        "tools/replay_pool.py",
+        "--backend",
+        "cpu",
+        "--output",
+        "artifacts/pool-replay.json"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 300.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 5.553
+    },
+    {
+      "name": "recovery-replay",
+      "argv": [
+        "python",
+        "tools/replay_recovery.py",
+        "--backend",
+        "cpu",
+        "--output",
+        "artifacts/pool-recovery.json"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 600.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 2.634
+    },
+    {
+      "name": "source-check-final",
+      "argv": [
+        "python",
+        "tools/neuroctl.py",
+        "source-check"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 120.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 0.115
+    },
+    {
+      "name": "candidate-verify-final",
+      "argv": [
+        "python",
+        "tools/candidate_manifest.py",
+        "verify",
+        "--root",
+        "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+        "--manifest",
+        "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/package/neuro-iteration-08-checkpoint/candidate.json",
+        "--expected",
+        "5fb11bec59f11b29f68497cd7c322c69301c3abeeaee1e0a743fb047e0abced3"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-rehearsal-old/source",
+      "timeout_seconds": 120.0,
+      "declared_environment": {
+        "CARGO_NET_OFFLINE": "true",
+        "RUSTUP_HOME": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup",
+        "RAYON_NUM_THREADS": "2"
+      },
+      "path_prefix": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin",
+      "status": "passed",
+      "cargo_source_cache_reused": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+      "compiled_target_cache_reused": false,
+      "network_enabled_for_cargo": false,
+      "returncode": 0,
+      "elapsed_seconds": 0.519
+    }
+  ],
+  "total_command_elapsed_seconds": 323.262,
+  "build_results": {
+    "rust_toolchain": {
+      "rustc": {
+        "binary": "rustc",
+        "commit-hash": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+        "commit-date": "2026-10-13",
+        "host": "x86_64-unknown-linux-gnu",
+        "release": "1.99.1",
+        "LLVM version": "23.1.1"
+      },
+      "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+      "target_cfg": [
+        "debug_assertions",
+        "panic=\"unwind\"",
+        "target_abi=\"\"",
+        "target_arch=\"x86_64\"",
+        "target_endian=\"little\"",
+        "target_env=\"gnu\"",
+        "target_family=\"unix\"",
+        "target_feature=\"fxsr\"",
+        "target_feature=\"sse\"",
+        "target_feature=\"sse2\"",
+        "target_has_atomic=\"16\"",
+        "target_has_atomic=\"32\"",
+        "target_has_atomic=\"64\"",
+        "target_has_atomic=\"8\"",
+        "target_has_atomic=\"ptr\"",
+        "target_has_atomic_primitive_alignment=\"16\"",
+        "target_has_atomic_primitive_alignment=\"32\"",
+        "target_has_atomic_primitive_alignment=\"64\"",
+        "target_has_atomic_primitive_alignment=\"8\"",
+        "target_has_atomic_primitive_alignment=\"ptr\"",
+        "target_os=\"linux\"",
+        "target_pointer_width=\"64\"",
+        "target_vendor=\"unknown\"",
+        "unix"
+      ]
+    },
+    "rust_target": "x86_64-unknown-linux-gnu",
+    "rust_donor_unit_tests_passed": 20,
+    "rust_locks_unchanged": true,
+    "stub_used": false,
+    "native_configuration": "Release; NEURO_ENABLE_PROOF=ON; NEURO_ENABLE_CUDA=OFF; NEURO_BUILD_CPU_CHECKS=ON",
+    "ctest_passed": 15,
+    "ctest_failed": 0,
+    "proof_build_artifacts": {
+      "proof_library": {
+        "path": "build/proof-target/x86_64-unknown-linux-gnu/release/libcp_proof_ffi.a",
+        "bytes": 45809566,
+        "sha256": "a9d01c84c22dfc418f5e5397ad984fddb4ff3a554b34e2e5718ebd1f42c7f190"
+      },
+      "reference_checker": {
+        "path": "build/proof-target/x86_64-unknown-linux-gnu/release/pearl-proof-check",
+        "bytes": 1491696,
+        "sha256": "2a67734ab92fce4419de87ad3072d6245f913bb32e3c4dfbb3fae5e36e234da0"
+      }
+    },
+    "native_artifacts": [
+      {
+        "path": "build/proof-cmake/neuro_pearl_proof",
+        "bytes": 5680520,
+        "sha256": "e94947f93df41d7c67b360bceca5cb98e85f87f06129a6e7ae7054cf3bab84ab"
+      },
+      {
+        "path": "build/proof-cmake/neuro_pool_replay_client",
+        "bytes": 5857136,
+        "sha256": "7177152c0458a191d11edcd902bcd6f9506967f20a1b70da77d9f045c5a8077c"
+      },
+      {
+        "path": "build/proof-cmake/neuro_search_journal_test",
+        "bytes": 5604648,
+        "sha256": "af47dfcfc856c6b7e6e532f120dfa9206fc3ad48f61242e313e6e0519d322e06"
+      },
+      {
+        "path": "build/proof-cmake/neuro_attempt_search_test",
+        "bytes": 5659936,
+        "sha256": "c98117f1b07178e104a3488b5dbf410cebd1d33c6ea7ab5ea4fb94bde6adb665"
+      }
+    ]
+  },
+  "gates": {
+    "proof_crosscheck": {
+      "passed": true,
+      "proofs_generated": 6,
+      "verification_checks": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60
+    },
+    "pool_replay": {
+      "passed": true,
+      "scenarios_run": 19,
+      "submitted_proofs_checked": 23
+    },
+    "pool_recovery": {
+      "passed": true,
+      "scenarios_run": 15,
+      "process_phases_run": 33,
+      "submitted_proofs_checked": 22
+    },
+    "search_journal": {
+      "passed": true,
+      "checks": 124,
+      "expected_rejections": 44
+    },
+    "native_json_test_results": [
+      {
+        "schema": "neuro.mining_job_test.v1",
+        "status": "PASS",
+        "kind": "bounded_cpu_host_lifecycle",
+        "checks": 141,
+        "full_matrix_cpu_reference_calls": 1,
+        "fixture_backend_calls": 12,
+        "cancellation_checkpoints": 7,
+        "controlled_concurrency_cases": 4,
+        "genuine_plain_proof_observed": true,
+        "gpu_execution_observed": false,
+        "pool_connection_observed": false,
+        "pool_share_accepted": false,
+        "mining_performance_evidence": false
+      },
+      {
+        "schema": "neuro.attempt_search_test.v1",
+        "status": "PASS",
+        "checks": 201,
+        "independent_full_matrix_cases": 11,
+        "genuine_proofs": 25,
+        "misses_before_later_proof": 7,
+        "maximum_attempts": 64,
+        "gpu_execution": false,
+        "live_pool": false
+      },
+      {
+        "schema": "neuro.mma_layout_test.v1",
+        "status": "PASS",
+        "kind": "cpu_layout_emulation",
+        "gpu_execution_observed": false,
+        "mining_evidence": false,
+        "checked_values": 1024
+      },
+      {
+        "schema": "neuro.fullk_cpu_test.v1",
+        "status": "PASS",
+        "kind": "cpu_reference_and_warp_emulation",
+        "gpu_execution_observed": false,
+        "mining_evidence": false,
+        "fixture_count": 6,
+        "reference_checked_values": 5120,
+        "emulation_checked_values": 5120,
+        "checked_values": 10240,
+        "invalid_inputs_rejected": 51
+      },
+      {
+        "schema": "neuro.blake3_vectors_test.v1",
+        "status": "PASS",
+        "kind": "official_cpu_hash_known_answers",
+        "exact": true,
+        "gpu_execution_observed": false,
+        "pool_connection_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "cases": 35,
+        "checked_modes": 105,
+        "checked_bytes": 17115
+      },
+      {
+        "schema": "neuro.pearl_alignment_test.v1",
+        "status": "PASS",
+        "kind": "upstream_cpu_alignment_and_cancellation",
+        "alignment_vectors_passed": true,
+        "cancellation_checks": 13,
+        "gpu_execution_observed": false,
+        "pool_connection_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false
+      },
+      {
+        "schema": "neuro.pearl_input_test.v1",
+        "status": "PASS",
+        "kind": "cpu_pearl_input_and_arithmetic",
+        "gpu_execution_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "fixture_count": 3,
+        "digest_bytes_checked": 1248,
+        "matrix_bytes_fingerprinted": 7340032,
+        "transcript_words_checked": 32768,
+        "final_c_values_checked": 65536,
+        "invalid_requests_rejected": 29,
+        "global_config_reset_checked": true
+      },
+      {
+        "schema": "neuro.fullk_upstream_test.v1",
+        "status": "PASS",
+        "kind": "cpu_scalar_differential",
+        "gpu_execution_observed": false,
+        "mining_evidence": false,
+        "fixture_count": 4,
+        "reference_upstream_transcript_words": 24576,
+        "emulation_upstream_transcript_words": 24576,
+        "reference_emulation_final_values": 98304,
+        "checked_values": 147456
+      },
+      {
+        "schema": "neuro.pearl_upstream_test.v1",
+        "status": "PASS",
+        "kind": "cpu_pearl_donor_differential",
+        "gpu_execution_observed": false,
+        "proof_verified": false,
+        "mining_evidence": false,
+        "fixture_count": 3,
+        "seed_bytes_checked": 384,
+        "changed_row_bytes_checked": 12288,
+        "noisy_matrix_bytes_checked": 3670016,
+        "reference_upstream_transcript_words": 16384,
+        "emulation_upstream_transcript_words": 16384,
+        "real_cancellation_linked": true,
+        "pool_connections_opened": false
+      }
+    ],
+    "git_worktree_clean_after": true,
+    "candidate_unchanged_after": true
+  },
+  "evidence_files": [
+    {
+      "path": "captured/artifacts/checkpoint-restore.json",
+      "bytes": 1784,
+      "sha256": "3eedfceb72c0679162e592757a8f7276ab77287bf20cb54957f3d7281d20bbb3"
+    },
+    {
+      "path": "captured/artifacts/proof-build.json",
+      "bytes": 52892,
+      "sha256": "5c2d67f37287c7ea6c9617d8fdf2b74b0ed1b2f3e462bac9bfcc9758c2a91cc0"
+    },
+    {
+      "path": "captured/artifacts/proof-check.json",
+      "bytes": 163391,
+      "sha256": "1d704a76141668213a6594d4804d62cac381fb0cea889efad1cf29d0cd993430"
+    },
+    {
+      "path": "captured/artifacts/pool-replay.json",
+      "bytes": 174296,
+      "sha256": "c46d58ed119ff59ed4f607668ee76ab946e82f7134a4a399c87eb19f027b8f88"
+    },
+    {
+      "path": "captured/artifacts/pool-recovery.json",
+      "bytes": 213730,
+      "sha256": "9eeb3bcac8b437c70b096d1f280d6db5f622e52cbd71aff9bf57b47aab650633"
+    },
+    {
+      "path": "captured/artifacts/proof-build/x86_64-unknown-linux-gnu/donor-build.log",
+      "bytes": 4911,
+      "sha256": "75740dd18c17fd7da60e1d71cbc4596173062edc61d7c0f0112228b9130ad37d"
+    },
+    {
+      "path": "captured/artifacts/proof-build/x86_64-unknown-linux-gnu/donor-tests.log",
+      "bytes": 1617,
+      "sha256": "8c505be23a26829426e04750850ce0b087c46fa8f1b74d8cc725326a01764638"
+    },
+    {
+      "path": "captured/artifacts/proof-build/x86_64-unknown-linux-gnu/reference-build.log",
+      "bytes": 1249,
+      "sha256": "bb41fb120278f3d72cd79f7f3e0a7f9f14b7357a541d655442c02254e6e07809"
+    },
+    {
+      "path": "captured/artifacts/proof-build/x86_64-unknown-linux-gnu/native-libs.log",
+      "bytes": 424,
+      "sha256": "27b918bbeaec34d954007b6a31cc21c366f996a5a2c2f0b50c2e92738be5c9d2"
+    },
+    {
+      "path": "captured/build/proof-cmake/Testing/Temporary/LastTest.log",
+      "bytes": 14668,
+      "sha256": "ec96cf4471ed165955493045f471f557eb4a53f5223408d6871dd31ef49c0cb3"
+    }
+  ],
+  "limitations": {
+    "cold_dependency_download": false,
+    "fresh_installed_toolchains": false,
+    "preexisting_compiled_artifacts_copied": false,
+    "cuda_compile": false,
+    "gpu_execution": false,
+    "windows_execution": false,
+    "real_pool_execution": false,
+    "ssh_owner_machine_access": false,
+    "dsh_provider_adapter_execution": false,
+    "github_actions_execution": false
+  },
+  "interpretation": "Fresh isolated Linux source restore and fresh native compilation using previously installed compilers and Cargo source/download caches. These are genuine local CPU proofs and loopback/recovery checks. No new cold-cache dependency provisioning, owner hardware, Windows runtime, GPU execution or live mining evidence."
+}

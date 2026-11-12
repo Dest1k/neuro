@@ -1,0 +1,13 @@
+{
+  "schema": "neuro.native_rehearsal_application.v1",
+  "passed": true,
+  "native_file_count": 62,
+  "native_files_sha256": "c52bb9a0511b09d17c846350ac0fcfaaa4b4e04828a6565dcfa72d8f9adc468d",
+  "gitlinks": {
+    "upstream/cppminer": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+    "upstream/blake3": "93a431c78a52d7ccf0f366f106467f5070e6075e"
+  },
+  "tested_source_commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
+  "scope": "unchanged native/proof/CMake/patch/fixture/replay inputs; full candidate differs for handoff tools, documentation and evidence",
+  "full_candidate_claimed_identical": false
+}
