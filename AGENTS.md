@@ -16,17 +16,18 @@ ordinary engineering changes, run bounded local tests, fix failures, and keep
 useful changes without repeatedly asking the owner to select implementation
 details. User instructions override this file.
 
-The current preparation iteration is recorded in `state/current.json` (10 total).
-Iteration 10 must
-deliver a complete archive for `/home/jericho/neuro/start/` and a DSH starting
-directive. Before then, record the completed iteration and the next concrete
-task. Do not describe a plan, an unrun probe, or a CPU test as a working GPU miner.
+The ten preparation iterations are complete in `state/current.json`. The final
+source archive extracts into `/home/jericho/neuro/start/`; the owner supplies a
+separate private DSH starting directive. Continue with the concrete runtime
+tasks in `docs/handoff-runbook.md`, not another preparation-iteration countdown.
+Read `docs/handoff-readiness.md` for supplied versus locally discoverable inputs.
+Do not describe a plan, an unrun probe, or a CPU test as a working GPU miner.
 
 The owner explicitly requested an empty root `README.md`. Keep it zero bytes;
 do not restore introductory text, badges, links, or a placeholder. Entry-point
 instructions belong in the state and documentation files.
 
-Iteration 9 adds `docs/handoff-runbook.md` and the flat source packager in
+The handoff uses `docs/handoff-runbook.md` and the flat source packager in
 `tools/package_handoff.py`. Verify a newly extracted package with its embedded
 `_work/handoff/verify.py` before builds or ordinary Git commands can update its
 index. Subsequent development uses source-check and candidate identity, not the
@@ -141,6 +142,11 @@ the same database and campaign/session IDs across restart; never reset them to
 make a denied call possible. Missing usage keeps its hold and blocks dispatch.
 The local boundary is implemented; the actual DSH/provider adapter is not yet
 connected. Do not claim it controls requests which bypass these hooks.
+The owner-started DSH bootstrap can already be billable. Use a genuinely active
+native project bound for that phase and count its actual charges and attempts
+inside the same overall limits. Do not fabricate historical ledger dispatches.
+Keep any existing budget state; see the runbook's two-phase accounting contract.
+Scope any DSH configuration/hook to neuro; preserve shared defaults and Friday.
 
 Keep private endpoint settings in ignored `configs/local.json`, the SSH profile
 in ignored `configs/remote.local.json`, and keys in the
@@ -149,7 +155,9 @@ credentials in a command line or archive. Do not inspect unrelated credentials.
 
 Use `docs/windows-worker.md` for the fixed Windows build/probe actions and
 Linux SSH dispatcher. Before run-cuda, require current source/binary evidence
-from build-probes and run-cpu. Windows CI CPU evidence and owner-laptop/GPU
+from build-probes and run-cpu, plus the four separate worker/evidence/interactive
+fixture suites listed in that document. A skipped interactive fixture does not
+establish a usable owner desktop. Windows CI CPU evidence and owner-laptop/GPU
 evidence are different observations. The owner supplied private SSH access
 details in iteration 6 for inclusion in the iteration-10 directive; retrieve
 `neuro-owner-handoff-iteration06.json` privately or use that conversation message.
@@ -168,6 +176,9 @@ do not stop SRBMiner. Keep GPU ownership settings in ignored
 watchdog and recovery contract. Record launch, visible window and observed miner
 process separately; successful SSH/Task Scheduler calls alone are not restoration
 evidence. Do not start a replacement miner while test processes may still use GPU.
+Before stopping it, also confirm that the exact batch can resume its existing
+configuration without an unresolved interactive setup question and that one
+active owner desktop is available. Inspect locally rather than guessing answers.
 
 Use bounded subprocesses and small GPU jobs first. After a CUDA context error,
 restart the worker. Do not retry a hanging candidate forever. Preserve the

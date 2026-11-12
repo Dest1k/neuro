@@ -1,15 +1,17 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 9,
+  "preparation_iteration": 10,
   "preparation_total": 10,
-  "status": "iteration_9_fresh_native_and_flat_handoff_gates_passed_owner_runtime_pending",
+  "status": "iteration_10_final_source_handoff_owner_runtime_acceptance_next",
   "updated_moscow_date": "2026-11-12",
   "entry_points": [
     "state/current.json",
+    "AGENTS.md",
+    "docs/architecture.md",
+    "docs/iterations/10.md",
+    "docs/handoff-readiness.md",
     "docs/handoff-runbook.md",
-    "docs/development.md",
-    "docs/iterations/09.md",
     "docs/handoff-package.md",
     "docs/incidents/2026-11-12-github-suspension.md"
   ],
@@ -30,7 +32,7 @@
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
     "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_journal_Linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
-    "windows_execution": "historical_iteration6_CPU_proof_TCP_pass_iteration7_through9_changes_unrun",
+    "windows_execution": "historical_iteration6_CPU_proof_TCP_pass_iteration7_through10_changes_unrun",
     "full_proof": "plainproof_built_and_verified_stark_not_generated",
     "pool_shares": "not_run_external_pool_no_live_share_acceptance",
     "dsh_api_integration": "local_budget_boundary_implemented_actual_DSH_provider_transport_not_connected",
@@ -78,20 +80,15 @@
     "durable_search_recovery": "passed_15_TCP_scenarios_33_fresh_process_phases_plus_one_lock_contender_22_official_wire_proofs",
     "durable_encoding_recovery": "passed_gzip_to_plain_same_work_progress_uncertain_send_preserved",
     "cuda_linked_cpu_recovery": "passed_2_scenarios_4_process_phases_4_official_wire_proofs_no_GPU_execution",
-    "fresh_directory_build": "passed_iteration8_source_restore_fresh_Rust_native_proof_TCP_recovery_unchanged_native_inputs_in_iteration9",
+    "fresh_directory_build": "passed_iteration9_fresh_Rust_native_proof_TCP_recovery_same62_native_inputs_retained_in_iteration10",
     "handoff_preflight": "passed_real_Linux_inventory_plus_binding_import_and_13_synthetic_tests_no_execution_readiness_claim",
-    "handoff_package": "passed_two_full_project_relocations_including_spaces_preflight_176_Python_tests_and_10_fresh_basic_CTest_checks"
+    "handoff_package": "passed_two_full_project_relocations_including_spaces_preflight_176_Python_tests_and_10_fresh_basic_CTest_checks",
+    "handoff_preparation": "iteration10_current_source_Python_fixtures_and_owner_input_audit_passed_final_archive_identity_in_generated_manifest"
   },
-  "next_iteration": {
-    "number": 10,
-    "goal": "Deliver the final flat source archive and private starting directive for MiniMax in existing DSH",
-    "first_step": "Continue from the current local HEAD or iteration9 flat rehearsal archive. Verify the arrival manifest before modifying extracted files. Read the iteration9 report/runbook; resolve any remaining concrete delivery issue, then finalize state/directive/archive for /home/jericho/neuro/start. Include owner-supplied SSH descriptor path, Dest account and exact visible guided-setup.bat requirement in the private directive only. First executor tasks are real DSH/provider dispatch accounting and current owner Windows build/CPU/recovery before guarded GPU work.",
-    "avoid": "Do not restore GitHub Actions or repoint neuro into Friday. Do not include keys, private profiles, budget databases or runtime journals in source ZIP. Do not erase existing budget/search/GPU state. Do not call prerequisite inventory, a Linux build, synthetic replay or historical Windows result current GPU/pool/DSH validation."
-  },
+  "next_iteration": null,
   "handoff": {
     "target_iteration": 10,
     "extract_path": "/home/jericho/neuro/start",
-    "archive_created": false,
     "must_include_submodule_contents": true,
     "private_owner_connection_instructions_required": true,
     "private_owner_note": "neuro-owner-handoff-iteration06.json",
@@ -111,24 +108,31 @@
     "no_active_remotes_in_package": true,
     "exclude_toolchain_and_cargo_caches": true,
     "rehearsal_archive": "neuro-iteration-09-handoff-rehearsal.zip",
-    "final_archive_created": false,
-    "qualification_report": "reports/iteration-09-package/qualification-summary.json"
+    "qualification_report": "reports/iteration-09-package/qualification-summary.json",
+    "final_archive": "neuro-iteration-10-start.zip",
+    "private_directive": "neuro-iteration-10-DSH-directive.md",
+    "final_archive_identity": "_work/handoff/MANIFEST.json generated after the final source commit; external ZIP checksum in separate private directive",
+    "final_source_preparation_complete": true,
+    "owner_input_audit": "docs/handoff-readiness.md",
+    "private_directive_must_not_be_embedded_in_public_source": true,
+    "verify_final_archive_flag": "iteration10_launch_archive must be true",
+    "runtime_execution_verified": false
   },
-  "validation_report": "reports/iteration-09-validation.json",
+  "validation_report": "reports/iteration-10-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points.",
     "executor": "Give MiniMax M3 a second bounded trial; the Sol fallback is disabled by default.",
     "gpu_tests": "Pause the configured owner SRBMiner only around GPU work; restore the exact existing guided-setup.bat in a visible owner desktop window after the test processes release the GPU."
   },
   "publication": {
-    "status": "local_only_no_publication_attempt_in_iteration9",
+    "status": "local_only_no_publication_attempt_in_iteration10",
     "remote_main_last_observed": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
-    "recovery_checkpoint": "neuro-iteration-09-handoff-rehearsal.zip",
+    "recovery_checkpoint": "neuro-iteration-10-start.zip",
     "iteration7_CI_not_started": true,
     "older_checkpoint_requires_ci_mitigation": true,
     "remote_settings_changed": false,
-    "recovery_package": "neuro-iteration-09-handoff-rehearsal.zip",
-    "superseded_checkpoint": "neuro-iteration-08-checkpoint.zip",
+    "recovery_package": "neuro-iteration-10-start.zip",
+    "superseded_checkpoint": "neuro-iteration-09-handoff-rehearsal.zip",
     "iteration7_local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7"
   },
   "execution_policy": {
@@ -159,6 +163,15 @@
     "local_mitigation": "both_workflows_moved_out_of_recognized_directory_without_content_changes",
     "remote_workflows_or_account_settings_changed": false,
     "current_iteration_advanced": true,
-    "iteration_advance_note": "Incident policy retained; authorized local development continued through iteration9 without Actions or publication."
+    "iteration_advance_note": "Incident policy retained; authorized local preparation completed through iteration10 without Actions or publication."
+  },
+  "preparation_complete": true,
+  "next_stage": {
+    "phase": "DSH_owner_runtime",
+    "goal": "Observe current Windows CPU/proof/recovery, exact physical GPU correctness and visible SRBMiner restoration with actual bounded DSH accounting",
+    "first_step": "Verify the delivered ZIP identity and embedded arrival manifest before modifying the checkout. Read the private starting directive and current runbook. Preserve existing runtime state. Discover the real installed DSH/provider limits at bootstrap and owner connection/toolchain locally, then execute the staged current-source gates.",
+    "owner_input_audit": "docs/handoff-readiness.md",
+    "owner_only_question_required_before_handoff": false,
+    "avoid": "No Actions, Friday publication or shared DSH changes. No budget/session/journal resets, private data in public source, false current Windows/GPU/pool/cache claims or source-gold weakening."
   }
 }

@@ -1,0 +1,1 @@
+{"candidate_hash_calculations": false, "cases": 35, "header_sha256": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46", "mode": "check", "modes_per_case": 3, "schema": "neuro.blake3_fixture_check.v1", "source_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e", "status": "PASS"}

@@ -1,0 +1,162 @@
+{
+  "schema": "neuro.iteration10.current_local_verification.v1",
+  "started_at_utc": "2026-11-12T02:06:54.564197+00:00",
+  "passed": true,
+  "root": "/workspace/scratch/ee2def0b7c52/neuro",
+  "comparison_commit": "03bf6216cd64f980d935024fde06b26facd6c174",
+  "native_scope": {
+    "passed": true,
+    "files": 62,
+    "files_sha256": "c52bb9a0511b09d17c846350ac0fcfaaa4b4e04828a6565dcfa72d8f9adc468d",
+    "gitlinks": {
+      "upstream/cppminer": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "upstream/blake3": "93a431c78a52d7ccf0f366f106467f5070e6075e"
+    },
+    "all_scopes_and_absence_observations_match": true
+  },
+  "executable_scopes": {
+    "passed": true,
+    "scopes": [
+      "CMakeLists.txt",
+      "cmake",
+      "native",
+      "rust",
+      "patches",
+      "tools",
+      "tests",
+      "configs",
+      "windows",
+      "requirements-fixtures.txt",
+      "upstream",
+      ".gitmodules"
+    ],
+    "tracked_changes": [],
+    "untracked_inputs": []
+  },
+  "commands": [
+    {
+      "name": "source-check",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "tools/neuroctl.py",
+        "source-check"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.149,
+      "stdout": "source-check.stdout.log",
+      "stderr": "source-check.stderr.log",
+      "passed": true
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_seconds": 10.25,
+      "stdout": "python-tests.stdout.log",
+      "stderr": "python-tests.stderr.log",
+      "passed": true
+    },
+    {
+      "name": "fullk-fixtures",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "tools/generate_fullk_fixtures.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_seconds": 2.214,
+      "stdout": "fullk-fixtures.stdout.log",
+      "stderr": "fullk-fixtures.stderr.log",
+      "passed": true
+    },
+    {
+      "name": "blake3-fixtures",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "tools/generate_blake3_vectors.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.041,
+      "stdout": "blake3-fixtures.stdout.log",
+      "stderr": "blake3-fixtures.stderr.log",
+      "passed": true
+    }
+  ],
+  "limits": {
+    "fresh_Rust_repeated": false,
+    "native_build_repeated": false,
+    "Windows_execution": false,
+    "GPU_execution": false,
+    "SSH_used": false,
+    "reseller_API_calls": 0,
+    "GitHub_Actions_used": false
+  },
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "python": {
+    "discovered": 176,
+    "passed": 175,
+    "skipped": 1,
+    "failed": 0
+  },
+  "fullk_fixtures": {
+    "cases": 6,
+    "final_c_values": 4096,
+    "gpu_execution_observed": false,
+    "mining_evidence": false,
+    "mismatches": [],
+    "mode": "check",
+    "schema": "neuro.fullk_fixture_check.v1",
+    "status": "PASS",
+    "transcript_words": 1024
+  },
+  "blake3_fixtures": {
+    "candidate_hash_calculations": false,
+    "cases": 35,
+    "header_sha256": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46",
+    "mode": "check",
+    "modes_per_case": 3,
+    "schema": "neuro.blake3_fixture_check.v1",
+    "source_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+    "status": "PASS"
+  },
+  "finished_at_utc": "2026-11-12T02:07:07.222765+00:00",
+  "total_command_elapsed_seconds": 12.654
+}

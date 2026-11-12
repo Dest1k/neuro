@@ -1,15 +1,19 @@
 # Architecture and current implementation
 
-Current preparation: iteration 8 of 10. Read `state/current.json` for the next
+Current preparation: iteration 10 of 10, the final source handoff. Read `state/current.json` for the next
 task and the latest entry in `docs/iterations/` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
-Iteration 8 adds durable bounded-search recovery and real process-interruption
-checks. Current Windows worker/GPU handoff changes remain unrun on owner hardware.
-GitHub Actions stays disabled; all current verification runs directly in the
-local environment. Recover this version from `neuro-iteration-08-checkpoint.zip`
-if needed. Historical iteration-6 Windows observations do not validate newer
-code. See the incident policy in `AGENTS.md` before any future publication.
+The source handoff includes durable bounded-search recovery, real
+process-interruption checks, and a verified flat archive with a standalone
+arrival verifier. Follow `docs/handoff-runbook.md` after extracting the final
+archive; `docs/handoff-package.md` describes its contents and verification.
+Current Windows worker/GPU handoff changes remain unrun on owner hardware.
+GitHub Actions stays disabled; current verification runs directly in the local
+environment. Historical iteration-6 Windows observations do not validate newer
+code. Owner SSH, current Windows gates, physical GPU execution, visible miner
+restoration and live DSH billing require their own observations. See the incident
+policy in `AGENTS.md` before any future publication.
 
 ## Goal
 

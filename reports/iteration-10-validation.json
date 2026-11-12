@@ -1,0 +1,140 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 10,
+  "date": "2026-11-12",
+  "generated_at": "2026-11-12T02:10:03.799093+00:00",
+  "passed": true,
+  "local_checks_passed": true,
+  "status": "iteration10_final_source_preparation_validated_owner_runtime_pending",
+  "scope": "source_handoff_documentation_owner_inputs_and_delivery_contract_not_production_mining",
+  "base_local_commit": "03bf6216cd64f980d935024fde06b26facd6c174",
+  "current_verification": "reports/iteration-10/current-verification-summary.json",
+  "python": {
+    "discovered": 176,
+    "passed": 175,
+    "skipped": 1,
+    "failed": 0
+  },
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "independent_fullk_fixtures": {
+    "cases": 6,
+    "final_c_values": 4096,
+    "gpu_execution_observed": false,
+    "mining_evidence": false,
+    "mismatches": [],
+    "mode": "check",
+    "schema": "neuro.fullk_fixture_check.v1",
+    "status": "PASS",
+    "transcript_words": 1024
+  },
+  "official_blake3_fixtures": {
+    "candidate_hash_calculations": false,
+    "cases": 35,
+    "header_sha256": "31ec6c9ac17a64fc2b1b999142b506b4daf293896de40cd67378301fb13c7b46",
+    "mode": "check",
+    "modes_per_case": 3,
+    "schema": "neuro.blake3_fixture_check.v1",
+    "source_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+    "status": "PASS"
+  },
+  "unchanged_native_scope": {
+    "passed": true,
+    "files": 62,
+    "files_sha256": "c52bb9a0511b09d17c846350ac0fcfaaa4b4e04828a6565dcfa72d8f9adc468d",
+    "gitlinks": {
+      "upstream/cppminer": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+      "upstream/blake3": "93a431c78a52d7ccf0f366f106467f5070e6075e"
+    },
+    "all_scopes_and_absence_observations_match": true
+  },
+  "unchanged_executable_scopes": {
+    "passed": true,
+    "scopes": [
+      "CMakeLists.txt",
+      "cmake",
+      "native",
+      "rust",
+      "patches",
+      "tools",
+      "tests",
+      "configs",
+      "windows",
+      "requirements-fixtures.txt",
+      "upstream",
+      ".gitmodules"
+    ],
+    "tracked_changes": [],
+    "untracked_inputs": []
+  },
+  "command_elapsed_seconds": 12.654,
+  "retained_evidence": {
+    "fresh_native": "reports/iteration-09-fresh/rehearsal-summary.json",
+    "native_inputs": "reports/iteration-09-fresh/native-inputs.json",
+    "flat_package_qualification": "reports/iteration-09-package/qualification-summary.json",
+    "sm120_compilation": "reports/iteration-08-validation.json",
+    "historical_windows_only": "reports/iteration-06-validation.json",
+    "fresh_Rust_or_native_build_repeated_in_iteration10": false,
+    "current_Windows_success_claimed": false
+  },
+  "owner_input_audit": {
+    "document": "docs/handoff-readiness.md",
+    "owner_only_question_required_before_handoff": false,
+    "environment_values_discovered_by_executor": true,
+    "private_details_in_separate_directive": true,
+    "credential_contents_read": false,
+    "owner_VM_paths_mounted": false,
+    "owner_SSH_attempted": false
+  },
+  "delivery_contract": {
+    "archive": "neuro-iteration-10-start.zip",
+    "directive": "neuro-iteration-10-DSH-directive.md",
+    "flat_checkout": true,
+    "extract_path": "/home/jericho/neuro/start",
+    "source_report_precedes_final_packaging": true,
+    "final_identity_location": "Generated _work/handoff/MANIFEST.json in delivered archive and the separately delivered private directive; no self-referential final ZIP/source hash is stored here.",
+    "final_artifact_verification": "Build from the clean final commit, extract into an empty unrelated directory, run embedded verifier first, require preparation_iteration=10 and iteration10_launch_archive=true.",
+    "private_directive_inside_public_archive": false
+  },
+  "runtime": {
+    "current_Windows_execution": false,
+    "physical_GPU_execution": false,
+    "owner_miner_stopped": false,
+    "visible_SRBMiner_restoration_observed": false,
+    "reseller_API_calls": 0,
+    "actual_DSH_adapter_connected": false,
+    "provider_cache_billing_observed": false,
+    "external_pool_connection": false,
+    "live_share_acceptance": false
+  },
+  "repository": {
+    "README_bytes": 0,
+    "active_GitHub_Actions_workflows": 0,
+    "upstreams_clean": true,
+    "GitHub_Actions_used": false,
+    "publication_attempted": false,
+    "new_remote_selected": false
+  },
+  "next_stage": "existing_DSH_bounded_bootstrap_and_owner_machine_acceptance",
+  "acceptance_scope": "Final preparation/source handoff only. Runtime execution, real billing, current Windows/GPU and pool acceptance require new observed evidence."
+}

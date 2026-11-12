@@ -1,8 +1,9 @@
 # Flat offline source handoff
 
 `tools/package_handoff.py` builds the source checkout that the owner will unpack
-directly into `/home/jericho/neuro/start/`. Iteration 9 rehearses this layout;
-iteration 10 supplies the final archive and DSH starting directive. A successful
+directly into `/home/jericho/neuro/start/`. Iteration 9 rehearsed this layout;
+iteration 10 supplies `neuro-iteration-10-start.zip` and a separate private DSH
+starting directive. A successful
 package check establishes source identity and portability of the checkout. It
 does not establish a working GPU miner, current Windows execution, a connected
 DSH billing adapter, or live pool acceptance.
@@ -100,7 +101,7 @@ python3 -B -s -E tools/package_handoff.py build \
   --root . \
   --commit FULL_COMMIT_SHA1 \
   --candidate-sha256 FULL_CANDIDATE_SHA256 \
-  --output /path/outside/checkout/neuro-iteration-09-handoff-rehearsal.zip
+  --output /path/outside/checkout/neuro-iteration-10-start.zip
 ```
 
 The build result records the ZIP SHA-256 and size, source identity, and successful
@@ -108,7 +109,11 @@ verification of the fresh staging checkout. It deliberately reports
 `relocation_tested:false`; an extraction rehearsal must be observed separately.
 An iteration-9 package records `iteration10_launch_archive:false`. Do not rename
 that result into the final iteration-10 deliverable. Iteration-10 packaging uses
-the final committed source/state and separately supplied DSH directive.
+the final committed source/state and separately supplied DSH directive. Its
+manifest must report `iteration10_launch_archive:true`. The private directive
+binds the actual ZIP checksum, final commit and candidate after packaging; it
+is not embedded in the public ZIP or its Git history. Check those delivered
+identities instead of accepting a similarly named older rehearsal archive.
 
 ## Extract and verify before use
 

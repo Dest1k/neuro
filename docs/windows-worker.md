@@ -12,11 +12,11 @@ and worker behavior on that source version. The owner's laptop connection and ph
 require separate observed results; a Windows CI pass does not establish either.
 
 The recorded successful Windows runs currently belong to iteration 6.
-Iteration-7 v2 candidate binding/GPU handoff and iteration-8 durable recovery
-are implemented but **not executed under Windows**. The original publication
+The current v2 candidate binding, GPU handoff, durable recovery and source
+arrival checks are implemented but **not executed under Windows**. The original publication
 was blocked by account suspension; Actions is now prohibited for project work,
 and the owner hardware is not accessible from the current web environment.
-See `docs/iterations/08.md` and its validation report. Run the updated fixtures
+See `state/current.json` and the latest iteration report. Run the updated fixtures
 and native gates directly on owner hardware before treating this revision
 as a validated remote Windows worker.
 
@@ -71,6 +71,37 @@ the checkout's drive (for example `C:\nc`). It preserves an explicitly supplied
 short writable cache path. The builder checks its length before fetching; the
 cache must be writable by the worker account. This does not relocate rustup's
 installed toolchains or require changing the registry or global Git settings.
+
+## Windows control checks before the first GPU lease
+
+After the archive arrival check, run the existing worker and evidence fixtures
+in separate Windows PowerShell processes. They exercise real owned child
+processes and synthetic reports; none starts CUDA or the owner's SRBMiner.
+These scripts are separate gates: `ci.ps1 -Action run-cpu` does not invoke them.
+
+```powershell
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\windows\test_worker.ps1
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\windows\test_remote_worker.ps1
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\windows\test_ci_evidence.ps1
+powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\windows\test_gpu_lease.ps1 -InteractiveSmoke
+```
+
+Check each process exit code and its reported result before continuing. The GPU
+lease fixture uses a temporary non-mining executable and its own batch file.
+Its interactive variant checks Task Scheduler and a visible fixture window in
+the owner's active desktop. A skipped interactive check is not a pass for that
+desktop prerequisite. Successful fixtures do not establish restoration of the
+real miner; the first bounded physical GPU run must observe that separately.
+
+Before stopping the real miner, inspect the existing `guided-setup.bat` and its
+referenced configuration locally. Establish that the exact batch can resume
+the existing miner without an unresolved interactive setup question. Also
+confirm one active interactive session for the configured owner SID. SSH access
+and local administrator rights alone do not establish either prerequisite. If
+either is missing, retain the current miner state and resolve that specific
+runtime blocker before a GPU lease.
+
+## Native build and run sequence
 
 From Windows PowerShell or PowerShell 7 in the checkout:
 
@@ -162,8 +193,12 @@ The current controller runs on Linux and requires OpenSSH 9+ for SFTP-based
 `scp`. The Windows checkout must already be present and its submodules populated.
 The controller stages its worker, runner, standalone candidate verifier,
 candidate manifest and structured version-2 request into a unique work directory.
-Source distribution and the complete handoff archive
-remain part of the later packaging work.
+It does not deploy the source checkout. The final flat source archive includes
+the pinned submodules and a standalone arrival verifier; transfer and verify
+that archive on the Windows host before a build/run action. Follow
+`docs/handoff-runbook.md` for this deployment order and
+`docs/handoff-package.md` for the package contract. Inventory can run before
+the checkout is present.
 
 The SSH invocation uses argv without a local shell, no agent forwarding,
 `BatchMode`, explicit key/known_hosts files and `StrictHostKeyChecking=yes`.

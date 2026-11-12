@@ -1,10 +1,13 @@
 # Fresh checkout and owner-machine handoff
 
 This is the executable preparation runbook for the flat source package. The
-iteration-10 directive will add the owner's private connection references and
-the final measured state. Read `AGENTS.md`, `state/current.json`, the latest
-`docs/iterations/` entry and `reports/iteration-09-validation.json` when present
-before choosing new miner work. The root README stays empty.
+separate iteration-10 directive supplies the owner's private connection references
+and final archive identity. Read `AGENTS.md`, `state/current.json`, the latest
+`docs/iterations/` entry, `docs/handoff-readiness.md` and
+`reports/iteration-10-validation.json` before choosing new miner work. The root
+README stays empty. Apply section 6's bootstrap accounting at entry: the section
+numbers group commands by topic, not permission to defer model accounting until
+after all hardware work.
 
 Use the owner's Linux x86_64 VM for orchestration and CPU work. Windows is a
 separate native build and physical GPU gate. Source verification, compilation,
@@ -272,6 +275,15 @@ The Linux dispatcher currently has no `build-cpu` action. Do not invent one.
 The iteration-6 Windows result belongs to an older source revision; it cannot
 replace execution of the current scripts and candidate.
 
+Before the first real GPU lease, also complete the four separate Windows suites
+listed in `docs/windows-worker.md`: `test_worker.ps1`, `test_remote_worker.ps1`,
+`test_ci_evidence.ps1`, and `test_gpu_lease.ps1 -InteractiveSmoke`. `run-cpu` does
+not invoke them. These synthetic-worker and interactive-desktop fixtures cover
+the control/restoration path separately from miner correctness. In particular,
+`skipped_no_unique_active_owner_session` does not mean the desktop check passed;
+resolve that session condition and obtain the actual interactive result before
+stopping the real owner miner.
+
 ## 6. Establish actual model accounting before a paid autonomous campaign
 
 The owner selected `minimax/minimax-m3` for a bounded retrial. The repository
@@ -279,11 +291,20 @@ implements durable local accounting in `tools/neuroctl/budget.py`, not the DSH
 model transport. Filling `configs/local.json` or executing `budget reserve`
 does not intercept a running DSH session. The actual endpoint, API format,
 provider usage semantics, cache billing and installed DSH interface remain
-unobserved. Existing DSH startup calls are not retroactively covered by this
-ledger either.
+unobserved. The owner-started DSH conversation can already incur a charge before
+the adapter exists. Do not require that adapter to precede the very model work
+needed to connect it, and do not claim it protected earlier calls.
 
-Inspect the installed DSH's supported client/hook interface and the configured
-provider locally. Connect a small adapter at the **actual paid dispatch point**:
+Use two explicit phases. During a **bounded bootstrap session**, inspect the
+installed client's supported interface, existing project-specific spend/token/
+attempt limits, final usage receipts and retry behavior. Use a genuinely active
+native DSH/provider bound for this work; a value in neuro's project JSON does not
+intercept the running session. Do not invent DSH CLI flags. Scope configuration
+and any small hook to neuro only: preserve shared DSH defaults, other profiles,
+Friday sessions and unrelated services.
+
+Then connect the small adapter at the **actual paid dispatch point** for every
+subsequent call:
 
 1. Count/bound the fully serialized model input, including system context,
    tool descriptions and results; enforce the reserved full output bound,
@@ -292,8 +313,12 @@ provider locally. Connect a small adapter at the **actual paid dispatch point**:
    `begin_dispatch(...)` before exactly one paid attempt. Every SDK retry must
    have its own reservation or be disabled.
 3. Reconcile the final complete usage, using an explicitly verified API format.
-   Missing/partial usage retains the hold and blocks more dispatches; keep the
-   same database, campaign and session after a process restart.
+   Trace raw API fields separately from normalized DSH fields: `inputTokens` in
+   a normalized record may be only uncached input, with cached input recorded
+   separately. Do not rename it blindly to OpenAI total `prompt_tokens`, or use
+   it to enforce the full serialized-input bound. Missing/partial usage retains
+   the hold and blocks more dispatches; keep the same database, campaign and
+   session after a process restart.
 4. Observe a bounded real call and reconcile its usage with provider billing
    before claiming the adapter or any cache discount is verified.
 
@@ -303,17 +328,36 @@ session and $25 for the initial campaign. Accounting uses ordinary input rates;
 the user-quoted reseller tariffs are not a measured provider invoice. Sol is an
 explicit fallback disabled by default, with its own sublimits inside the total.
 
-If the installed DSH exposes no suitable accounting hook, record that specific
-limitation and use only its independently configured bounded session while
-implementing the adapter. Do not claim the repository's $5/$25 limits protect
-unintercepted DSH calls or start an unbounded autonomous loop. Do not create a
-new agent framework, proxy or guessed DSH command in place of inspecting the
-existing installation. API credentials and connection details stay outside
-public source, reports and packages.
+Bootstrap spend and paid attempts count against those same overall allowances.
+Keep observed bootstrap receipts; the ledger has no historical-spend import API.
+Never fabricate old reservations/dispatches. Prefer a native project limit that
+spans both phases. If no ledger exists and the bootstrap debit/attempt count is
+known, an explicitly recorded private runtime-policy may reduce the remaining
+allowance before the first database is created. Keep it in ignored runtime
+storage with its original policy/hash and supporting receipts, pass it explicitly
+to `BudgetLedger.from_project` or CLI `--project`, and validate its sublimits.
+Do not rewrite public `configs/project.json` with machine-specific spending.
+Preserve any existing database, policy and campaign/session IDs; replacement is
+not a way to reset spent allowance. Unknown bootstrap cost stays unknown, so
+exact all-in $5/$25 enforcement cannot be asserted in that condition.
+
+If no suitable hook or independently bounded bootstrap mode is available,
+complete the available local inspection, save its concrete result and report
+that runtime blocker before further unbounded paid work. Do not create a new
+agent framework or proxy in place of inspecting the existing installation.
+
+Keep the repeated instructions/tool definitions stable and append changing work
+and results after that prefix. Load state and the relevant concise documents,
+not all upstream sources or old logs on every call. Do not send paid keepalive
+requests during long local builds/GPU checks. Confirm cache semantics with final
+per-request usage and attributable billing; a shared-account balance delta is
+ambiguous when other projects run concurrently. Credentials and connection
+details stay outside public source, reports and packages.
 
 ## 7. First physical GPU group and the next useful miner task
 
-After the current Windows build/CPU gates pass, configure ignored
+After the current Windows build/CPU gates and the four separate worker/desktop
+suites in section 5 pass, configure ignored
 `configs/gpu-owner.local.json` with the real owner's SID, exact miner executable
 and hash, and exact restart batch and hash. The final directive provides the
 owner-specific connection and visible-batch requirements; the public example
