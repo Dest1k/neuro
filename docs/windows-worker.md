@@ -7,15 +7,17 @@ any older checkpoint.
 
 The first target remains the owner's Windows RTX 5080 Laptop. The repository
 contains a native MSVC proof build, fixed Windows actions and a Linux SSH
-dispatcher. GitHub's Windows job validates CPU/proof/loopback and worker behavior
-on its Windows runner. The owner's laptop connection and physical GPU execution
+dispatcher. Historical iteration-6 Windows execution validated CPU/proof/loopback
+and worker behavior on that source version. The owner's laptop connection and physical GPU execution
 require separate observed results; a Windows CI pass does not establish either.
 
 The recorded successful Windows runs currently belong to iteration 6.
-Iteration-7 v2 candidate binding, prerequisite checks and GPU handoff scripts
-are implemented but **not executed under Windows**: GitHub rejected publication
-with an account-suspended HTTP 403. See `docs/iterations/07.md` and its validation
-report. Run the updated fixtures and native gates before treating this revision
+Iteration-7 v2 candidate binding/GPU handoff and iteration-8 durable recovery
+are implemented but **not executed under Windows**. The original publication
+was blocked by account suspension; Actions is now prohibited for project work,
+and the owner hardware is not accessible from the current web environment.
+See `docs/iterations/08.md` and its validation report. Run the updated fixtures
+and native gates directly on owner hardware before treating this revision
 as a validated remote Windows worker.
 
 ## Native proof build
@@ -60,7 +62,7 @@ or changes drivers. `inventory` reports what is actually available first.
 The fixed entry point locates Visual Studio with `vswhere`, enters its x64
 Developer PowerShell environment and uses Ninja/Release under `build/windows`.
 The [Microsoft developer-shell documentation](https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell)
-describes that environment. CPU-only proof CI does not require a CUDA toolkit.
+describes that environment. CPU-only proof checks do not require a CUDA toolkit.
 
 The pinned official Pearl checkout recursively fetches CUTLASS, whose example
 filenames exceed the legacy Windows path limit under the usual user-profile

@@ -55,15 +55,17 @@ cannot turn it into another submit permission.
 Each attempt can invoke its bounded sink once, including a failed or throwing
 sink. Different verified attempts of the same job can each be submitted.
 Publication, invalidation and handoff remain serialized. A replacement job or
-connection invalidates earlier attempts at every existing checkpoint and starts
-its own sequence at zero. A backend exception remains an error even if the job
+connection invalidates earlier attempts at every existing checkpoint. The
+in-memory coordinator starts its sequence at zero unless a durable consumed
+prefix is restored into that fresh generation. A backend exception remains an error even if the job
 was concurrently invalidated; the TCP client stops rather than reusing that
 failed arithmetic worker.
 
-The guarantee is local to one Coordinator lifetime. The root seed, policy,
-attempt indices, work identities and outcomes are recorded so the computation
-can be reproduced. This is not a durable cross-process share-submission journal
-or automatic recovery of a previously sent but unacknowledged share.
+The base coordinator guarantee is local to one lifetime. Iteration 8 adds an
+optional durable journal around it: `docs/search-recovery.md` specifies saved
+work/seed/progress, interrupted computation and uncertain sends. Recovery
+requires fresh authorization/notify and never automatically resubmits an
+unacknowledged attempt. Gzip negotiation changes retain the consumed prefix.
 
 ## Bounded TCP execution
 
@@ -74,6 +76,7 @@ The loopback client's default remains one attempt per generation. New options:
 | `--max-attempts N` | 1..64 attempts per generation; default 1 |
 | `--stop-on-attempt-limit 1` | Explicitly finish with `reason: attempt_limit` after the sequence is exhausted and no response remains pending |
 | `--pause-attempt-index I` | Select the attempt for a deliberate cancellation checkpoint; requires the existing pause stage/job options |
+| `--journal PATH` | Persist the finite search and response outcomes; preserve this path, peer scope and root seed across restart |
 
 There is one arithmetic worker and at most one pending submission. A miss
 advances to the next index. After a found proof, the client processes its exact

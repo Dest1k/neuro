@@ -1,0 +1,52 @@
+gmake: jobserver mkfifo: /tmp/GMfifo6: File exists
+[  2%] Built target neuro_fullk_reference
+[  6%] Built target neuro_blake3
+[  8%] Built target neuro_fullk_warp
+[ 11%] Built target neuro_cli_test
+[ 17%] Built target neuro_protocol_test
+[ 20%] Built target neuro_mma_layout_test
+[ 22%] Built target neuro_fullk_test
+[ 24%] Built target neuro_blake3_vectors_test
+[ 28%] Built target neuro_math_probe
+[ 35%] Built target neuro_fullk_upstream_test
+[ 37%] Built target neuro_fullk_cuda
+[ 40%] Built target neuro_mma_probe
+[ 50%] Built target neuro_pearl_donor
+[ 52%] Built target neuro_fullk_probe
+[ 54%] Built target neuro_mining_cuda
+[ 56%] Built target neuro_pearl_input
+[ 58%] Built target neuro_pearl_alignment_test
+[ 61%] Built target neuro_mining_cuda_host_test
+[ 64%] Built target neuro_pearl_proof
+[ 66%] Built target neuro_pearl_input_test
+[ 73%] Built target neuro_pearl_upstream_test
+[ 75%] Built target neuro_pearl_proof_cli
+[ 77%] Built target neuro_pearl_probe
+[ 80%] Built target neuro_pearl_proof_test
+[ 81%] Building CXX object CMakeFiles/neuro_mining_job.dir/native/host/mining_job.cpp.o
+[ 82%] Linking CXX static library libneuro_mining_job.a
+[ 82%] Built target neuro_mining_job
+[ 83%] Building CXX object CMakeFiles/neuro_search_journal.dir/native/host/search_journal.cpp.o
+[ 84%] Building CXX object CMakeFiles/neuro_mining_job_test.dir/native/tests/mining_job_test.cpp.o
+[ 85%] Linking CXX static library libneuro_search_journal.a
+[ 85%] Built target neuro_search_journal
+[ 86%] Building CXX object CMakeFiles/neuro_attempt_search_test.dir/native/tests/attempt_search_test.cpp.o
+[ 87%] Linking CXX executable neuro_mining_job_test
+[ 87%] Built target neuro_mining_job_test
+[ 88%] Building CXX object CMakeFiles/neuro_pool_wire.dir/native/host/pool_wire.cpp.o
+[ 90%] Linking CXX executable neuro_attempt_search_test
+[ 90%] Built target neuro_attempt_search_test
+[ 91%] Building CXX object CMakeFiles/neuro_search_journal_test.dir/native/tests/search_journal_test.cpp.o
+[ 92%] Linking CXX static library libneuro_pool_wire.a
+[ 92%] Built target neuro_pool_wire
+[ 93%] Building CXX object CMakeFiles/neuro_pool_replay_client.dir/native/host/pool_replay_client.cpp.o
+[ 94%] Linking CXX executable neuro_search_journal_test
+[ 94%] Built target neuro_search_journal_test
+[ 95%] Building CXX object CMakeFiles/neuro_pool_wire_test.dir/native/tests/pool_wire_test.cpp.o
+[ 96%] Linking CXX executable neuro_pool_replay_client
+[ 97%] Linking CXX executable neuro_pool_wire_test
+[ 97%] Built target neuro_pool_replay_client
+[ 98%] Building CXX object CMakeFiles/neuro_pool_replay_client_cuda.dir/native/host/pool_replay_client.cpp.o
+[ 98%] Built target neuro_pool_wire_test
+[100%] Linking CXX executable neuro_pool_replay_client_cuda
+[100%] Built target neuro_pool_replay_client_cuda

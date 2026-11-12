@@ -13,7 +13,7 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 | 5 — complete within offline boundary | Immutable host/backend lifecycle, real TCP replay, independent verification of wire submissions and combined CUDA executable | Cancellation/ACK/reconnect scenarios; CPU execution and SM120 compile/link; GPU/Windows/live pool unrun |
 | 6 — complete within CI/local boundary | Native Windows proof/host execution, bounded SSH worker and durable local model-cost ledger | Actual Windows CPU/proof/loopback and worker gates; Linux regressions; owner SSH/GPU and real DSH/provider billing unobserved |
 | 7 — local search gates pass; Windows validation pending | Bounded 64-attempt search, complete candidate identity and exact-batch visible SRBMiner handoff implementation | 14 native tests, 19 TCP scenarios, 23 official wire proofs; new Windows scripts unrun because GitHub publication returned account-suspended HTTP 403; unpublished work preserved in an offline checkpoint |
-| 8 | Resume checkpoint, execute pending Windows gates and add durable bounded-search recovery | Persist work/seed/attempt and uncertain submissions across interruption; physical GPU coverage explicitly distinguished |
+| 8 — local recovery gates pass; Windows/GPU pending | Durable bounded-search journal integrated into the native host | 15 native tests, 15 recovery scenarios across 33 fresh process phases and 22 official wire proofs; encoding changes retain progress; current Windows/owner-host execution unavailable |
 | 9 | Fresh-directory handoff rehearsal | Rebuild from pinned sources, resolve missing dependencies, verify package contents |
 | 10 | Complete archive + DSH starting directive | Extract layout `/home/jericho/neuro/start/`; checksums, exact status, next executable step |
 
@@ -35,14 +35,17 @@ machine-specific caches, or binaries falsely labelled as tested on the laptop.
 
 The web environment does not mount the owner's `/home/jericho` and currently has
 no connection to the laptop or model reseller. Local CPU execution, Linux GPU
-compilation and actual GitHub Windows CPU/proof/loopback execution have been
-observed. Owner hardware runs, real accepted shares, DSH's
+compilation and historical iteration-6 Windows CPU/proof/loopback execution have
+been observed. Current project work never uses GitHub Actions. Owner hardware
+runs, real accepted shares, DSH's
 actual usage events and reseller billing need the actual endpoints. If they are
 still unavailable by iteration10, the handoff must make the remaining tasks
 directly executable and state the untested coverage. It must not invent success.
 
 Iteration-7 GitHub publication was rejected with an account-suspended HTTP 403.
 The Windows observations above belong to iteration 6; they do not validate the
-changed iteration-7 worker or GPU handoff. Continue from
-`neuro-iteration07-checkpoint.zip` while the remote main remains at iteration 6.
+changed iteration-7/8 worker, recovery or GPU handoff. Continue from the current
+`neuro-iteration-08-checkpoint.zip`; its restored state retains the execution
+policy and has no active Actions workflow definitions. No new neuro remote was
+selected or contacted during iteration 8.
 The final archive/directive still belongs to iteration 10.

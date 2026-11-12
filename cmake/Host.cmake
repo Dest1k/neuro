@@ -6,14 +6,23 @@ add_library(neuro_mining_job STATIC native/host/mining_job.cpp)
 target_include_directories(neuro_mining_job PUBLIC native/include)
 target_link_libraries(neuro_mining_job PUBLIC neuro_pearl_proof Threads::Threads)
 
+add_library(neuro_search_journal STATIC native/host/search_journal.cpp)
+target_include_directories(neuro_search_journal PUBLIC native/include)
+target_link_libraries(neuro_search_journal PUBLIC neuro_mining_job neuro_blake3)
+
 add_library(neuro_pool_wire STATIC native/host/pool_wire.cpp)
 target_include_directories(neuro_pool_wire PUBLIC native/include)
-target_link_libraries(neuro_pool_wire PUBLIC neuro_mining_job)
+target_link_libraries(neuro_pool_wire PUBLIC neuro_mining_job neuro_search_journal)
 
 add_executable(neuro_pool_replay_client native/host/pool_replay_client.cpp)
 target_link_libraries(neuro_pool_replay_client PRIVATE neuro_pool_wire)
 
 if(NEURO_BUILD_CPU_CHECKS)
+  add_executable(neuro_search_journal_test native/tests/search_journal_test.cpp)
+  target_link_libraries(neuro_search_journal_test PRIVATE neuro_search_journal)
+  add_test(NAME neuro_search_journal COMMAND neuro_search_journal_test)
+  set_tests_properties(neuro_search_journal PROPERTIES TIMEOUT 30)
+
   add_executable(neuro_mining_job_test native/tests/mining_job_test.cpp)
   target_include_directories(neuro_mining_job_test PRIVATE native)
   target_link_libraries(neuro_mining_job_test PRIVATE neuro_mining_job)

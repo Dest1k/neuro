@@ -1,0 +1,214 @@
+{
+  "schema": "neuro.iteration_validation.v1",
+  "iteration": 8,
+  "date": "2026-11-12",
+  "generated_at": "2026-11-12T01:18:48.113158+00:00",
+  "passed": false,
+  "local_checks_passed": true,
+  "status": "local_recovery_gates_passed_current_Windows_and_owner_hardware_execution_pending",
+  "scope": "durable_bounded_search_real_process_restarts_and_loopback_proofs_on_Linux",
+  "base_local_commit": "7b385f79ee225b355134d18c0c894aecdc0f74cd",
+  "source_files_sha256": {
+    "cmake/Host.cmake": "e58a75e012d1874e9dd4db96662f3648041973db09d1ef8feb6bc6c9846543b0",
+    "native/host/mining_job.cpp": "52ef4969aaccd775d5526558bb929732b2f160212115f0c1ac1334a22cc0691c",
+    "native/host/pool_replay_client.cpp": "9eecfed9302e2833304dc186da48601f69b5bcc87b9b8db3b927eef77cf46b25",
+    "native/host/search_journal.cpp": "256fc9e8dbec37b0bd371426c39b1bf5eeb43cd7de271976995fdbe22c486db1",
+    "native/include/neuro/mining_job.hpp": "7587a45e6d2157761adc7e9daf3653cf5b992f23f6142dad6072600f325dfbbb",
+    "native/include/neuro/search_journal.hpp": "93edb89038323318fb3ded99de2cba0846eb2c8f7ff72d0784f54e415fb8be8e",
+    "native/tests/attempt_search_test.cpp": "2e826c2bd0a90e276ba83676290ad82ad47607922933ed46eb625d49f818ecd9",
+    "native/tests/search_journal_test.cpp": "93c0283b5e848b0a92a4b2ef5466d1e53c8a8cb6e1d8644bf85423bb6c8d08da",
+    "tools/replay_recovery.py": "2a4d9fd8f1999ddc985cbee694a08342df219a03d560995c36832bb8905ae35a",
+    "tests/test_replay_recovery.py": "6e318ba8fe31e5efbbb42edd93727348fabed32a264fb05ff4f7d3febd92dd49",
+    "windows/ci.ps1": "915905ea68cfdb14ff9d4d3318b3e0b66635e82bfe92392d23ec3a03a126e375",
+    "windows/test_ci_evidence.ps1": "f4661a2cbc7bec4b96c57f31a5686cdac7ae2211258417eb50faca681767aec6"
+  },
+  "source_scope_note": "Hashes identify implementation inputs; Windows files are reviewed but unrun. The later checkpoint manifest binds the final committed full candidate including state/docs/reports without a self-referential hash.",
+  "source_check": {
+    "schema": "neuro.sources.v1",
+    "passed": true,
+    "sources": [
+      {
+        "id": "cppminer",
+        "path": "upstream/cppminer",
+        "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "passed": true,
+        "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+        "clean": true
+      },
+      {
+        "id": "blake3",
+        "path": "upstream/blake3",
+        "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "passed": true,
+        "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+        "clean": true
+      }
+    ]
+  },
+  "linux": {
+    "system": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "python_tests": {
+      "discovered": 148,
+      "passed": 147,
+      "skipped": 1,
+      "failed": 0
+    },
+    "native_ctest": {
+      "passed": 15,
+      "failed": 0
+    },
+    "attempt_search": {
+      "schema": "neuro.attempt_search_test.v1",
+      "status": "PASS",
+      "checks": 201,
+      "independent_full_matrix_cases": 11,
+      "genuine_proofs": 25,
+      "misses_before_later_proof": 7,
+      "maximum_attempts": 64,
+      "gpu_execution": false,
+      "live_pool": false
+    },
+    "native_journal": {
+      "passed": true,
+      "checks": 124,
+      "expected_rejections": 44
+    },
+    "independent_fullk_fixtures": {
+      "cases": 6,
+      "final_c_values": 4096,
+      "gpu_execution_observed": false,
+      "mining_evidence": false,
+      "mismatches": [],
+      "mode": "check",
+      "schema": "neuro.fullk_fixture_check.v1",
+      "status": "PASS",
+      "transcript_words": 1024
+    },
+    "independent_attempt_fixtures": {
+      "schema": "neuro.attempt_fixture_check.v1",
+      "passed": true,
+      "mode": "check",
+      "mismatches": []
+    },
+    "proof_crosscheck": {
+      "passed": true,
+      "proofs_generated": 6,
+      "verification_checks": 66,
+      "expected_acceptances": 6,
+      "expected_rejections": 60,
+      "stark_generated": false
+    },
+    "tcp_replay": {
+      "passed": true,
+      "scenarios_run": 19,
+      "submitted_proofs_checked": 23,
+      "binaries": {
+        "native_sha256": "53bc71c09cb2a1430d6bbaa2c87cad36954502c113d061253cb47c429360bc59",
+        "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+      },
+      "cpu_execution": true,
+      "gpu_execution": false,
+      "live_pool_acceptance": false
+    },
+    "durable_recovery": {
+      "passed": true,
+      "scenarios_run": 15,
+      "process_phases_run": 33,
+      "submitted_proofs_checked": 22,
+      "binaries": {
+        "native_sha256": "53bc71c09cb2a1430d6bbaa2c87cad36954502c113d061253cb47c429360bc59",
+        "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+      },
+      "cpu_execution": true,
+      "gpu_execution": false,
+      "power_loss_tested": false,
+      "additional_lock_contenders": 1,
+      "gzip_to_plain_retains_uncertainty": true
+    },
+    "cuda": {
+      "toolkit": "13.5.37",
+      "architecture": "SM120",
+      "compiled_and_linked": true,
+      "combined_build_cpu_host_ctest_passed": 18,
+      "physical_gpu_execution": false,
+      "explicit_cpu_recovery": {
+        "passed": true,
+        "scenarios_run": 2,
+        "process_phases_run": 4,
+        "submitted_proofs_checked": 4,
+        "binaries": {
+          "native_sha256": "2ec6a4c9d771d98c224fc178803f96d0cfc21b5995526fa93c93dabbb1e8a74f",
+          "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+        },
+        "cpu_execution": true,
+        "gpu_execution": false
+      }
+    }
+  },
+  "windows": {
+    "current_execution": false,
+    "status": "no_Windows_runtime_or_owner_host_surface_in_web_environment",
+    "PowerShell_runtime_available_locally": false,
+    "owner_VM_paths_mounted": false,
+    "actual_SSH_attempted": false,
+    "historical_evidence": "reports/iteration-06-validation.json",
+    "historical_success_applies_to_current_changes": false,
+    "new_run_cpu_gate": "tools/replay_recovery.py",
+    "static_review_performed": true
+  },
+  "physical_gpu": {
+    "executed": false,
+    "owner_miner_stopped": false,
+    "visible_batch_restoration_observed": false,
+    "timings_observed": false
+  },
+  "model": {
+    "executor": "minimax/minimax-m3",
+    "reseller_API_calls": 0,
+    "actual_DSH_adapter_connected": false,
+    "cache_billing_observed": false
+  },
+  "recovery_limits": {
+    "work_identities": 64,
+    "attempts_per_identity": 64,
+    "frames": 32768,
+    "bytes": 4194304,
+    "eviction": false,
+    "automatic_retry_uncertain_attempt": false,
+    "power_loss_tested": false,
+    "whole_file_rollback_or_deletion_protected": false
+  },
+  "repository": {
+    "README_bytes": 0,
+    "active_GitHub_Actions_workflows": 0,
+    "upstreams_clean": true,
+    "new_remote_selected": false,
+    "publication_attempted": false,
+    "GitHub_Actions_used": false
+  },
+  "publication": {
+    "mode": "local_commit_and_offline_checkpoint",
+    "archive": "neuro-iteration-08-checkpoint.zip",
+    "iteration10_launch_archive": false
+  },
+  "next_iteration": 9,
+  "evidence_files": [
+    "reports/iteration-08-attempt-fixture-check.json",
+    "reports/iteration-08-attempt-search.log",
+    "reports/iteration-08-ctest.log",
+    "reports/iteration-08-cuda-build.log",
+    "reports/iteration-08-cuda-configure.log",
+    "reports/iteration-08-cuda-ctest.log",
+    "reports/iteration-08-cuda-linked-recovery.json",
+    "reports/iteration-08-fullk-fixture-check.json",
+    "reports/iteration-08-native-build.log",
+    "reports/iteration-08-pool-replay.json",
+    "reports/iteration-08-proof-check.json",
+    "reports/iteration-08-python-tests.log",
+    "reports/iteration-08-recovery-replay.json",
+    "reports/iteration-08-search-journal.log",
+    "reports/iteration-08-source-check.json"
+  ]
+}

@@ -1,0 +1,42 @@
+Internal ctest changing into directory: /workspace/scratch/ee2def0b7c52/neuro/build/host-cuda
+Test project /workspace/scratch/ee2def0b7c52/neuro/build/host-cuda
+      Start  1: neuro_pearl_proof
+ 1/18 Test  #1: neuro_pearl_proof .................   Passed    0.47 sec
+      Start  2: neuro_search_journal
+ 2/18 Test  #2: neuro_search_journal ..............   Passed    0.05 sec
+      Start  3: neuro_mining_job
+ 3/18 Test  #3: neuro_mining_job ..................   Passed    0.78 sec
+      Start  4: neuro_attempt_search
+ 4/18 Test  #4: neuro_attempt_search ..............   Passed    1.28 sec
+      Start  5: neuro_pool_wire
+ 5/18 Test  #5: neuro_pool_wire ...................   Passed    0.02 sec
+      Start  6: neuro_cli
+ 6/18 Test  #6: neuro_cli .........................   Passed    0.01 sec
+      Start  7: neuro_protocol
+ 7/18 Test  #7: neuro_protocol ....................   Passed    0.00 sec
+      Start  8: neuro_mma_layout
+ 8/18 Test  #8: neuro_mma_layout ..................   Passed    0.01 sec
+      Start  9: neuro_fullk
+ 9/18 Test  #9: neuro_fullk .......................   Passed    0.12 sec
+      Start 10: neuro_blake3_vectors
+10/18 Test #10: neuro_blake3_vectors ..............   Passed    0.01 sec
+      Start 11: neuro_pearl_alignment
+11/18 Test #11: neuro_pearl_alignment .............   Passed    0.01 sec
+      Start 12: neuro_pearl_input
+12/18 Test #12: neuro_pearl_input .................   Passed    2.10 sec
+      Start 13: neuro_math
+13/18 Test #13: neuro_math ........................   Passed    1.23 sec
+      Start 14: neuro_fullk_upstream
+14/18 Test #14: neuro_fullk_upstream ..............   Passed    2.44 sec
+      Start 15: neuro_pearl_upstream
+15/18 Test #15: neuro_pearl_upstream ..............   Passed    2.08 sec
+      Start 16: neuro_fullk_host_validation
+16/18 Test #16: neuro_fullk_host_validation .......   Passed    0.01 sec
+      Start 17: neuro_pearl_host_preparation
+17/18 Test #17: neuro_pearl_host_preparation ......   Passed    0.14 sec
+      Start 18: neuro_mining_cuda_host_boundary
+18/18 Test #18: neuro_mining_cuda_host_boundary ...   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 18
+
+Total Test time (real) =  10.78 sec

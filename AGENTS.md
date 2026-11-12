@@ -100,6 +100,14 @@ submitted/accepted/rejected/unacknowledged counts. Local peer acceptance is not
 live pool acceptance. Default replay is CPU; an explicit CUDA backend must report
 actual observed GPU execution. A CUDA-linked CPU run is still a CPU run.
 
+Iteration 8 adds native durable recovery in `docs/search-recovery.md` and the
+real fresh-process gate `tools/replay_recovery.py`. Preserve the same journal,
+peer scope and root seed across recovery. Consume attempts before computation,
+flush send intent before socket writes and terminal ACK before success. A lost
+ACK remains uncertain; never reset/truncate a journal to replay that attempt.
+Transport encoding changes must preserve the consumed search prefix. Keep
+runtime journals in ignored generated storage, outside source checkpoints.
+
 An optimization is useful only if exact results remain correct and repeated
 measurements under comparable conditions support it. Keep independent expected
 results separate from candidate code. Never weaken a verifier to accept a

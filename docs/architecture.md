@@ -1,14 +1,15 @@
 # Architecture and current implementation
 
-Current preparation: iteration 7 of 10. Read `state/current.json` for the next
+Current preparation: iteration 8 of 10. Read `state/current.json` for the next
 task and the latest entry in `docs/iterations/` for observed evidence. Build commands live in
 `docs/development.md`; the root README is intentionally empty at the owner's request.
 
-Iteration 7 passed its local search/proof/identity gates. Its changed Windows
-worker and GPU handoff have not run: GitHub rejected publication with an
-account-suspended HTTP 403. Recover the unpublished work from
-`neuro-iteration07-checkpoint.zip` if needed; the current validation report keeps
-this block separate from the observed iteration-6 Windows results.
+Iteration 8 adds durable bounded-search recovery and real process-interruption
+checks. Current Windows worker/GPU handoff changes remain unrun on owner hardware.
+GitHub Actions stays disabled; all current verification runs directly in the
+local environment. Recover this version from `neuro-iteration-08-checkpoint.zip`
+if needed. Historical iteration-6 Windows observations do not validate newer
+code. See the incident policy in `AGENTS.md` before any future publication.
 
 ## Goal
 
@@ -139,6 +140,18 @@ one handoff per attempt and independent proof checks remain in force. The old
 attempt-zero fixtures remain unchanged. `docs/attempt-search.md` describes the
 independent corpus and real TCP continuation cases. Sustained production search,
 large-panel staging and performance tuning remain ahead.
+
+Iteration 8 persists the complete work/seed plan, consumed attempt prefix and
+submission outcomes in a bounded native journal. Consumption is flushed before
+computation, intent before socket submission and an exact ACK before terminal
+success reporting. A crash recovers unsent work as interrupted and pending
+intent as uncertain, without automatically replaying either attempt. Fresh
+authorization/notify is required before continuing. Connection changes and
+gzip negotiation retain the search prefix; transport details remain recorded
+as provenance. Previous identities survive A/B/A job changes. The journal
+has OS writer exclusion, strict bounded integrity/transition validation and
+fatal storage-error handling. `docs/search-recovery.md` describes the real
+restart/TCP proof gate and its process-crash/storage limits.
 
 Physical GPU actions additionally acquire a bounded ownership lease for the
 owner's SRBMiner. A separate interactive watchdog prepares restoration before

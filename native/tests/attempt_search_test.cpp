@@ -251,11 +251,71 @@ void in_flight_exclusion() {
             "failed handoff was retried or consumed a different attempt");
     genuine_proofs += 2;
 }
+void restored_consumed_prefix() {
+    const auto compute = checked_backend();
+    const auto seed = pearl_golden::fixed_seed;
+    auto rejects = [&](const std::function<void()>& action, const char* message) {
+        bool rejected = false;
+        try { action(); } catch (const std::invalid_argument&) { rejected = true; }
+        require(rejected, message);
+    };
+
+    Coordinator resumed;
+    const auto current = resumed.publish(job());
+    rejects([&] { resumed.restore_progress(current, seed, pearl::max_attempts + 1); },
+            "out-of-range durable progress was accepted");
+    resumed.restore_progress(current, seed, 7);
+    rejects([&] { resumed.restore_progress(current, seed, 0); },
+            "second restore rewound consumed progress");
+    int computed = 0;
+    const Compute counting = [&](const fullk::Input& input) { ++computed; return compute(input); };
+    require(resumed.run_attempt(current, seed, 0, counting).status == Status::error && computed == 0,
+            "recovered prefix was recomputed");
+    auto changed_seed = seed; changed_seed.back() ^= 1;
+    require(resumed.run_attempt(current, changed_seed, 7, counting).status == Status::error && computed == 0,
+            "recovery allowed a different root seed");
+    const auto later = resumed.run_attempt(current, seed, 7, counting);
+    require(later.status == Status::found && computed == 1 && later.share &&
+            later.share->hash == gold(7).winner_hash,
+            "recovered attempt did not retain independent cumulative sequence");
+    require(resumed.commit(later, [](const Share&) { return true; }) &&
+            !resumed.commit(later, [](const Share&) { return true; }),
+            "recovery restored duplicate submission permissions");
+    ++genuine_proofs;
+
+    Coordinator zero;
+    const auto zero_ticket = zero.publish(job());
+    zero.restore_progress(zero_ticket, seed, 0);
+    rejects([&] { zero.restore_progress(zero_ticket, seed, 1); },
+            "zero-index restoration was not single-use");
+    const auto first = zero.run_attempt(zero_ticket, seed, 0, compute);
+    require(first.status == Status::found, "zero prefix prevented a genuine first attempt");
+    ++genuine_proofs;
+    rejects([&] { zero.restore_progress(first.ticket, seed, 1); },
+            "attempt-bound ticket was accepted for restoration");
+    const auto replacement = zero.publish(job(true));
+    rejects([&] { zero.restore_progress(zero_ticket, seed, 1); },
+            "stale generation was accepted for restoration");
+    zero.restore_progress(replacement, seed, pearl::max_attempts);
+    require(zero.run_attempt(replacement, seed, 63, counting).status == Status::error && computed == 1,
+            "exhausted durable prefix allowed its final attempt again");
+    require(!zero.commit(first, [](const Share&) { return true; }),
+            "old verified proof survived restoration of a new generation");
+
+    Coordinator used;
+    const auto used_ticket = used.publish(job());
+    require(used.run_attempt(used_ticket, seed, 0, compute).status == Status::found,
+            "used generation fixture failed");
+    ++genuine_proofs;
+    rejects([&] { used.restore_progress(used_ticket, seed, 1); },
+            "active generation accepted externally restored progress");
+}
 } // namespace
 
 int main() {
     try {
         independent_inputs(); sequential_and_sealed(); misses_and_cancellation(); in_flight_exclusion();
+        restored_consumed_prefix();
         std::cout << "{\"schema\":\"neuro.attempt_search_test.v1\",\"status\":\"PASS\",\"checks\":" << checks
                   << ",\"independent_full_matrix_cases\":" << full_matrices
                   << ",\"genuine_proofs\":" << genuine_proofs

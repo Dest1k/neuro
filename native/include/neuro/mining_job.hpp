@@ -77,6 +77,12 @@ public:
     // Exact duplicates retain their ticket. All Job fields participate in
     // equality. Invalid jobs throw without invalidating the current one.
     Ticket publish(Job job);
+    // Restore only the consumed prefix of a freshly published generation.
+    // The caller must have independently matched the durable job/seed plan to
+    // a new authorized notify. No saved proof or submission permission is
+    // restored. This is single-use even when next_attempt is zero.
+    void restore_progress(const Ticket& ticket, const Seed& root_seed,
+                          std::uint32_t next_attempt);
     void invalidate();
     // An old connection's late disconnect must not cancel a newer connection.
     bool disconnect(std::uint64_t connection);

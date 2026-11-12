@@ -17,6 +17,12 @@ Iteration 7 adds bounded cumulative attempts and four additional real TCP
 scenarios. `docs/attempt-search.md` specifies the seed policy, per-attempt
 identity, independent expected results and continuation/limit behavior.
 
+Iteration 8 adds optional durable search recovery and a separate fresh-process
+TCP gate. `docs/search-recovery.md` records the journal contract and conservative
+handling of interrupted/uncertain attempts. Existing no-journal replay remains
+available and does not itself claim persistence. Current checks run directly
+locally or on owner hardware; GitHub Actions remains disabled.
+
 ## Source and reuse boundary
 
 The wire dialect comes from CPPminer commit

@@ -83,12 +83,13 @@ try {
     [IO.Directory]::CreateDirectory($Build) | Out-Null
     [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($Reference)) | Out-Null
     $binaryNames = @('neuro_pearl_proof.exe', 'neuro_pearl_proof_test.exe', 'neuro_pool_replay_client.exe',
-        'neuro_mining_job_test.exe', 'neuro_pool_wire_test.exe', 'neuro_cli_test.exe',
+        'neuro_mining_job_test.exe', 'neuro_attempt_search_test.exe', 'neuro_search_journal_test.exe',
+        'neuro_pool_wire_test.exe', 'neuro_cli_test.exe',
         'neuro_protocol_test.exe', 'neuro_mma_layout_test.exe', 'neuro_fullk_test.exe',
         'neuro_blake3_vectors_test.exe', 'neuro_pearl_alignment_test.exe', 'neuro_pearl_input_test.exe',
         'neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe',
         'neuro_pool_replay_client_cuda.exe', 'neuro_mining_cuda_host_test.exe',
-        'neuro_attempt_search_test.exe')
+        'neuro_additional_fixture.exe')
     foreach ($name in $binaryNames) {
         [IO.File]::WriteAllText((Join-Path $Build $name), ('SYNTHETIC NON-EXECUTABLE FIXTURE: ' + $name), [Text.Encoding]::ASCII)
     }
@@ -133,7 +134,17 @@ try {
             'missing required executable rejected' 'Missing built artifact:*'
     } finally { [IO.File]::WriteAllBytes($requiredPath, $requiredBytes) }
 
-    $additionalPath = Join-Path $Build 'neuro_attempt_search_test.exe'
+    foreach ($requiredSearchName in @('neuro_attempt_search_test.exe', 'neuro_search_journal_test.exe')) {
+        $requiredSearchPath = Join-Path $Build $requiredSearchName
+        $requiredSearchBytes = [IO.File]::ReadAllBytes($requiredSearchPath)
+        try {
+            [IO.File]::Delete($requiredSearchPath)
+            Assert-EvidenceReject { Require-MatchingEvidence $fixtureReport $true $cpuAction } `
+                ('missing required search executable rejected: ' + $requiredSearchName) 'Missing built artifact:*'
+        } finally { [IO.File]::WriteAllBytes($requiredSearchPath, $requiredSearchBytes) }
+    }
+
+    $additionalPath = Join-Path $Build 'neuro_additional_fixture.exe'
     $additionalBytes = [IO.File]::ReadAllBytes($additionalPath)
     try {
         [IO.File]::AppendAllText($additionalPath, ' changed')

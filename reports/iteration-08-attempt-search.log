@@ -1,0 +1,1 @@
+{"schema":"neuro.attempt_search_test.v1","status":"PASS","checks":201,"independent_full_matrix_cases":11,"genuine_proofs":25,"misses_before_later_proof":7,"maximum_attempts":64,"gpu_execution":false,"live_pool":false}

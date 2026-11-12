@@ -1,20 +1,21 @@
 {
   "schema_version": 1,
   "project": "neuro",
-  "preparation_iteration": 7,
+  "preparation_iteration": 8,
   "preparation_total": 10,
-  "status": "iteration_7_local_work_preserved_GitHub_reinstatement_denied_Actions_disabled",
+  "status": "iteration_8_local_durable_recovery_passed_current_Windows_GPU_pending",
   "updated_moscow_date": "2026-11-12",
   "entry_points": [
     "state/current.json",
     "docs/development.md",
-    "docs/iterations/07.md",
+    "docs/iterations/08.md",
+    "docs/search-recovery.md",
     "docs/incidents/2026-11-12-github-suspension.md"
   ],
   "decisions": {
     "base": "CPPminer_pinned_submodule",
     "gpu": "CUDA_C++17_inline_PTX_as_needed",
-    "host": "pinned_CPPminer_wire_immutable_generation_and_bounded_cumulative_attempts",
+    "host": "pinned_CPPminer_wire_immutable_generation_bounded_cumulative_attempts_and_native_durable_journal",
     "proof": "pinned_Rust_PlainProof_and_separate_official_Pearl_verifier",
     "executor": "minimax/minimax-m3",
     "executor_selection": "provisional_owner_selected_second_trial",
@@ -22,13 +23,13 @@
     "fallback": "openai/gpt-6.1-sol_disabled_by_default"
   },
   "coverage": {
-    "python_controls": "passed_139_of_140_Linux_tests_1_Windows_specific_skip",
+    "python_controls": "passed_147_of_148_Linux_tests_1_Windows_specific_skip",
     "cpu_protocol": "passed",
     "cpu_milestone_math": "passed",
     "gpu_instruction_layout": "passed_1024_cpu_emulated_values",
-    "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_linux_compile_and_link",
+    "cuda_compilation": "passed_sm120_combined_host_kernel_proof_wire_journal_Linux_compile_and_link",
     "gpu_execution": "not_run_no_gpu",
-    "windows_execution": "historical_iteration6_actual_CPU_proof_TCP_pass_iteration7_changes_not_executed",
+    "windows_execution": "historical_iteration6_CPU_proof_TCP_pass_iteration7_and8_changes_unrun",
     "full_proof": "plainproof_built_and_verified_stark_not_generated",
     "pool_shares": "not_run_external_pool_no_live_share_acceptance",
     "dsh_api_integration": "local_budget_boundary_implemented_actual_DSH_provider_transport_not_connected",
@@ -42,7 +43,7 @@
     "cpu_pearl_full_builders": "passed_3670016_noisy_bytes_against_actual_donor_builders",
     "cpu_blake3": "passed_105_official_known_answer_modes",
     "cpu_job_cancellation": "passed_13_real_donor_component_checks_without_pool_connection",
-    "cpu_native": "passed_14_CMake_tests_with_real_proof_and_host_mode",
+    "cpu_native": "passed_15_CMake_tests_with_real_proof_host_and_durable_journal",
     "cuda_pearl_host_mode": "passed_3_cases_16384_transcript_words_no_gpu_launches",
     "gpu_pearl_execution": "not_run_no_gpu",
     "plain_proof": "passed_6_full_signal_proofs_and_3_byte_identical_witness_proofs",
@@ -60,24 +61,28 @@
     "local_peer_responses": "19_synthetic_acceptances_2_rejections_2_unacknowledged_not_live_pool_shares",
     "pool_ack_timeout": "passed_open_socket_silence_and_separate_EOF_without_ACK",
     "cuda_host_backend": "passed_5_invalid_inputs_before_CUDA_calls",
-    "cuda_linked_cpu_replay": "passed_6_scenarios_8_officially_verified_wire_proofs_no_GPU_execution",
+    "cuda_linked_cpu_replay": "historical_iteration7_six_scenarios_eight_proofs_current_CPU_recovery_checked_separately",
     "host_proof_windows_build": "historical_iteration6_MSVC_WinSock_15_TCP_scenarios_current_19_scenarios_not_run_on_Windows",
-    "continuous_mining_search": "bounded_64_attempt_sequence_implemented_sustained_production_search_not_implemented",
+    "continuous_mining_search": "bounded_64_attempt_sequence_with_process_restart_recovery_sustained_production_search_not_implemented",
     "model_budget": "implemented_durable_SQLite_reserve_single_dispatch_reconcile_25_tests_passed",
     "remote_worker": "passed_26_synthetic_controller_tests_current_Windows_v2_not_run_historical_iteration6_in_own_report",
     "model_executor": "MiniMax_M3_owner_selected_no_live_endpoint_trial",
     "remote_candidate_identity": "implemented_complete_public_candidate_22_actual_Linux_Git_fixture_tests_passed_Windows_v2_unrun",
-    "windows_python_controls": "historical_iteration6_109_of_111_current_140_test_suite_not_run_on_Windows",
-    "windows_native": "historical_iteration6_10_native_tests_iteration7_attempt_target_not_run_on_Windows",
+    "windows_python_controls": "historical_iteration6_109_of_111_current148_test_suite_not_run_on_Windows",
+    "windows_native": "historical_iteration6_10_native_tests_iteration7_and8_targets_not_run_on_Windows",
     "bounded_donor_source": "passed_4_copy_preparation_checks_and_current_Linux_link_historical_iteration6_MSVC_link_unchanged_patch",
-    "bounded_attempt_search": "passed_187_checks_11_independent_full_matrix_cases_22_genuine_proofs_7_misses_then_attempt7_proof",
-    "gpu_miner_handoff": "implemented_exact_batch_visible_restore_watchdog_and_fixture_tests_current_Windows_not_run"
+    "bounded_attempt_search": "passed_201_checks_11_independent_full_matrix_cases_25_genuine_proofs",
+    "gpu_miner_handoff": "implemented_exact_batch_visible_restore_watchdog_and_fixture_tests_current_Windows_not_run",
+    "durable_search_journal": "passed_124_checks_44_expected_rejections_Linux_Windows_unrun",
+    "durable_search_recovery": "passed_15_TCP_scenarios_33_fresh_process_phases_plus_one_lock_contender_22_official_wire_proofs",
+    "durable_encoding_recovery": "passed_gzip_to_plain_same_work_progress_uncertain_send_preserved",
+    "cuda_linked_cpu_recovery": "passed_2_scenarios_4_process_phases_4_official_wire_proofs_no_GPU_execution"
   },
   "next_iteration": {
-    "number": 8,
-    "goal": "Resume the incident-mitigated iteration-7 checkpoint, run pending Windows gates directly on owner hardware, and add durable bounded-search recovery",
-    "first_step": "Read docs/incidents/2026-11-12-github-suspension.md and the current execution_policy before continuing. Use neuro-iteration07-ci-paused.zip from neuro-github-recovery-20261112.zip, which includes the incident mitigation. If restoring the older neuro-iteration07-checkpoint.zip, remove its active GitHub Actions definitions before any future publication; account reinstatement alone must not reactivate them. Resolve the suspension through the owner and GitHub Support without alternate credentials or bypass. Run pending Windows fixtures/build/CPU gates directly on the owner test host when available, not through Actions. Then persist complete job identity, root seed, next attempt and terminal/uncertain submission outcomes, with bounded local restart/loopback tests. Use the guarded owner GPU path only after its actual Windows preflight is validated.",
-    "avoid": "Do not treat iteration6 Windows evidence as a pass for iteration7 changes. Do not invent owner SSH, console restoration, GPU timings, live shares or provider billing. Do not weaken the official proof gate or replace miner work with another agent framework. Do not restore GitHub Actions triggers or move the same workloads to self-hosted Actions as a workaround."
+    "number": 9,
+    "goal": "Rehearse a fresh-directory DSH handoff from the current pinned sources and make the final layout and first executable tasks concrete",
+    "first_step": "Continue from current local HEAD or neuro-iteration-08-checkpoint.zip. Preserve no-Actions policy and empty README. Rehearse source restoration and a fresh-directory native build with explicit dependency inventory; remove hidden absolute-path/cache assumptions from final handoff commands. Prepare the final /home/jericho/neuro/start layout and operational instructions using existing DSH, MiniMax full-price budget and private owner connection references. Run current Windows fixtures/build/CPU/recovery gates directly on owner hardware only when actually available, before any guarded GPU action.",
+    "avoid": "Do not reset a durable search journal or root seed to retry uncertain sends. Do not classify gzip negotiation as new search work. Do not present Linux checks/CUDA compilation as Windows/GPU execution. Do not restore GitHub Actions or repoint neuro into Friday. Do not include runtime journals, credentials or private profiles in source archives."
   },
   "handoff": {
     "target_iteration": 10,
@@ -90,24 +95,26 @@
     "executor": "minimax/minimax-m3",
     "private_owner_gpu_handoff_instructions_required": true,
     "execution_policy_in_archive_and_directive_required": true,
-    "github_actions_must_remain_disabled": true
+    "github_actions_must_remain_disabled": true,
+    "durable_search_recovery_instructions_required": true,
+    "exclude_runtime_search_journals": true
   },
-  "validation_report": "reports/iteration-07-validation.json",
+  "validation_report": "reports/iteration-08-validation.json",
   "owner_preferences": {
     "root_readme": "Keep README.md present and exactly zero bytes; use state and docs as entry points.",
     "executor": "Give MiniMax M3 a second bounded trial; the Sol fallback is disabled by default.",
     "gpu_tests": "Pause the configured owner SRBMiner only around GPU work; restore the exact existing guided-setup.bat in a visible owner desktop window after the test processes release the GPU."
   },
   "publication": {
-    "status": "blocked_GitHub_HTTP_403_account_suspended",
+    "status": "local_only_no_publication_attempt_in_iteration8",
     "remote_main_last_observed": "c864e1eaf513ccefcf786f412d0b0ac151d2b983",
-    "local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7",
-    "recovery_checkpoint": "neuro-iteration07-ci-paused.zip",
+    "recovery_checkpoint": "neuro-iteration-08-checkpoint.zip",
     "iteration7_CI_not_started": true,
     "older_checkpoint_requires_ci_mitigation": true,
     "remote_settings_changed": false,
-    "recovery_package": "neuro-github-recovery-20261112.zip",
-    "superseded_checkpoint": "neuro-iteration07-checkpoint.zip"
+    "recovery_package": "neuro-iteration-08-checkpoint.zip",
+    "superseded_checkpoint": "neuro-iteration07-ci-paused.zip",
+    "iteration7_local_implementation_commit": "2113a1e98deb56611b516c01e430b782027db0b7"
   },
   "execution_policy": {
     "github_actions": "disabled_for_all_project_workloads_including_self_hosted_runners",
@@ -136,6 +143,7 @@
     "reinstatement_status": "denied_without_expiry_stated",
     "local_mitigation": "both_workflows_moved_out_of_recognized_directory_without_content_changes",
     "remote_workflows_or_account_settings_changed": false,
-    "current_iteration_advanced": false
+    "current_iteration_advanced": true,
+    "iteration_advance_note": "Incident remediation retained its own boundary; authorized local development resumed in iteration8 without Actions or publication."
   }
 }

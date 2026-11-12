@@ -88,6 +88,21 @@ Ticket Coordinator::publish(Job job) {
     return {generation_, job_};
 }
 
+void Coordinator::restore_progress(const Ticket& ticket, const Seed& root_seed,
+                                   std::uint32_t next_attempt) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!current_locked(ticket) || ticket.attempt)
+        throw std::invalid_argument("recovery requires a current unbound job ticket");
+    if (root_seed_ || next_attempt_ || running_ || committed_)
+        throw std::invalid_argument("progress can only be restored into a fresh generation");
+    if (next_attempt > pearl::max_attempts)
+        throw std::invalid_argument("recovered attempt prefix exceeds 64");
+    root_seed_ = root_seed;
+    next_attempt_ = next_attempt;
+    committed_ = next_attempt == 64 ? std::numeric_limits<std::uint64_t>::max() :
+                 ((std::uint64_t{1} << next_attempt) - 1);
+}
+
 void Coordinator::advance_locked() {
     if (generation_ == std::numeric_limits<std::uint64_t>::max())
         throw std::overflow_error("job generation exhausted");

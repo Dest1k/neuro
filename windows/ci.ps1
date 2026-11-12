@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Fixed build/check actions shared by Windows CI and the bounded SSH worker.
+# Fixed direct Windows build/check actions for the bounded SSH worker.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
@@ -39,7 +39,8 @@ $Record = [ordered]@{
     gpu_execution = $false; live_pool = $false; error = $null
     source_fingerprint = $null; source_fingerprint_kind = 'complete_candidate_manifest_v1'
     candidate_files = $null; candidate_bytes = $null
-    gpu_handoff = $null; gpu_handoff_error = $null; artifacts = @{}; phases = $Phases
+    gpu_handoff = $null; gpu_handoff_error = $null; search_recovery = $null
+    artifacts = @{}; phases = $Phases
 }
 $ReportPath = Join-Path $Evidence ($Action + '.json')
 if ($Action -like 'build-*') { $ReportPath = Join-Path $Evidence 'build.json' }
@@ -103,7 +104,8 @@ function Source-Fingerprint {
 
 function Binary-Inventory([bool]$Cuda) {
     $required = @('neuro_pearl_proof.exe', 'neuro_pearl_proof_test.exe', 'neuro_pool_replay_client.exe',
-        'neuro_mining_job_test.exe', 'neuro_pool_wire_test.exe', 'neuro_cli_test.exe',
+        'neuro_mining_job_test.exe', 'neuro_attempt_search_test.exe', 'neuro_search_journal_test.exe',
+        'neuro_pool_wire_test.exe', 'neuro_cli_test.exe',
         'neuro_protocol_test.exe', 'neuro_mma_layout_test.exe', 'neuro_fullk_test.exe',
         'neuro_blake3_vectors_test.exe', 'neuro_pearl_alignment_test.exe', 'neuro_pearl_input_test.exe')
     if ($Cuda) { $required += @('neuro_mma_probe.exe', 'neuro_fullk_probe.exe', 'neuro_pearl_probe.exe',
@@ -175,6 +177,25 @@ try {
             $null = Invoke-Checked 'native Windows CPU tests' 'ctest' @('--test-dir', 'build/windows', '-C', 'Release', '--output-on-failure', '--no-tests=error') 180
             $null = Invoke-Checked 'official proof corruption corpus' $Python @('tools/check_pearl_proofs.py', '--output', 'artifacts/windows/proof-check.json') 180
             $null = Invoke-Checked 'real Windows loopback lifecycle' $Python @('tools/replay_pool.py', '--backend', 'cpu', '--output', 'artifacts/windows/pool-replay.json') 180
+            $null = Invoke-Checked 'durable Windows search restart recovery' $Python @('tools/replay_recovery.py',
+                '--native', 'build/windows/neuro_pool_replay_client.exe', '--reference', $Reference,
+                '--backend', 'cpu', '--work-dir', 'artifacts/windows/search-recovery',
+                '--output', 'artifacts/windows/search-recovery.json') 180
+            $recoveryPath = Join-Path $Evidence 'search-recovery.json'
+            $recovery = Get-Content -LiteralPath $recoveryPath -Raw | ConvertFrom-Json
+            if ($recovery.schema -cne 'neuro.pool_recovery.v1' -or $recovery.passed -ne $true -or
+                $recovery.windows_execution -ne $true -or $recovery.cpu_execution -ne $true -or
+                $recovery.gpu_execution -ne $false -or $recovery.external_pool_connection -ne $false -or
+                $recovery.live_pool_acceptance -ne $false) {
+                throw 'Search recovery has no successful native Windows CPU observation.'
+            }
+            $Record.search_recovery = [ordered]@{
+                path = 'artifacts/windows/search-recovery.json'
+                sha256 = (Get-FileHash -LiteralPath $recoveryPath -Algorithm SHA256).Hash.ToLowerInvariant()
+                schema = $recovery.schema; passed = $recovery.passed
+                scenarios_run = $recovery.scenarios_run; process_phases_run = $recovery.process_phases_run
+                submitted_proofs_checked = $recovery.submitted_proofs_checked
+            }
         } else {
             $null = Require-MatchingEvidence (Join-Path $Evidence 'run-cpu.json') $true @('run-cpu')
             . (Join-Path $PSScriptRoot 'gpu_lease.ps1')

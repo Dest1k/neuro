@@ -106,7 +106,8 @@ This builds actual `cp-proof-ffi` in a generated source copy, executes its 20
 unit tests, and builds an official Pearl verifier from a separate pinned Git
 dependency. CMake's proof option checks the successful build report and static
 library hash. Missing real Rust output is an error; no stub is available.
-The Linux native CTest set now has thirteen entries with proof mode enabled.
+The Linux native CTest set now has fifteen entries with proof mode enabled,
+including bounded attempt recovery and the durable journal.
 Ordinary ten-test CPU builds remain independent of Cargo.
 
 The corpus check generates six proofs and performs 66 checks across the native
@@ -122,9 +123,10 @@ independent jackpot/target expectations separately:
 python tools/generate_proof_fixtures.py --check
 ```
 
-The builder and checks save JSON evidence under `artifacts/`. GitHub's Linux
-proof job runs the same workflow and uploads the logs. The separate Windows job
-uses `windows/ci.ps1`. Initial dependency download is required; subsequent builds
+The builder and checks save JSON evidence under `artifacts/`. Run them directly
+in the local environment or on owner hardware. The Windows entry point is
+`windows/ci.ps1`; its filename does not authorize execution in GitHub Actions.
+Initial dependency download is required; subsequent builds
 reuse Cargo's cache. A cached file does not replace a successful current build
 report matching the source/configuration and library hash.
 
@@ -144,9 +146,14 @@ or change drivers. From Windows PowerShell or PowerShell 7 in the checkout:
 `build-cpu` builds the real donor Rust library and separate official checker,
 then the native CPU/proof/host targets. `run-cpu` requires matching build evidence
 and runs Python controls, native CTest, the 66-case proof corpus and complete
-19-scenario loopback replay, including cumulative attempt continuation. Windows omits the three GCC/Linux donor arithmetic
-differentials. The iteration-6 Windows CI passed this full sequence on an actual
-Windows runner. `reports/iteration-06-validation.json` records the tested commit,
+19-scenario loopback replay, including cumulative attempt continuation, followed
+by the separate process-restart gate in `tools/replay_recovery.py`. The latter
+checks interrupted and uncertain outcomes, retained work progress, encoding
+changes and exclusive journal ownership with real independently verified proofs.
+Windows omits the three GCC/Linux donor arithmetic
+differentials. Iteration 6 passed its then-current CPU/proof/loopback sequence
+on an actual Windows runner. Changed iteration-7/8 gates remain unrun on Windows.
+`reports/iteration-06-validation.json` records that historical tested commit,
 per-platform counts and CI URL. Owner-laptop and GPU execution remain separate.
 
 On the owner's suitable SM120 GPU machine, after installing a compatible CUDA
@@ -201,8 +208,8 @@ is CPU. `docs/host-replay.md` specifies the supported donor wire dialect and
 provides combined CUDA/proof build commands and the explicit hardware-run mode.
 
 An ordinary proof-enabled native CTest run includes the coordinator and wire
-component tests. The Python replay is an additional process-level gate included
-in both platform workflows. Native failure in an expected disconnect or
+component tests. The Python replay is an additional process-level gate available
+on both platforms. Native failure in an expected disconnect or
 ACK-timeout scenario counts as a replay pass only when its exact unresolved
 result and zero accepted/rejected counters are observed.
 
@@ -219,6 +226,24 @@ For remote Windows GPU checks, read `docs/windows-worker.md`,
 miner privately before `run-cuda`; build and CPU checks do not stop it.
 Candidate manifests cover the complete public checkout, so finish source and
 documentation edits before a build/CPU/GPU gate sequence.
+
+## Durable bounded-search recovery
+
+After the real proof/native build, run the additional fresh-process gate:
+
+```bash
+python tools/replay_recovery.py --output artifacts/search-recovery.json
+```
+
+Use `--native PATH` and `--reference PATH` to select a different build. The
+default backend is CPU; a linked CUDA executable with `--backend cpu` still
+provides CPU evidence only. No owner miner is stopped for these checks.
+
+`docs/search-recovery.md` specifies journal identity, flush ordering and the
+conservative interrupted/uncertain policy. `--journal PATH` requires an existing
+parent directory and keeps the same peer scope/root seed across restart. Do not
+delete or truncate it to repeat consumed attempts. Runtime journals belong
+under ignored generated storage, not in public source or final handoff archives.
 
 ## Local model budget boundary
 

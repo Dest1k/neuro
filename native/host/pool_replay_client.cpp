@@ -2,6 +2,7 @@
 // A bounded loopback client using real donor TCP/wire and genuine Pearl proofs.
 #include "neuro/mining_job.hpp"
 #include "neuro/pool_wire.hpp"
+#include "neuro/search_journal.hpp"
 #ifdef NEURO_REPLAY_CUDA
 #include "neuro/mining_cuda.hpp"
 #endif
@@ -9,6 +10,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <future>
@@ -105,7 +107,10 @@ struct Options {
     bool stop_on_attempt_limit = false;
     neuro::fullk::Shape shape{128, 128};
     std::filesystem::path report = "artifacts/pool-client.json";
+    std::filesystem::path journal;
     std::string backend = "cpu", pause_stage, pause_job_id;
+    std::string crash_point;
+    int crash_attempt_index = 0;
     host::Seed seed{};
 };
 
@@ -130,6 +135,9 @@ Options options(int argc, char** argv) {
         else if (flag == "--cols") result.shape.cols = integer(value, 128, 256, flag);
         else if (flag == "--seed-hex") result.seed = seed_from_hex(value);
         else if (flag == "--report") result.report = value;
+        else if (flag == "--journal") result.journal = value;
+        else if (flag == "--crash-point") result.crash_point = value;
+        else if (flag == "--crash-attempt-index") result.crash_attempt_index = integer(value, 0, neuro::pearl::max_attempts - 1, flag);
         else if (flag == "--backend") result.backend = value;
         else if (flag == "--device") result.device = integer(value, 0, 15, flag);
         else if (flag == "--pause-stage") result.pause_stage = value;
@@ -155,6 +163,28 @@ Options options(int argc, char** argv) {
     if ((seen.count("--pause-attempt-index") && result.pause_stage.empty()) ||
         result.pause_attempt_index >= result.max_attempts)
         throw std::invalid_argument("Pause attempt must belong to the bounded requested search");
+    if (!result.crash_point.empty()) {
+        const std::string& point = result.crash_point;
+        if (result.journal.empty() || result.crash_attempt_index >= result.max_attempts ||
+            (point != "before_prepare" && point != "before_compute" &&
+             point != "before_proof" && point != "after_proof" && point != "after_verify" &&
+             point != "after_send_intent" && point != "after_send" && point != "after_ack"))
+            throw std::invalid_argument("Recovery fault injection requires a journal and supported bounded crash point");
+    } else if (seen.count("--crash-attempt-index"))
+        throw std::invalid_argument("--crash-attempt-index requires --crash-point");
+    if (seen.count("--journal") && result.journal.empty())
+        throw std::invalid_argument("Journal path must not be empty");
+    if (!result.journal.empty()) {
+        const auto aliases_journal = [&](const std::filesystem::path& path) {
+            if (std::filesystem::weakly_canonical(std::filesystem::absolute(path)) ==
+                std::filesystem::weakly_canonical(std::filesystem::absolute(result.journal)))
+                return true;
+            return std::filesystem::exists(path) && std::filesystem::exists(result.journal) &&
+                   std::filesystem::equivalent(path, result.journal);
+        };
+        if (aliases_journal(result.report) || aliases_journal(result.report.string() + ".tmp"))
+            throw std::invalid_argument("Report or temporary report aliases the durable journal");
+    }
     return result;
 }
 
@@ -177,9 +207,19 @@ struct Counts {
     }
 };
 
-struct Pending { host::Ticket ticket; Clock::time_point sent; };
+struct Pending {
+    host::Ticket ticket;
+    Clock::time_point sent;
+    std::optional<std::uint32_t> work_id;
+};
 
 int run(const Options& opt) {
+    // Open and validate before even connecting. A damaged or busy journal is
+    // never an excuse to start another untracked copy of the same search.
+    std::unique_ptr<host::SearchJournal> journal;
+    if (!opt.journal.empty())
+        journal = std::make_unique<host::SearchJournal>(opt.journal,
+                    "loopback:" + std::to_string(opt.port));
     const auto started = Clock::now();
     const auto deadline = started + std::chrono::milliseconds(opt.deadline_ms);
     host::Coordinator coordinator;
@@ -187,6 +227,9 @@ int run(const Options& opt) {
     std::future<host::Result> worker;
     std::uint64_t started_generation = 0, connection = 0;
     std::uint32_t next_attempt = 0;
+    std::optional<host::SearchBinding> latest_binding;
+    std::optional<std::uint32_t> worker_work_id;
+    std::uint32_t worker_attempt_index = 0;
     std::unique_ptr<wire::LoopbackPool> pool;
     std::optional<double> difficulty;
     std::map<int, Pending> pending;
@@ -198,10 +241,28 @@ int run(const Options& opt) {
     bool completed = false, fatal = false;
     std::string reason = "deadline", last_error;
 
+    auto crash = [&](const std::string& point, const host::Ticket& ticket) {
+        if (point == opt.crash_point && ticket.attempt &&
+            ticket.attempt->index == static_cast<std::uint32_t>(opt.crash_attempt_index)) {
+            event("crash_injected", identity(ticket) + ",\"point\":" + quote(point) +
+                  ",\"index\":" + std::to_string(ticket.attempt->index));
+            // Test-only, loopback-only process death: no destructors, report,
+            // graceful disconnect or journal cleanup can hide the crash gap.
+            std::_Exit(86);
+        }
+    };
+
+    auto mark_unresolved = [&](const Pending& item) {
+        if (journal && item.work_id)
+            journal->uncertain(*item.work_id, item.ticket.attempt->index);
+    };
+
     auto disconnect = [&](const std::string& why) {
         coordinator.disconnect(connection);
         latest = {};
+        latest_binding.reset();
         for (const auto& item : pending) {
+            mark_unresolved(item.second);
             ++counts.pending_lost;
             event("share_unresolved", identity(item.second.ticket) + ",\"id\":" + std::to_string(item.first));
         }
@@ -238,11 +299,18 @@ int run(const Options& opt) {
                 event("unmatched_response", ",\"connection\":" + std::to_string(connection) + ",\"id\":" + std::to_string(id));
                 return;
             }
+            // A pool response becomes a terminal durable outcome before we
+            // claim it was accepted/rejected or permit the next attempt.
+            if (journal && found->second.work_id)
+                journal->response(*found->second.work_id, found->second.ticket.attempt->index,
+                                  connection, id, message.response.accepted);
+            const auto response_ticket = found->second.ticket;
             if (message.response.accepted) ++counts.accepted;
             else ++counts.rejected;
             event("share_response", identity(found->second.ticket) + ",\"id\":" + std::to_string(id) +
                   ",\"accepted\":" + (message.response.accepted ? "true" : "false"));
             pending.erase(found);
+            crash("after_ack", response_ticket);
             return;
         }
         if (!pool->authorized()) {
@@ -268,6 +336,15 @@ int run(const Options& opt) {
                 ++counts.duplicates;
                 event("duplicate_job", identity(incoming));
             } else {
+                if (journal) {
+                    latest_binding = journal->bind(*incoming.job, opt.seed,
+                        static_cast<std::uint32_t>(opt.max_attempts), incoming.generation);
+                    coordinator.restore_progress(incoming, opt.seed, latest_binding->next_attempt);
+                    event("journal_bound", identity(incoming) +
+                        ",\"work_id\":" + std::to_string(latest_binding->work_id) +
+                        ",\"next_attempt\":" + std::to_string(latest_binding->next_attempt) +
+                        ",\"resumed\":" + (latest_binding->resumed ? "true" : "false"));
+                }
                 ++counts.jobs_received;
                 latest = incoming;
                 event("job_received", identity(incoming));
@@ -302,6 +379,7 @@ int run(const Options& opt) {
     host::Checkpoint checkpoint = [&](host::Stage stage, const host::Ticket& ticket) {
         const std::string stage_text = stage_name(stage);
         event("stage", identity(ticket) + ",\"stage\":" + quote(stage_text));
+        crash(stage_text, ticket);
         if (stage_text == opt.pause_stage && ticket.job->job_id == opt.pause_job_id &&
             ticket.attempt && ticket.attempt->index == static_cast<std::uint32_t>(opt.pause_attempt_index) &&
             !pause_used.exchange(true)) {
@@ -322,7 +400,8 @@ int run(const Options& opt) {
             if (!pool) {
                 if (attempts_to_connect >= opt.max_connections) { reason = "connection_limit"; break; }
                 ++attempts_to_connect;
-                ++connection;
+                if (journal) connection = journal->next_connection();
+                else ++connection;
                 try {
                     pool = std::make_unique<wire::LoopbackPool>(opt.port, 500);
                     ++counts.connections;
@@ -342,6 +421,16 @@ int run(const Options& opt) {
 
             if (worker.valid() && worker.wait_for(0ms) == std::future_status::ready) {
                 const auto result = worker.get();
+                const auto result_work_id = worker_work_id;
+                worker_work_id.reset();
+                if (journal && result_work_id) {
+                    host::AttemptOutcome outcome = host::AttemptOutcome::error;
+                    if (result.status == host::Status::found) outcome = host::AttemptOutcome::found;
+                    else if (result.status == host::Status::miss) outcome = host::AttemptOutcome::miss;
+                    else if (result.status == host::Status::cancelled) outcome = host::AttemptOutcome::cancelled;
+                    journal->finish(*result_work_id, result.ticket.attempt ?
+                                    result.ticket.attempt->index : worker_attempt_index, outcome);
+                }
                 ++counts.attempts_finished;
                 event("attempt_finished", identity(result.ticket) + ",\"status\":" + quote(host::status_name(result.status)) +
                       ",\"tiles_scanned\":" + std::to_string(result.tiles_scanned));
@@ -352,24 +441,45 @@ int run(const Options& opt) {
                 } else {
                     drain(1);
                     if (!pool || !pool->authorized() || !coordinator.current(result.ticket)) {
+                        if (journal && result_work_id)
+                            journal->finish(*result_work_id, result.ticket.attempt->index,
+                                            host::AttemptOutcome::discarded);
                         ++counts.cancelled;
                         event("stale_discarded", identity(result.ticket));
                     } else if (counts.submissions < static_cast<std::size_t>(opt.max_submissions)) {
                         const int id = next_id++;
-                        try {
-                            const bool sent = coordinator.commit(result, [&](const host::Share& share) {
-                                pending.emplace(id, Pending{share.ticket, Clock::now()});
+                        std::string network_error;
+                        const bool sent = coordinator.commit(result, [&](const host::Share& share) {
+                            if (journal && result_work_id)
+                                journal->send_intent(*result_work_id, share.ticket.attempt->index,
+                                                     connection, id);
+                            crash("after_send_intent", share.ticket);
+                            pending.emplace(id, Pending{share.ticket, Clock::now(), result_work_id});
+                            // Only the actual transport failure is retryable.
+                            // Persistence exceptions propagate to the fatal gate.
+                            try {
                                 pool->submit(id, share.ticket.job->job_id, share.proof_b64);
-                                return true;
-                            });
-                            if (sent) {
-                                ++counts.submissions;
-                                event("submitted", identity(result.ticket) + ",\"id\":" + std::to_string(id));
-                            } else {
-                                ++counts.cancelled;
-                                event("stale_discarded", identity(result.ticket));
+                            } catch (const std::exception& error) {
+                                network_error = error.what();
+                                return false;
                             }
-                        } catch (const std::exception& error) { disconnect(error.what()); }
+                            crash("after_send", share.ticket);
+                            return true;
+                        });
+                        if (!network_error.empty()) disconnect(network_error);
+                        else if (sent) {
+                            ++counts.submissions;
+                            event("submitted", identity(result.ticket) + ",\"id\":" + std::to_string(id));
+                        } else {
+                            if (journal && result_work_id)
+                                journal->finish(*result_work_id, result.ticket.attempt->index,
+                                                host::AttemptOutcome::discarded);
+                            ++counts.cancelled;
+                            event("stale_discarded", identity(result.ticket));
+                        }
+                    } else if (journal && result_work_id) {
+                        journal->finish(*result_work_id, result.ticket.attempt->index,
+                                        host::AttemptOutcome::discarded);
                     }
                 }
             }
@@ -385,11 +495,15 @@ int run(const Options& opt) {
                 const auto ticket = latest;
                 if (started_generation != ticket.generation) {
                     started_generation = ticket.generation;
-                    next_attempt = 0;
+                    next_attempt = latest_binding ? latest_binding->next_attempt : 0;
                     ++counts.jobs_started;
                 }
                 if (next_attempt < static_cast<std::uint32_t>(opt.max_attempts)) {
                     const auto index = next_attempt++;
+                    worker_attempt_index = index;
+                    worker_work_id = latest_binding ?
+                        std::optional<std::uint32_t>(latest_binding->work_id) : std::nullopt;
+                    if (journal && worker_work_id) journal->begin(*worker_work_id, index);
                     ++counts.attempts_started;
                     event("attempt_started", identity(ticket) + ",\"index\":" + std::to_string(index));
                     worker = std::async(std::launch::async, [&, ticket, index] {
@@ -405,17 +519,39 @@ int run(const Options& opt) {
     }
     coordinator.invalidate();
     if (worker.valid()) {
+        const bool already_fatal = fatal;
         const auto result = worker.get();
         ++counts.attempts_finished;
         if (result.status == host::Status::cancelled) ++counts.cancelled;
         else if (result.status == host::Status::error) {
             ++counts.errors; fatal = true; completed = false;
-            reason = "fatal_error"; last_error = result.error;
+            if (!already_fatal) { reason = "fatal_error"; last_error = result.error; }
         }
         event("attempt_finished", identity(result.ticket) + ",\"status\":" + quote(host::status_name(result.status)));
+        // If the loop already failed, leave its durable running record intact:
+        // recovery classifies it as interrupted. Never hide the first error by
+        // attempting more writes to potentially damaged storage.
+        if (journal && worker_work_id && !already_fatal && journal->healthy()) {
+            try {
+                const auto outcome = result.status == host::Status::error ? host::AttemptOutcome::error :
+                    result.status == host::Status::miss ? host::AttemptOutcome::miss : host::AttemptOutcome::cancelled;
+                journal->finish(*worker_work_id, result.ticket.attempt ?
+                                result.ticket.attempt->index : worker_attempt_index, outcome);
+            } catch (const std::exception& error) {
+                ++counts.errors; fatal = true; completed = false;
+                reason = "fatal_error"; last_error = error.what();
+            }
+        }
     }
     if (!pending.empty()) {
         for (const auto& item : pending) {
+            if (!fatal) {
+                try { mark_unresolved(item.second); }
+                catch (const std::exception& error) {
+                    ++counts.errors; fatal = true; completed = false;
+                    reason = "fatal_error"; last_error = error.what();
+                }
+            }
             ++counts.pending_lost;
             event("share_unresolved", identity(item.second.ticket) + ",\"id\":" + std::to_string(item.first));
         }
@@ -432,6 +568,7 @@ int run(const Options& opt) {
         ",\n  \"cpu_execution\":" + (cpu_computations.load() ? "true" : "false") +
         ",\n  \"gpu_execution\":" + (gpu_computations.load() ? "true" : "false") +
         ",\n  \"live_pool\":false,\n  \"synthetic_work\":true,\n  \"error\":" + quote(last_error) +
+        ",\n  \"journal\":" + (journal ? journal->report_json() : "{\"enabled\":false}") +
         ",\n  \"counters\":" + counts.json(checkpoints.load()) + "\n}\n";
     if (!opt.report.parent_path().empty()) std::filesystem::create_directories(opt.report.parent_path());
     const auto temporary = opt.report.string() + ".tmp";
@@ -449,6 +586,7 @@ int main(int argc, char** argv) {
     try {
         if (argc == 2 && std::string(argv[1]) == "--help") {
             std::cout << "Usage: neuro_pool_replay_client --port N [--report FILE] [--backend cpu|cuda]\n"
+                         "  [--journal FILE] retains consumed attempts and uncertain sends across restarts.\n"
                          "Bounded local TCP replay only; no external host option.\n";
             return 0;
         }

@@ -1,0 +1,855 @@
+{
+  "schema": "neuro.pool_recovery.v1",
+  "passed": true,
+  "transport": "loopback_tcp_fresh_process_restarts",
+  "backend": "cpu",
+  "device": null,
+  "scenarios_run": 2,
+  "process_phases_run": 4,
+  "scenarios": [
+    {
+      "name": "received_without_ack",
+      "passed": true,
+      "phases": [
+        {
+          "name": "first",
+          "passed": true,
+          "native_returncode": -15,
+          "elapsed_seconds": 0.182,
+          "events": [
+            {
+              "event": "connected",
+              "sequence": 1,
+              "connection": 1
+            },
+            {
+              "event": "authorized",
+              "sequence": 2,
+              "connection": 1,
+              "gzip": true
+            },
+            {
+              "event": "journal_bound",
+              "sequence": 3,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "work_id": 1,
+              "next_attempt": 0,
+              "resumed": false
+            },
+            {
+              "event": "job_received",
+              "sequence": 4,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null
+            },
+            {
+              "event": "attempt_started",
+              "sequence": 5,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "index": 0
+            },
+            {
+              "event": "stage",
+              "sequence": 6,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 7,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 8,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 9,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 10,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 11,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 12,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_verify"
+            },
+            {
+              "event": "attempt_finished",
+              "sequence": 13,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "status": "found",
+              "tiles_scanned": 6
+            },
+            {
+              "event": "submitted",
+              "sequence": 14,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "id": 2
+            }
+          ],
+          "submitted_proofs": [
+            {
+              "id": 2,
+              "job_id": "recovery-same-id",
+              "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+              "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+              "expected_attempt_index": 0,
+              "attempt_identity_independently_checked": true,
+              "proof_signal_commitment_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+              "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+              "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+              "raw_bytes": 100432,
+              "wire_bytes": 922,
+              "gzip": true,
+              "official_verifier": {
+                "cert_version": 3,
+                "gpu_executed": false,
+                "nbits": "0x1e080000",
+                "pool_acceptance_checked": false,
+                "proof_bytes": 100432,
+                "proof_kind": "PlainProof",
+                "schema_version": 1,
+                "stage": "verified",
+                "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+                "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+                "verified": true,
+                "verifier": "official_pearl_verify_plain_proof",
+                "zk_proof_generated": false
+              },
+              "synthetic_peer_accepted": null
+            }
+          ],
+          "connections": 1
+        },
+        {
+          "name": "resume",
+          "passed": true,
+          "native_report": {
+            "schema": "neuro.pool_client.v1",
+            "completed": true,
+            "reason": "submission_limit",
+            "backend": "cpu",
+            "elapsed_ms": 2152,
+            "root_seed_hex": "1d3b73c531b75711e5d3dbfd398fff892debc3b5c1e72781f5832bedc9bfcff9",
+            "attempt_limit_per_generation": 8,
+            "attempt_seed_policy": "neuro/zero-b/row-seed/v1",
+            "cpu_execution": true,
+            "gpu_execution": false,
+            "live_pool": false,
+            "synthetic_work": true,
+            "error": "",
+            "journal": {
+              "enabled": true,
+              "schema": "neuro.search_journal.v1",
+              "recovered": true,
+              "poisoned": false,
+              "work_count": 1,
+              "connections": 2,
+              "attempts_consumed": 2,
+              "frames": 13,
+              "bytes": 1412,
+              "outcomes": {
+                "running": 0,
+                "found": 0,
+                "miss": 0,
+                "cancelled": 0,
+                "error": 0,
+                "interrupted": 0,
+                "intent": 0,
+                "accepted": 1,
+                "rejected": 0,
+                "uncertain": 1,
+                "discarded": 0
+              },
+              "works": [
+                {
+                  "work_id": 1,
+                  "next_attempt": 2,
+                  "limit": 8,
+                  "job_id": "recovery-same-id",
+                  "last_connection": 2,
+                  "last_generation": 1,
+                  "last_gzip": true
+                }
+              ]
+            },
+            "counters": {
+              "connections": 1,
+              "jobs_received": 1,
+              "jobs_started": 1,
+              "attempts_finished": 1,
+              "attempts_started": 1,
+              "cancelled": 0,
+              "misses": 0,
+              "errors": 0,
+              "duplicates": 0,
+              "protocol_errors": 0,
+              "unmatched_responses": 0,
+              "submissions": 1,
+              "accepted": 1,
+              "rejected": 0,
+              "pending_lost": 0,
+              "checkpoints": 0
+            }
+          },
+          "native_returncode": 0,
+          "elapsed_seconds": 2.181,
+          "events": [
+            {
+              "event": "connected",
+              "sequence": 1,
+              "connection": 2
+            },
+            {
+              "event": "authorized",
+              "sequence": 2,
+              "connection": 2,
+              "gzip": true
+            },
+            {
+              "event": "journal_bound",
+              "sequence": 3,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "work_id": 1,
+              "next_attempt": 1,
+              "resumed": true
+            },
+            {
+              "event": "job_received",
+              "sequence": 4,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null
+            },
+            {
+              "event": "attempt_started",
+              "sequence": 5,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "index": 1
+            },
+            {
+              "event": "stage",
+              "sequence": 6,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 7,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 8,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 9,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 10,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 11,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 12,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_verify"
+            },
+            {
+              "event": "attempt_finished",
+              "sequence": 13,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "status": "found",
+              "tiles_scanned": 3
+            },
+            {
+              "event": "submitted",
+              "sequence": 14,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "id": 2
+            },
+            {
+              "event": "share_response",
+              "sequence": 15,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "id": 2,
+              "accepted": true
+            },
+            {
+              "event": "completed",
+              "sequence": 16,
+              "completed": true,
+              "reason": "submission_limit"
+            }
+          ],
+          "submitted_proofs": [
+            {
+              "id": 2,
+              "job_id": "recovery-same-id",
+              "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+              "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+              "expected_attempt_index": 1,
+              "attempt_identity_independently_checked": true,
+              "proof_signal_commitment_a": "40791a9ea6d39d83a0bec1c7073b0c70f077d6f0f5688382f956124b7701c3d7",
+              "proof_sha256": "8272ebbe68b11100e5cace1e0a5fe20c7e084634d45cf95d72f4ffb0e59486b7",
+              "wire_sha256": "efbbfead84e26a693b5a67807d80508accb910aa91917eafab13bc838158d700",
+              "raw_bytes": 100432,
+              "wire_bytes": 921,
+              "gzip": true,
+              "official_verifier": {
+                "cert_version": 3,
+                "gpu_executed": false,
+                "nbits": "0x1e080000",
+                "pool_acceptance_checked": false,
+                "proof_bytes": 100432,
+                "proof_kind": "PlainProof",
+                "schema_version": 1,
+                "stage": "verified",
+                "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+                "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+                "verified": true,
+                "verifier": "official_pearl_verify_plain_proof",
+                "zk_proof_generated": false
+              },
+              "synthetic_peer_accepted": true
+            }
+          ],
+          "connections": 1
+        }
+      ]
+    },
+    {
+      "name": "encoding_change_restart",
+      "passed": true,
+      "phases": [
+        {
+          "name": "first",
+          "passed": true,
+          "native_returncode": -15,
+          "elapsed_seconds": 0.114,
+          "events": [
+            {
+              "event": "connected",
+              "sequence": 1,
+              "connection": 1
+            },
+            {
+              "event": "authorized",
+              "sequence": 2,
+              "connection": 1,
+              "gzip": true
+            },
+            {
+              "event": "journal_bound",
+              "sequence": 3,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "work_id": 1,
+              "next_attempt": 0,
+              "resumed": false
+            },
+            {
+              "event": "job_received",
+              "sequence": 4,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null
+            },
+            {
+              "event": "attempt_started",
+              "sequence": 5,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "index": 0
+            },
+            {
+              "event": "stage",
+              "sequence": 6,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 7,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 8,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 9,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 10,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "before_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 11,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 12,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "stage": "after_verify"
+            },
+            {
+              "event": "attempt_finished",
+              "sequence": 13,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "status": "found",
+              "tiles_scanned": 6
+            },
+            {
+              "event": "submitted",
+              "sequence": 14,
+              "connection": 1,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 0,
+              "id": 2
+            }
+          ],
+          "submitted_proofs": [
+            {
+              "id": 2,
+              "job_id": "recovery-same-id",
+              "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+              "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+              "expected_attempt_index": 0,
+              "attempt_identity_independently_checked": true,
+              "proof_signal_commitment_a": "e5f768a3f47571214b0d1e8c0fa52b1e591b9f76c88a16db6105c9a2571b1d84",
+              "proof_sha256": "e3bd2d3eb390414e2af69c34bef4abdffb3196cd39b06bf2b048485f8de316cb",
+              "wire_sha256": "fc1828766b6a70b463873e32b66498a05706dd3405077b51b262ac68148b282e",
+              "raw_bytes": 100432,
+              "wire_bytes": 922,
+              "gzip": true,
+              "official_verifier": {
+                "cert_version": 3,
+                "gpu_executed": false,
+                "nbits": "0x1e080000",
+                "pool_acceptance_checked": false,
+                "proof_bytes": 100432,
+                "proof_kind": "PlainProof",
+                "schema_version": 1,
+                "stage": "verified",
+                "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+                "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+                "verified": true,
+                "verifier": "official_pearl_verify_plain_proof",
+                "zk_proof_generated": false
+              },
+              "synthetic_peer_accepted": null
+            }
+          ],
+          "connections": 1
+        },
+        {
+          "name": "resume",
+          "passed": true,
+          "native_report": {
+            "schema": "neuro.pool_client.v1",
+            "completed": true,
+            "reason": "submission_limit",
+            "backend": "cpu",
+            "elapsed_ms": 73,
+            "root_seed_hex": "1d3b73c531b75711e5d3dbfd398fff892debc3b5c1e72781f5832bedc9bfcff9",
+            "attempt_limit_per_generation": 8,
+            "attempt_seed_policy": "neuro/zero-b/row-seed/v1",
+            "cpu_execution": true,
+            "gpu_execution": false,
+            "live_pool": false,
+            "synthetic_work": true,
+            "error": "",
+            "journal": {
+              "enabled": true,
+              "schema": "neuro.search_journal.v1",
+              "recovered": true,
+              "poisoned": false,
+              "work_count": 1,
+              "connections": 2,
+              "attempts_consumed": 2,
+              "frames": 13,
+              "bytes": 1412,
+              "outcomes": {
+                "running": 0,
+                "found": 0,
+                "miss": 0,
+                "cancelled": 0,
+                "error": 0,
+                "interrupted": 0,
+                "intent": 0,
+                "accepted": 1,
+                "rejected": 0,
+                "uncertain": 1,
+                "discarded": 0
+              },
+              "works": [
+                {
+                  "work_id": 1,
+                  "next_attempt": 2,
+                  "limit": 8,
+                  "job_id": "recovery-same-id",
+                  "last_connection": 2,
+                  "last_generation": 1,
+                  "last_gzip": false
+                }
+              ]
+            },
+            "counters": {
+              "connections": 1,
+              "jobs_received": 1,
+              "jobs_started": 1,
+              "attempts_finished": 1,
+              "attempts_started": 1,
+              "cancelled": 0,
+              "misses": 0,
+              "errors": 0,
+              "duplicates": 0,
+              "protocol_errors": 0,
+              "unmatched_responses": 0,
+              "submissions": 1,
+              "accepted": 1,
+              "rejected": 0,
+              "pending_lost": 0,
+              "checkpoints": 0
+            }
+          },
+          "native_returncode": 0,
+          "elapsed_seconds": 0.101,
+          "events": [
+            {
+              "event": "connected",
+              "sequence": 1,
+              "connection": 2
+            },
+            {
+              "event": "authorized",
+              "sequence": 2,
+              "connection": 2,
+              "gzip": false
+            },
+            {
+              "event": "journal_bound",
+              "sequence": 3,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "work_id": 1,
+              "next_attempt": 1,
+              "resumed": true
+            },
+            {
+              "event": "job_received",
+              "sequence": 4,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null
+            },
+            {
+              "event": "attempt_started",
+              "sequence": 5,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": null,
+              "index": 1
+            },
+            {
+              "event": "stage",
+              "sequence": 6,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 7,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_prepare"
+            },
+            {
+              "event": "stage",
+              "sequence": 8,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 9,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_compute"
+            },
+            {
+              "event": "stage",
+              "sequence": 10,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "before_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 11,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_proof"
+            },
+            {
+              "event": "stage",
+              "sequence": 12,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "stage": "after_verify"
+            },
+            {
+              "event": "attempt_finished",
+              "sequence": 13,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "status": "found",
+              "tiles_scanned": 3
+            },
+            {
+              "event": "submitted",
+              "sequence": 14,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "id": 2
+            },
+            {
+              "event": "share_response",
+              "sequence": 15,
+              "connection": 2,
+              "generation": 1,
+              "job_id": "recovery-same-id",
+              "attempt_index": 1,
+              "id": 2,
+              "accepted": true
+            },
+            {
+              "event": "completed",
+              "sequence": 16,
+              "completed": true,
+              "reason": "submission_limit"
+            }
+          ],
+          "submitted_proofs": [
+            {
+              "id": 2,
+              "job_id": "recovery-same-id",
+              "header_sha256": "8ae0e749f347c80117acf60287d1f96ee277ec10d446c40394e77d9df9f57eff",
+              "target_be_hex": "0000080000000000000000000000000000000000000000000000000000000000",
+              "expected_attempt_index": 1,
+              "attempt_identity_independently_checked": true,
+              "proof_signal_commitment_a": "40791a9ea6d39d83a0bec1c7073b0c70f077d6f0f5688382f956124b7701c3d7",
+              "proof_sha256": "8272ebbe68b11100e5cace1e0a5fe20c7e084634d45cf95d72f4ffb0e59486b7",
+              "wire_sha256": "8272ebbe68b11100e5cace1e0a5fe20c7e084634d45cf95d72f4ffb0e59486b7",
+              "raw_bytes": 100432,
+              "wire_bytes": 100432,
+              "gzip": false,
+              "official_verifier": {
+                "cert_version": 3,
+                "gpu_executed": false,
+                "nbits": "0x1e080000",
+                "pool_acceptance_checked": false,
+                "proof_bytes": 100432,
+                "proof_kind": "PlainProof",
+                "schema_version": 1,
+                "stage": "verified",
+                "upstream_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+                "upstream_repository": "https://github.com/pearl-research-labs/pearl",
+                "verified": true,
+                "verifier": "official_pearl_verify_plain_proof",
+                "zk_proof_generated": false
+              },
+              "synthetic_peer_accepted": true
+            }
+          ],
+          "connections": 1
+        }
+      ]
+    }
+  ],
+  "submitted_proofs_checked": 4,
+  "official_reference_commit": "0dbdb2ffd8b81193a5079bb67a59aecc10ad501c",
+  "attempt_fixture_manifest_sha256": "c8d6b6e6e1bb39600b5cf9d818d9ee263e42caca36615b7b36e68a01389bac68",
+  "proof_fixture_manifest_sha256": "a73b16f06cc533dd52cf78df9b53e2302d2d10e418cbb3ae36ce6c2d5c082daa",
+  "binaries": {
+    "native_sha256": "2ec6a4c9d771d98c224fc178803f96d0cfc21b5995526fa93c93dabbb1e8a74f",
+    "official_sha256": "8ef463a49c1cc6fa5a94957649d09ca5f6d788fe9b2ad25b8d1e59d281dd779b"
+  },
+  "work_dir": "/workspace/scratch/ee2def0b7c52/neuro/artifacts/iteration08-cuda-recovery/run-dgvor5gt",
+  "external_pool_connection": false,
+  "live_pool_acceptance": false,
+  "model_api_calls": false,
+  "power_loss_tested": false,
+  "cpu_execution": true,
+  "gpu_execution": false,
+  "windows_execution": false
+}
