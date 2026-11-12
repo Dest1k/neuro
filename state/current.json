@@ -3,7 +3,7 @@
   "project": "neuro",
   "preparation_iteration": 9,
   "preparation_total": 10,
-  "status": "iteration_9_native_reproduction_passed_flat_package_qualification_in_progress",
+  "status": "iteration_9_fresh_native_and_flat_handoff_gates_passed_owner_runtime_pending",
   "updated_moscow_date": "2026-11-12",
   "entry_points": [
     "state/current.json",
@@ -79,8 +79,8 @@
     "durable_encoding_recovery": "passed_gzip_to_plain_same_work_progress_uncertain_send_preserved",
     "cuda_linked_cpu_recovery": "passed_2_scenarios_4_process_phases_4_official_wire_proofs_no_GPU_execution",
     "fresh_directory_build": "passed_iteration8_source_restore_fresh_Rust_native_proof_TCP_recovery_unchanged_native_inputs_in_iteration9",
-    "handoff_preflight": "passed_Linux_installed_tool_prerequisites_only_13_synthetic_tests",
-    "handoff_package": "15_real_Git_fixture_tests_passed_full_project_qualification_pending"
+    "handoff_preflight": "passed_real_Linux_inventory_plus_binding_import_and_13_synthetic_tests_no_execution_readiness_claim",
+    "handoff_package": "passed_two_full_project_relocations_including_spaces_preflight_176_Python_tests_and_10_fresh_basic_CTest_checks"
   },
   "next_iteration": {
     "number": 10,
@@ -102,14 +102,17 @@
     "github_actions_must_remain_disabled": true,
     "durable_search_recovery_instructions_required": true,
     "exclude_runtime_search_journals": true,
-    "rehearsal_archive_created": false,
+    "rehearsal_archive_created": true,
     "flat_checkout_layout": true,
     "package_builder": "tools/package_handoff.py",
     "arrival_verifier": "python3 -B -s -E _work/handoff/verify.py verify --root .",
     "runbook": "docs/handoff-runbook.md",
     "linux_preflight": "tools/handoff_preflight.py",
     "no_active_remotes_in_package": true,
-    "exclude_toolchain_and_cargo_caches": true
+    "exclude_toolchain_and_cargo_caches": true,
+    "rehearsal_archive": "neuro-iteration-09-handoff-rehearsal.zip",
+    "final_archive_created": false,
+    "qualification_report": "reports/iteration-09-package/qualification-summary.json"
   },
   "validation_report": "reports/iteration-09-validation.json",
   "owner_preferences": {

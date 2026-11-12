@@ -14,7 +14,7 @@ reordered when findings justify it; it is not ten mandatory approval gates.
 | 6 — complete within CI/local boundary | Native Windows proof/host execution, bounded SSH worker and durable local model-cost ledger | Actual Windows CPU/proof/loopback and worker gates; Linux regressions; owner SSH/GPU and real DSH/provider billing unobserved |
 | 7 — local search gates pass; Windows validation pending | Bounded 64-attempt search, complete candidate identity and exact-batch visible SRBMiner handoff implementation | 14 native tests, 19 TCP scenarios, 23 official wire proofs; new Windows scripts unrun because GitHub publication returned account-suspended HTTP 403; unpublished work preserved in an offline checkpoint |
 | 8 — local recovery gates pass; Windows/GPU pending | Durable bounded-search journal integrated into the native host | 15 native tests, 15 recovery scenarios across 33 fresh process phases and 22 official wire proofs; encoding changes retain progress; current Windows/owner-host execution unavailable |
-| 9 | Fresh-directory handoff rehearsal | Rebuild from pinned sources, resolve missing dependencies, verify package contents |
+| 9 — local handoff rehearsal complete | Fresh Rust/native proof reproduction, portable flat checkout with Git identity, Linux prerequisites and staged owner runbook | 20 Rust/15 proof-native tests, 19 TCP/15 recovery scenarios; two full-package relocations; 176 Python checks (1 Windows skip) and 10 fresh basic native tests from the extracted ZIP |
 | 10 | Complete archive + DSH starting directive | Extract layout `/home/jericho/neuro/start/`; checksums, exact status, next executable step |
 
 ## What the final archive must contain
@@ -44,8 +44,11 @@ directly executable and state the untested coverage. It must not invent success.
 
 Iteration-7 GitHub publication was rejected with an account-suspended HTTP 403.
 The Windows observations above belong to iteration 6; they do not validate the
-changed iteration-7/8 worker, recovery or GPU handoff. Continue from the current
-`neuro-iteration-08-checkpoint.zip`; its restored state retains the execution
-policy and has no active Actions workflow definitions. No new neuro remote was
-selected or contacted during iteration 8.
+changed iteration-7/8 worker, recovery or current iteration-9 delivery tools.
+Continue from the current local HEAD or
+`neuro-iteration-09-handoff-rehearsal.zip`. It extracts directly as a populated
+source checkout; verify its `_work/handoff/` arrival manifest before editing.
+Its state retains the execution policy and has no active root Actions workflow
+definitions or active Git remotes. No new neuro remote was selected or contacted
+during iterations 8 or 9. Read `docs/handoff-runbook.md` for actual next commands.
 The final archive/directive still belongs to iteration 10.

@@ -1,0 +1,362 @@
+{
+  "schema": "neuro.handoff_preflight.v1",
+  "stage": "cuda-build",
+  "passed": true,
+  "kind": "local_prerequisites_not_build_evidence",
+  "root": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+  "platform": "Linux",
+  "machine": "x86_64",
+  "python": "3.12.14",
+  "checks": {
+    "python_supported": true,
+    "empty_readme": true,
+    "github_actions_disabled": true,
+    "sources": {
+      "schema": "neuro.sources.v1",
+      "passed": true,
+      "sources": [
+        {
+          "id": "cppminer",
+          "path": "upstream/cppminer",
+          "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+          "passed": true,
+          "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+          "clean": true
+        },
+        {
+          "id": "blake3",
+          "path": "upstream/blake3",
+          "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+          "passed": true,
+          "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+          "clean": true
+        }
+      ]
+    },
+    "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+    "candidate_files": 1010,
+    "cmake_compatible": true,
+    "ctest_matches_cmake": true,
+    "rust_pin": true,
+    "cargo_pin": true,
+    "rust_override_names": [],
+    "donor_lock_sha256": true,
+    "reference_lock_sha256": true,
+    "cuda_toolkit_minimum": true,
+    "cuda_sm120_compiler": true
+  },
+  "tools": {
+    "git": {
+      "path": "/usr/local/bin/git",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "a93a8e0c-e78a-43da-b363-29e6b5d1490c",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/usr/local/bin/git",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.793004+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.005319407999195391,
+        "stdout": "git version 2.52.0\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "cc": {
+      "path": "/usr/bin/gcc",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "fd25b729-775b-49c8-b32f-7aaca2e357d8",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/usr/bin/gcc",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.798527+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.004112004000489833,
+        "stdout": "gcc (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "cxx": {
+      "path": "/usr/bin/g++",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "b5936403-5ed5-4a5e-9957-41fce9469416",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/usr/bin/g++",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.802809+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.003965288997278549,
+        "stdout": "g++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "cmake": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "e92eb167-d456-473a-bfb8-84607bdcc901",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.807736+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.016344124000170268,
+        "stdout": "cmake version 3.31.6\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "ctest": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "4babf525-1237-41e6-9467-af1edf1b4e0e",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.824325+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.01641287899838062,
+        "stdout": "ctest version 3.31.6\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "build_tool": {
+      "path": "/usr/bin/make",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "3d90de00-d112-435f-9ed3-06e1fb120f90",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/usr/bin/make",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.840997+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.004020949996629497,
+        "stdout": "GNU Make 4.4.1\nBuilt for x86_64-pc-linux-gnu\nCopyright (C) 1988-2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "fixture_binding": {
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "20ee5af1-2c3b-4282-bc19-561bae156c52",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-c",
+          "import blake3; print(blake3.blake3(b'').hexdigest())"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.848417+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.03224727700217045,
+        "stdout": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "cargo": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/cargo",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "d18a0d7f-050c-436b-a56c-5a12c061286f",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/cargo",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.881211+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.016365989999030717,
+        "stdout": "cargo 1.99.1 (5f94df478 2026-08-27)\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "rustc": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "a8f3b2de-89cc-49f7-a182-657a3a2475c6",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+          "-Vv"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.897768+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.06549733700012439,
+        "stdout": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "nvcc": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "b896ab76-2d87-4019-be1d-97194936c0e4",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+          "--version"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:32.963846+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.06695553600002313,
+        "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Mon_Oct_12_19:25:48_PDT_2026\nCuda compilation tools, release 13.5, V13.5.37\nBuild cuda_13.5.r13.5/compiler.39125733_0\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    },
+    "cuda_architectures": {
+      "path": "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+      "available": true,
+      "probe": {
+        "schema": "neuro.process.v1",
+        "run_id": "3f2684ca-190a-4554-a342-c3fbd50154b4",
+        "source": "local-subprocess",
+        "stage": "inventory",
+        "argv": [
+          "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+          "--list-gpu-code"
+        ],
+        "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+        "started_at": "2026-11-12T01:41:33.031004+00:00",
+        "returncode": 0,
+        "timed_out": false,
+        "launch_error": null,
+        "output_complete": true,
+        "elapsed_s": 0.004307953997340519,
+        "stdout": "sm_75\nsm_80\nsm_86\nsm_87\nsm_88\nsm_89\nsm_90\nsm_100\nsm_110\nsm_103\nsm_120\nsm_121\nsm_107\n",
+        "stdout_truncated": false,
+        "stderr": "",
+        "stderr_truncated": false
+      }
+    }
+  },
+  "missing": [],
+  "limits": {
+    "compiler_compatibility_tested": false,
+    "proof_built": false,
+    "cargo_dependencies_materialized": false,
+    "gpu_execution": false,
+    "windows_execution": false,
+    "owner_ssh_connected": false,
+    "srbminer_stopped": false,
+    "dsh_transport_connected": false,
+    "provider_billing_verified": false,
+    "paid_model_calls": 0,
+    "external_pool_connection": false
+  },
+  "generator": "Unix Makefiles",
+  "fixtures": {
+    "required": true,
+    "blake3_version": "1.0.11",
+    "locked_version": "1.0.11",
+    "wheel_hash_verified": false,
+    "runtime_check_passed": true
+  },
+  "cargo_home": {
+    "path": "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+    "selected_by": "argument",
+    "cache_completeness_checked": false
+  },
+  "proof_build_arguments": [
+    "--cargo",
+    "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/cargo",
+    "--rustc",
+    "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+    "--cargo-home",
+    "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo"
+  ],
+  "run_id": "86fa154b-93df-413e-b386-413667da846b"
+}

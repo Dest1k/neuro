@@ -2,10 +2,10 @@
   "schema": "neuro.iteration_validation.v1",
   "iteration": 9,
   "date": "2026-11-12",
-  "generated_at": "2026-11-12T01:40:23.465886+00:00",
-  "passed": false,
+  "generated_at": "2026-11-12T01:43:15.640620+00:00",
+  "passed": true,
   "local_checks_passed": true,
-  "status": "native_reproduction_and_delivery_unit_gates_passed_full_project_package_qualification_pending",
+  "status": "iteration9_fresh_native_and_flat_source_handoff_gates_passed_owner_runtime_pending",
   "scope": "fresh_native_reproduction_and_portable_source_handoff_not_production_mining",
   "base_local_commit": "d7d9a3c0ed015b77f4e70a67d7f935f0040a8a1c",
   "source_scope_note": "Native inputs match the separate freshly built checkpoint exactly; new handoff tools are validated separately. Final archive manifest binds full final committed source without a self-referential report hash.",
@@ -61,11 +61,34 @@
     }
   },
   "flat_package": {
-    "qualification_passed": false,
+    "qualification_passed": true,
+    "qualification_evidence": "reports/iteration-09-package/qualification-summary.json",
+    "qualification_commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+    "qualification_candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+    "two_real_relocations_passed": true,
+    "path_with_spaces_tested": true,
+    "source_identity_preserved_after_build": true,
+    "fresh_basic_native_ctest": {
+      "passed": true,
+      "tests": 10,
+      "failed": 0,
+      "proof_enabled": false,
+      "CUDA_enabled": false
+    },
+    "python_from_extracted_checkout": {
+      "discovered": 176,
+      "passed": 175,
+      "skipped": 1,
+      "failed": 0
+    },
+    "preflight_stage": "cuda-build with --require-fixtures",
+    "preflight_passed": true,
+    "preflight_means_execution_tested": false,
+    "command_elapsed_seconds": 41.273,
     "synthetic_real_git_tests_passed": 15,
-    "current_roundtrip_pending_until_clean_commit": true,
     "final_archive": "neuro-iteration-09-handoff-rehearsal.zip",
-    "iteration10_launch_archive": false
+    "iteration10_launch_archive": false,
+    "final_identity_location": "Embedded _work/handoff/MANIFEST.json binds the final committed source, including these qualification reports. Final ZIP delivery is built and verified after this report commit, avoiding self-referential source identity."
   },
   "windows": {
     "current_execution": false,
@@ -96,5 +119,23 @@
     "publication_attempted": false,
     "GitHub_Actions_used": false
   },
-  "next_iteration": 10
+  "next_iteration": 10,
+  "acceptance_scope": "Iteration9 local handoff/reproduction goals only; does not assert Windows/GPU/live-pool/DSH readiness",
+  "independent_fullk_fixtures": {
+    "cases": 6,
+    "final_c_values": 4096,
+    "gpu_execution_observed": false,
+    "mining_evidence": false,
+    "mismatches": [],
+    "mode": "check",
+    "schema": "neuro.fullk_fixture_check.v1",
+    "status": "PASS",
+    "transcript_words": 1024
+  },
+  "preflight": {
+    "evidence": "reports/iteration-09-package/preflight-cuda-build.json",
+    "scope": "installed Linux prerequisite inventory with explicit tool paths and real fixture binding import",
+    "passed": true,
+    "build_or_GPU_evidence": false
+  }
 }

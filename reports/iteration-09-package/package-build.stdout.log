@@ -1,0 +1,46 @@
+{
+  "schema": "neuro.handoff.build.v1",
+  "passed": true,
+  "archive": "/workspace/scratch/ee2def0b7c52/neuro-iteration-09-qualification.zip",
+  "archive_sha256": "37f32eb13f1dfda4165a91bb4d6fb00728520fc94afa19381bb7577745edd482",
+  "archive_bytes": 7719290,
+  "commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+  "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+  "iteration": 9,
+  "iteration10_launch_archive": false,
+  "staging_verification": {
+    "schema": "neuro.handoff.verification.v1",
+    "passed": true,
+    "iteration": 9,
+    "commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+    "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+    "payload_files": 1040,
+    "source_check": {
+      "schema": "neuro.sources.v1",
+      "passed": true,
+      "sources": [
+        {
+          "id": "cppminer",
+          "path": "upstream/cppminer",
+          "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+          "passed": true,
+          "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+          "clean": true
+        },
+        {
+          "id": "blake3",
+          "path": "upstream/blake3",
+          "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+          "passed": true,
+          "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+          "clean": true
+        }
+      ]
+    },
+    "active_remotes": [],
+    "network_used": false,
+    "iteration10_launch_archive": false
+  },
+  "relocation_tested": false,
+  "network_used": false
+}

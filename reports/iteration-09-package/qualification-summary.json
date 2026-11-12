@@ -1,0 +1,301 @@
+{
+  "schema": "neuro.handoff.qualification.v1",
+  "passed": true,
+  "preliminary_package": true,
+  "steps": [
+    {
+      "name": "source-head",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro",
+      "returncode": 0,
+      "elapsed_seconds": 0.003
+    },
+    {
+      "name": "source-candidate",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-E",
+        "tools/candidate_manifest.py",
+        "fingerprint",
+        "--root",
+        "."
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro",
+      "returncode": 0,
+      "elapsed_seconds": 0.299
+    },
+    {
+      "name": "package-build",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-E",
+        "tools/package_handoff.py",
+        "build",
+        "--root",
+        ".",
+        "--commit",
+        "1811209248427afb9c26c8f38fcad880e3c15b58",
+        "--candidate-sha256",
+        "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+        "--output",
+        "/workspace/scratch/ee2def0b7c52/neuro-iteration-09-qualification.zip"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro",
+      "returncode": 0,
+      "elapsed_seconds": 5.54
+    },
+    {
+      "name": "verify-a",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-E",
+        "_work/handoff/verify.py",
+        "verify",
+        "--root",
+        "."
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout-a",
+      "returncode": 0,
+      "elapsed_seconds": 1.445
+    },
+    {
+      "name": "verify-spaces",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-E",
+        "_work/handoff/verify.py",
+        "verify",
+        "--root",
+        "."
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 1.578
+    },
+    {
+      "name": "preflight-cuda-build",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "tools/handoff_preflight.py",
+        "--stage",
+        "cuda-build",
+        "--require-fixtures",
+        "--cmake",
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "--ctest",
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest",
+        "--cc",
+        "/usr/bin/gcc",
+        "--cxx",
+        "/usr/bin/g++",
+        "--build-tool",
+        "/usr/bin/make",
+        "--cargo",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/cargo",
+        "--rustc",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/rustup/toolchains/1.99.1-x86_64-unknown-linux-gnu/bin/rustc",
+        "--cargo-home",
+        "/workspace/scratch/ee2def0b7c52/neuro-rust-tools/cargo",
+        "--nvcc",
+        "/workspace/scratch/ee2def0b7c52/neuro-cuda-tools/python/nvidia/cu13/bin/nvcc",
+        "--output",
+        "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/evidence/preflight-cuda-build.json"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 0.716
+    },
+    {
+      "name": "python-tests",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 9.923
+    },
+    {
+      "name": "fullk-fixtures",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "tools/generate_fullk_fixtures.py",
+        "--check"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 2.43
+    },
+    {
+      "name": "cmake-configure",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "-S",
+        ".",
+        "-B",
+        "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start/build/basic-fresh",
+        "-G",
+        "Unix Makefiles",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_C_COMPILER=/usr/bin/gcc",
+        "-DCMAKE_CXX_COMPILER=/usr/bin/g++"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 0.914
+    },
+    {
+      "name": "cmake-build",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/cmake",
+        "--build",
+        "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start/build/basic-fresh",
+        "--parallel",
+        "2"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 12.119
+    },
+    {
+      "name": "ctest",
+      "argv": [
+        "/workspace/scratch/ee2def0b7c52/neuro-build-tools/cmake/data/bin/ctest",
+        "--test-dir",
+        "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start/build/basic-fresh",
+        "--output-on-failure",
+        "--no-tests=error"
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 5.895
+    },
+    {
+      "name": "candidate-after-checks",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-s",
+        "-E",
+        "tools/candidate_manifest.py",
+        "fingerprint",
+        "--root",
+        "."
+      ],
+      "cwd": "/workspace/scratch/ee2def0b7c52/neuro9-package-qualification/checkout with spaces/start",
+      "returncode": 0,
+      "elapsed_seconds": 0.411
+    }
+  ],
+  "network_used": false,
+  "physical_GPU_run": false,
+  "Windows_execution": false,
+  "commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+  "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+  "archive": {
+    "schema": "neuro.handoff.build.v1",
+    "passed": true,
+    "archive": "/workspace/scratch/ee2def0b7c52/neuro-iteration-09-qualification.zip",
+    "archive_sha256": "37f32eb13f1dfda4165a91bb4d6fb00728520fc94afa19381bb7577745edd482",
+    "archive_bytes": 7719290,
+    "commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+    "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+    "iteration": 9,
+    "iteration10_launch_archive": false,
+    "staging_verification": {
+      "schema": "neuro.handoff.verification.v1",
+      "passed": true,
+      "iteration": 9,
+      "commit": "1811209248427afb9c26c8f38fcad880e3c15b58",
+      "candidate_sha256": "16f899386cbb12a17a32c8a80b6b1997d91de67759d2bf216a8d1f6809070e4c",
+      "payload_files": 1040,
+      "source_check": {
+        "schema": "neuro.sources.v1",
+        "passed": true,
+        "sources": [
+          {
+            "id": "cppminer",
+            "path": "upstream/cppminer",
+            "expected_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+            "passed": true,
+            "actual_commit": "5b68506af5e6433ee5c25aa9e6fbb00b537590aa",
+            "clean": true
+          },
+          {
+            "id": "blake3",
+            "path": "upstream/blake3",
+            "expected_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+            "passed": true,
+            "actual_commit": "93a431c78a52d7ccf0f366f106467f5070e6075e",
+            "clean": true
+          }
+        ]
+      },
+      "active_remotes": [],
+      "network_used": false,
+      "iteration10_launch_archive": false
+    },
+    "relocation_tested": false,
+    "network_used": false
+  },
+  "two_relocations_passed": true,
+  "preflight_passed": true,
+  "source_identity_preserved_after_build": true,
+  "fresh_basic_native_build": true,
+  "proof_build_repeated": false,
+  "installed_toolchains_reused": true,
+  "cargo_cache_copied": false,
+  "python": {
+    "discovered": 176,
+    "passed": 175,
+    "skipped": 1,
+    "failed": 0
+  },
+  "native_ctest": {
+    "passed": true,
+    "tests": 10,
+    "failed": 0,
+    "proof_enabled": false,
+    "CUDA_enabled": false
+  },
+  "fullk_fixtures": {
+    "cases": 6,
+    "final_c_values": 4096,
+    "gpu_execution_observed": false,
+    "mining_evidence": false,
+    "mismatches": [],
+    "mode": "check",
+    "schema": "neuro.fullk_fixture_check.v1",
+    "status": "PASS",
+    "transcript_words": 1024
+  },
+  "preflight_evidence": "preflight-cuda-build.json",
+  "relocation_verifier_evidence": [
+    "verify-a.stdout.log",
+    "verify-spaces.stdout.log"
+  ],
+  "command_elapsed_seconds": 41.273
+}

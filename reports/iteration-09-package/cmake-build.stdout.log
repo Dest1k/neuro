@@ -1,0 +1,68 @@
+[  1%] Building CXX object CMakeFiles/neuro_fullk_reference.dir/native/reference/fullk_reference.cpp.o
+[  3%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3.c.o
+[  5%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_dispatch.c.o
+[  7%] Linking CXX static library libneuro_fullk_reference.a
+[  7%] Built target neuro_fullk_reference
+[  9%] Building C object CMakeFiles/neuro_blake3.dir/upstream/blake3/c/blake3_portable.c.o
+[ 11%] Building CXX object CMakeFiles/neuro_fullk_warp.dir/native/reference/fullk_warp.cpp.o
+[ 13%] Linking C static library libneuro_blake3.a
+[ 13%] Built target neuro_blake3
+[ 15%] Building CXX object CMakeFiles/neuro_cli_test.dir/upstream/cppminer/tests/cp_cli_test.cpp.o
+[ 16%] Linking CXX static library libneuro_fullk_warp.a
+[ 16%] Built target neuro_fullk_warp
+[ 18%] Building CXX object CMakeFiles/neuro_protocol_test.dir/upstream/cppminer/tests/cp_pool_protocol_test.cpp.o
+[ 20%] Linking CXX executable neuro_cli_test
+[ 20%] Built target neuro_cli_test
+[ 22%] Building CXX object CMakeFiles/neuro_mma_layout_test.dir/native/tests/mma_layout_test.cpp.o
+[ 24%] Building CXX object CMakeFiles/neuro_protocol_test.dir/upstream/cppminer/src/common/cp_json_frame.cpp.o
+[ 26%] Building CXX object CMakeFiles/neuro_protocol_test.dir/upstream/cppminer/src/common/cp_pool_notify.cpp.o
+[ 28%] Building CXX object CMakeFiles/neuro_protocol_test.dir/upstream/cppminer/src/common/cp_util.cpp.o
+[ 30%] Building CXX object CMakeFiles/neuro_protocol_test.dir/upstream/cppminer/src/common/cp_state.cpp.o
+[ 32%] Linking CXX executable neuro_protocol_test
+[ 33%] Linking CXX executable neuro_mma_layout_test
+[ 33%] Built target neuro_protocol_test
+[ 35%] Building CXX object CMakeFiles/neuro_fullk_test.dir/native/tests/fullk_test.cpp.o
+[ 35%] Built target neuro_mma_layout_test
+[ 37%] Building CXX object CMakeFiles/neuro_blake3_vectors_test.dir/native/tests/blake3_vectors_test.cpp.o
+[ 39%] Linking CXX executable neuro_blake3_vectors_test
+[ 39%] Built target neuro_blake3_vectors_test
+[ 41%] Building CXX object CMakeFiles/neuro_math_probe.dir/native/tests/cppminer_math_probe.cpp.o
+[ 43%] Linking CXX executable neuro_fullk_test
+[ 43%] Built target neuro_fullk_test
+[ 45%] Building CXX object CMakeFiles/neuro_fullk_upstream_test.dir/native/tests/fullk_upstream_test.cpp.o
+[ 47%] Building CXX object CMakeFiles/neuro_math_probe.dir/upstream/cppminer/src/cpu/gemm/case33_gemm_xor.cpp.o
+[ 49%] Building CXX object CMakeFiles/neuro_fullk_upstream_test.dir/native/reference/fullk_reference.cpp.o
+[ 50%] Building CXX object CMakeFiles/neuro_math_probe.dir/upstream/cppminer/src/cpu/gemm/case33_cpu_features.cpp.o
+[ 52%] Linking CXX executable neuro_math_probe
+[ 54%] Building CXX object CMakeFiles/neuro_fullk_upstream_test.dir/native/reference/fullk_warp.cpp.o
+[ 54%] Built target neuro_math_probe
+[ 56%] Building C object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_noise.c.o
+[ 58%] Building CXX object CMakeFiles/neuro_fullk_upstream_test.dir/upstream/cppminer/src/cpu/gemm/case33_gemm_xor.cpp.o
+[ 60%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_job_ctrl.cpp.o
+[ 62%] Building CXX object CMakeFiles/neuro_fullk_upstream_test.dir/upstream/cppminer/src/cpu/gemm/case33_cpu_features.cpp.o
+[ 64%] Linking CXX executable neuro_fullk_upstream_test
+[ 66%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/bounded-donor/src/common/cp_pool.cpp.o
+[ 66%] Built target neuro_fullk_upstream_test
+[ 67%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_pool_notify.cpp.o
+[ 69%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_tcp.cpp.o
+[ 71%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_json_frame.cpp.o
+[ 73%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_util.cpp.o
+[ 75%] Building CXX object CMakeFiles/neuro_pearl_donor.dir/upstream/cppminer/src/common/cp_state.cpp.o
+[ 77%] Linking CXX static library libneuro_pearl_donor.a
+[ 77%] Built target neuro_pearl_donor
+[ 79%] Building CXX object CMakeFiles/neuro_pearl_input.dir/native/pearl/pearl_input.cpp.o
+[ 81%] Building CXX object CMakeFiles/neuro_pearl_alignment_test.dir/native/tests/pearl_alignment_test.cpp.o
+[ 83%] Linking CXX executable neuro_pearl_alignment_test
+[ 83%] Built target neuro_pearl_alignment_test
+[ 84%] Linking CXX static library libneuro_pearl_input.a
+[ 84%] Built target neuro_pearl_input
+[ 86%] Building CXX object CMakeFiles/neuro_pearl_input_test.dir/native/tests/pearl_input_test.cpp.o
+[ 88%] Building CXX object CMakeFiles/neuro_pearl_upstream_test.dir/native/tests/pearl_upstream_test.cpp.o
+[ 90%] Building CXX object CMakeFiles/neuro_pearl_upstream_test.dir/native/reference/fullk_reference.cpp.o
+[ 92%] Building CXX object CMakeFiles/neuro_pearl_upstream_test.dir/native/reference/fullk_warp.cpp.o
+[ 94%] Building CXX object CMakeFiles/neuro_pearl_upstream_test.dir/upstream/cppminer/src/cpu/gemm/case33_gemm_xor.cpp.o
+[ 96%] Linking CXX executable neuro_pearl_input_test
+[ 96%] Built target neuro_pearl_input_test
+[ 98%] Building CXX object CMakeFiles/neuro_pearl_upstream_test.dir/upstream/cppminer/src/cpu/gemm/case33_cpu_features.cpp.o
+[100%] Linking CXX executable neuro_pearl_upstream_test
+[100%] Built target neuro_pearl_upstream_test
