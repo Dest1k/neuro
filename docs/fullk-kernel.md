@@ -141,3 +141,11 @@ Iteration 3 adds the deterministic Pearl signal/noise/commitment path as a
 separate caller of this unchanged arithmetic contract. See `docs/pearl-input.md`.
 Real proof verification remains a distinct gate; fixture success is not proof
 or share acceptance.
+
+`--time-launches N` (8 through 64) requires one `--case`. It checks that gold
+fixture once, then records CUDA events around N queued launches of the same
+kernel. Host copies, poison memsets, and the compare stay outside the interval.
+The JSON schema is `neuro.fullk_kernel_time.v1`. It always sets
+`mining_evidence` false and `hashrate` null. `tools/record_gpu_baseline.py`
+turns three such samples for `coordinate_mix` into one `neuro.experiment.v1`
+baseline. That record is a kernel interval, not accepted pool work.

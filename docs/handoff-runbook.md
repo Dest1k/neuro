@@ -387,6 +387,18 @@ The first useful handoff milestone is **current Windows CPU/proof/recovery
 evidence plus exact physical GPU results with observed visible SRBMiner
 restoration**. If a gate fails, fix that concrete failure against independent
 expected data and rerun the affected sequence. After that milestone, measure a
-bounded comparable baseline before kernel optimization. The implemented host
-currently uses local synthetic peers; an external pool adapter and accepted
-shares remain future work, not something this startup sequence promises.
+bounded comparable baseline before kernel optimization. Rebuild with
+`build-probes` when the probe source changes, then acquire the existing GPU
+lease and run:
+
+```bash
+python tools/record_gpu_baseline.py --native build/windows/neuro_fullk_probe.exe --device 0
+```
+
+The recorder refuses to start while `SRBMiner-MULTI.exe` is running. It times
+64 queued `coordinate_mix` launches per sample with CUDA events, three samples,
+against the committed full-K gold, and writes `artifacts/gpu-baseline.json`.
+It does not change clocks, power, or TDR settings, and it is not a hashrate or
+a pool share. The implemented host currently uses local synthetic peers; an
+external pool adapter and accepted shares remain future work, not something
+this startup sequence promises.
