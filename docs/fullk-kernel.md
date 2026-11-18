@@ -61,10 +61,16 @@ At each milestone, two full-mask warp XOR reductions produce the upper and lower
 milestone. The layout helpers and their PTX source are documented in
 `docs/gpu-probe.md`.
 
-This implementation uses explicit byte packing and direct global loads. It has
-no shared-memory pipeline, asynchronous staging or persistent kernel. Those are
-later measured optimization candidates. Compiler output reports 80 registers and
-no spills for the recorded SM120 object; these counts are not a speed estimate.
+The direct kernel uses explicit byte packing and direct global loads. A shape
+whose rows and columns are both multiples of 64, and whose A and Bt pointers
+are 16-byte aligned, uses a different launch: 512 threads stage one milestone
+(128 K values) of a 64x64 output tile through shared memory, then each warp
+runs the same 16x16 MMA, transcript XOR, and final-C scatter. Unaligned
+pointers and every other legal shape, including the 32x48 gold fixture, stay
+on the direct kernel. Asynchronous copies and a persistent kernel remain later
+candidates. Compiler output reports 80 registers and no spills for the recorded
+direct SM120 object; these counts are not a speed estimate. The staged kernel
+is a separate launch and its register count is not that figure.
 
 ## Independent correctness checks
 

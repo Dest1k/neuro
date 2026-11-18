@@ -410,6 +410,9 @@ python tools/record_gpu_baseline.py --panel \
 
 That writes `artifacts/gpu-panel-baseline.json` for `coordinate_mix` 1024x1024,
 checked against the scalar reference. It is a separate experiment from the
-32x48 record. The implemented host currently uses local synthetic peers; an
-external pool adapter and accepted shares remain future work, not something
-this startup sequence promises.
+32x48 record and the comparison baseline for a later kernel on the same
+workload. Compare a candidate with `evaluate()`: same hardware, workload,
+profile, environment, and power limit; repetition spread at most 0.15;
+regression limit 2%. Do not overwrite the baseline artifact. The implemented
+host currently uses local synthetic peers; an external pool adapter and
+accepted shares remain future work, not something this startup sequence promises.
