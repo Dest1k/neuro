@@ -149,3 +149,14 @@ The JSON schema is `neuro.fullk_kernel_time.v1`. It always sets
 `mining_evidence` false and `hashrate` null. `tools/record_gpu_baseline.py`
 turns three such samples for `coordinate_mix` into one `neuro.experiment.v1`
 baseline. That record is a kernel interval, not accepted pool work.
+
+`--panel-rows R --panel-cols C` times a different workload. R and C must be
+multiples of 128 in [128, 1024], the range shared by this kernel and the Pearl
+input contract. The panel is `coordinate_mix` with seed `0x12345678`. Expected
+transcript and final C come from `native/reference/fullk_reference.cpp`, not
+from the small gold header. Omit `--time-launches` to verify once with final C
+and once without it. With `--time-launches`, the scalar reference and the
+compare stay outside the same CUDA-event interval. `record_gpu_baseline.py
+--panel` records three samples of the 1024x1024 panel to
+`artifacts/gpu-panel-baseline.json`. The 32x48 gold baseline stays a separate
+experiment. Neither record is a hashrate or a pool share.

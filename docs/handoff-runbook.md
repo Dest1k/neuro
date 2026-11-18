@@ -399,6 +399,17 @@ The recorder refuses to start while `SRBMiner-MULTI.exe` is running. It times
 64 queued `coordinate_mix` launches per sample with CUDA events, three samples,
 against the committed full-K gold, and writes `artifacts/gpu-baseline.json`.
 It does not change clocks, power, or TDR settings, and it is not a hashrate or
-a pool share. The implemented host currently uses local synthetic peers; an
+a pool share. That 32x48 fixture is launch-overhead dominated. The next
+measurement is the largest panel this kernel and the Pearl input contract both
+accept. Rebuild when the probe source changes, lease the GPU, and run:
+
+```bash
+python tools/record_gpu_baseline.py --panel \
+  --native build/windows/neuro_fullk_probe.exe --device 0
+```
+
+That writes `artifacts/gpu-panel-baseline.json` for `coordinate_mix` 1024x1024,
+checked against the scalar reference. It is a separate experiment from the
+32x48 record. The implemented host currently uses local synthetic peers; an
 external pool adapter and accepted shares remain future work, not something
 this startup sequence promises.

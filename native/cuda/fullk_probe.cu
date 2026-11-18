@@ -74,6 +74,18 @@ void compare(const std::vector<T>& actual, const T* expected, std::size_t count,
 
 constexpr const char* kTimingInterval =
     "cuda_events_around_queued_launches_excluding_transfers";
+constexpr const char* kPanelCase = "reference_coordinate_mix";
+constexpr std::uint32_t kPanelSeed = 0x12345678u;
+
+void require_panel_shape(int rows, int cols) {
+    // Pearl-shaped panels only. The 16-multiple kernel bound is wider; this
+    // measurement stays inside the proof/input contract of multiples of 128.
+    if (rows < 128 || cols < 128 || rows > fullk::max_dimension || cols > fullk::max_dimension ||
+        rows % 128 != 0 || cols % 128 != 0) {
+        throw std::invalid_argument(
+            "panel rows and cols must be multiples of 128 in [128, 1024]");
+    }
+}
 
 // One sample: verify the named gold fixture, then time a fixed batch of queued
 // launches. Transfers, poison memsets, and the host compare stay outside the
@@ -150,6 +162,93 @@ void record_launch_interval(const cudaDeviceProp& properties, const std::string&
     cudaEventDestroy(start);
 }
 
+// One Pearl-shaped panel checked against the scalar reference, then optionally
+// timed. The reference run is outside the CUDA-event interval. Not a hashrate.
+void record_reference_panel(const cudaDeviceProp& properties, int rows, int cols,
+                            int repeats, bool& gpu_observed) {
+    require_panel_shape(rows, cols);
+    const fullk::Shape shape{rows, cols};
+    const auto input = fullk::make_input(shape, fullk::Pattern::coordinate_mix, kPanelSeed);
+    const auto expected = fullk::reference(input);
+    DeviceBuffer<std::int8_t> a(input.a.size()), bt(input.bt.size());
+    DeviceBuffer<std::uint32_t> transcript(expected.transcript.size());
+    DeviceBuffer<std::int32_t> final_c(expected.final_c.size());
+    check(cudaMemcpy(a.data(), input.a.data(), a.bytes(), cudaMemcpyHostToDevice), "copy A");
+    check(cudaMemcpy(bt.data(), input.bt.data(), bt.bytes(), cudaMemcpyHostToDevice), "copy Bt");
+    auto compare_outputs = [&](bool keep_c) {
+        std::vector<std::uint32_t> words(expected.transcript.size());
+        check(cudaMemcpy(words.data(), transcript.data(), transcript.bytes(), cudaMemcpyDeviceToHost),
+              "read transcript");
+        compare(words, expected.transcript.data(), expected.transcript.size(), kPanelCase, "transcript");
+        if (!keep_c) return;
+        std::vector<std::int32_t> values(expected.final_c.size());
+        check(cudaMemcpy(values.data(), final_c.data(), final_c.bytes(), cudaMemcpyDeviceToHost),
+              "read final C");
+        compare(values, expected.final_c.data(), expected.final_c.size(), kPanelCase, "final C");
+    };
+    auto launch_once = [&](bool keep_c) {
+        check(cudaMemset(transcript.data(), 0xa5, transcript.bytes()), "poison transcript");
+        if (keep_c) check(cudaMemset(final_c.data(), 0x5a, final_c.bytes()), "poison final C");
+        check(fullk::launch_fullk(a.data(), bt.data(), transcript.data(),
+                                  keep_c ? final_c.data() : nullptr, shape),
+              "launch full-K kernel");
+        check(cudaDeviceSynchronize(), "synchronize full-K kernel");
+        gpu_observed = true;
+        compare_outputs(keep_c);
+    };
+    launch_once(true);
+    if (repeats == 0) {
+        launch_once(false);
+        std::cout << "{\"schema\":\"neuro.fullk_probe.v1\",\"status\":\"PASS\","
+                  << "\"exact\":true,\"gpu_execution_observed\":true,\"device\":" << quote(properties.name)
+                  << ",\"compute_capability\":" << quote(std::to_string(properties.major) + "." + std::to_string(properties.minor))
+                  << ",\"case\":" << quote(kPanelCase)
+                  << ",\"rows\":" << rows << ",\"cols\":" << cols
+                  << ",\"seed\":" << kPanelSeed
+                  << ",\"cases\":1,\"launches\":2,\"k\":4096,\"mining_evidence\":false,\"hashrate\":null}\n";
+        return;
+    }
+    check(cudaMemset(transcript.data(), 0xa5, transcript.bytes()), "poison transcript before timing");
+    check(cudaMemset(final_c.data(), 0x5a, final_c.bytes()), "poison final C before timing");
+    check(cudaDeviceSynchronize(), "drain poison before timing");
+    cudaEvent_t start = nullptr, stop = nullptr;
+    try {
+        check(cudaEventCreate(&start), "cudaEventCreate");
+        check(cudaEventCreate(&stop), "cudaEventCreate");
+        check(cudaEventRecord(start), "record start");
+        for (int index = 0; index < repeats; ++index) {
+            check(fullk::launch_fullk(a.data(), bt.data(), transcript.data(), final_c.data(), shape),
+                  "timed launch");
+        }
+        check(cudaEventRecord(stop), "record stop");
+        check(cudaEventSynchronize(stop), "synchronize timing");
+        float milliseconds = 0.f;
+        check(cudaEventElapsedTime(&milliseconds, start, stop), "elapsed");
+        if (!std::isfinite(milliseconds) || milliseconds <= 0.f)
+            throw std::runtime_error("kernel interval was not a positive finite time");
+        compare_outputs(true);
+        char elapsed[64];
+        if (std::snprintf(elapsed, sizeof elapsed, "%.9f", static_cast<double>(milliseconds) / 1000.0) < 0)
+            throw std::runtime_error("elapsed formatting failed");
+        std::cout << "{\"schema\":\"neuro.fullk_kernel_time.v1\",\"status\":\"PASS\","
+                  << "\"exact\":true,\"gpu_execution_observed\":true,\"device\":" << quote(properties.name)
+                  << ",\"compute_capability\":" << quote(std::to_string(properties.major) + "." + std::to_string(properties.minor))
+                  << ",\"case\":" << quote(kPanelCase)
+                  << ",\"rows\":" << rows << ",\"cols\":" << cols
+                  << ",\"seed\":" << kPanelSeed
+                  << ",\"k\":4096,\"launches\":" << repeats
+                  << ",\"interval\":" << quote(kTimingInterval)
+                  << ",\"elapsed_s\":" << elapsed
+                  << ",\"mining_evidence\":false,\"hashrate\":null}\n";
+    } catch (...) {
+        if (stop) cudaEventDestroy(stop);
+        if (start) cudaEventDestroy(start);
+        throw;
+    }
+    cudaEventDestroy(stop);
+    cudaEventDestroy(start);
+}
+
 int host_validation() {
     // Every call must be rejected before any CUDA runtime operation. Non-null
     // pointers below are ordinary host scalars, used only with invalid shapes.
@@ -186,16 +285,18 @@ int main(int argc, char** argv) {
     std::size_t launches = 0, checked_transcript = 0, checked_final = 0, cases = 0;
     try {
         if (argc == 2 && std::string(argv[1]) == "--host-validation") return host_validation();
-        int device = 0, time_launches = 0;
+        int device = 0, time_launches = 0, panel_rows = 0, panel_cols = 0;
         std::string selected_case;
         for (int index = 1; index < argc; ++index) {
             const std::string arg = argv[index];
             if (arg == "--help") {
                 std::cout << "Usage: neuro_fullk_probe [--device N] [--case NAME]\n"
                              "       neuro_fullk_probe --device N --case NAME --time-launches N\n"
+                             "       neuro_fullk_probe --device N --panel-rows R --panel-cols C [--time-launches N]\n"
                              "       neuro_fullk_probe --host-validation\n"
                              "Default: verify all fixed arithmetic fixtures on the GPU.\n"
-                             "--time-launches (8..64) times that many queued launches with CUDA events.\n";
+                             "--time-launches (8..64) times that many queued launches with CUDA events.\n"
+                             "Panel mode checks one coordinate_mix panel against the scalar reference.\n";
                 return 0;
             }
             if (arg == "--device" && index + 1 < argc) {
@@ -214,8 +315,22 @@ int main(int argc, char** argv) {
                 time_launches = std::stoi(value, &consumed);
                 if (consumed != value.size() || time_launches < 8 || time_launches > 64)
                     throw std::invalid_argument("time-launches must be an integer from 8 to 64");
+            } else if ((arg == "--panel-rows" || arg == "--panel-cols") && index + 1 < argc) {
+                int& slot = arg == "--panel-rows" ? panel_rows : panel_cols;
+                if (slot != 0) throw std::invalid_argument("panel dimension was given twice");
+                const std::string value = argv[++index];
+                std::size_t consumed = 0;
+                const int parsed = std::stoi(value, &consumed);
+                if (consumed != value.size() || parsed <= 0)
+                    throw std::invalid_argument("panel dimension must be a positive integer");
+                slot = parsed;
             } else throw std::invalid_argument("Unknown or incomplete command line option: " + arg);
         }
+        if ((panel_rows == 0) != (panel_cols == 0))
+            throw std::invalid_argument("panel rows and cols are both required");
+        if (panel_rows != 0 && !selected_case.empty())
+            throw std::invalid_argument("panel mode does not take a gold fixture");
+        if (panel_rows != 0) require_panel_shape(panel_rows, panel_cols);
         if (!selected_case.empty()) {
             bool exists = false;
             for (const auto& fixture : neuro::golden::fixtures)
@@ -227,6 +342,10 @@ int main(int argc, char** argv) {
         check(cudaGetDeviceProperties(&properties, device), "cudaGetDeviceProperties");
         if (properties.major < 8 || properties.warpSize != 32)
             throw std::runtime_error("Probe requires INT8 MMA support and 32-thread warps");
+        if (panel_rows != 0) {
+            record_reference_panel(properties, panel_rows, panel_cols, time_launches, gpu_observed);
+            return 0;
+        }
         if (time_launches != 0) {
             if (selected_case.empty())
                 throw std::invalid_argument("--time-launches requires one --case");

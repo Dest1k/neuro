@@ -88,6 +88,55 @@ class BaselineParserTests(unittest.TestCase):
         self.assertFalse(first["synthetic"])
         self.assertNotIn("commit", first["identity"]["environment"])
 
+    def test_panel_contract_is_pinned_in_the_probe_and_recorder(self):
+        source = (ROOT / "native/cuda/fullk_probe.cu").read_text(encoding="utf-8")
+        self.assertIn("panel rows and cols must be multiples of 128 in [128, 1024]", source)
+        self.assertIn("panel mode does not take a gold fixture", source)
+        self.assertIn("0x12345678u", source)
+        self.assertIn(baseline.PANEL_CASE, source)
+        self.assertEqual(baseline.PANEL_ROWS, 1024)
+        self.assertEqual(baseline.PANEL_COLS, 1024)
+        self.assertEqual(baseline.PANEL_SEED, 0x12345678)
+
+    def test_panel_samples_assemble_a_separate_experiment(self):
+        line = json.dumps({
+            "schema": "neuro.fullk_probe.v1", "status": "PASS", "exact": True,
+            "gpu_execution_observed": True, "case": baseline.PANEL_CASE,
+            "rows": baseline.PANEL_ROWS, "cols": baseline.PANEL_COLS,
+            "seed": baseline.PANEL_SEED, "cases": 1, "launches": 2, "k": baseline.K,
+            "mining_evidence": False, "hashrate": None,
+        })
+        verification = emit("verification", line)
+        baseline.parse_panel_verification(verification["stdout"])
+        with self.assertRaises(baseline.BaselineError):
+            baseline.parse_panel_verification(PROBE_SCHEMA)
+        samples = []
+        for elapsed in (0.20, 0.21, 0.19):
+            payload = json.loads(timing_line(elapsed))
+            payload.update(case=baseline.PANEL_CASE, rows=baseline.PANEL_ROWS,
+                           cols=baseline.PANEL_COLS, seed=baseline.PANEL_SEED)
+            record = emit("measurement", json.dumps(payload))
+            samples.append((baseline.parse_timing(
+                record["stdout"], case=baseline.PANEL_CASE, rows=baseline.PANEL_ROWS,
+                cols=baseline.PANEL_COLS, seed=baseline.PANEL_SEED), record))
+        missing_seed = json.loads(timing_line(0.20))
+        missing_seed.update(case=baseline.PANEL_CASE, rows=baseline.PANEL_ROWS,
+                            cols=baseline.PANEL_COLS)
+        with self.assertRaises(baseline.BaselineError):
+            baseline.parse_timing(
+                json.dumps(missing_seed), case=baseline.PANEL_CASE,
+                rows=baseline.PANEL_ROWS, cols=baseline.PANEL_COLS, seed=baseline.PANEL_SEED)
+        experiment = baseline.assemble_experiment(
+            hardware="parser-fixture", environment="parser-fixture", power_limit_w=115,
+            verification=verification, samples=samples,
+            workload="fullk reference panel", verifier_id=baseline.PANEL_VERIFIER_ID)
+        self.assertEqual(experiment["correctness"]["verifier_id"], baseline.PANEL_VERIFIER_ID)
+        self.assertNotEqual(experiment["identity"]["workload"],
+                            baseline.assemble_experiment(
+                                hardware="parser-fixture", environment="parser-fixture",
+                                power_limit_w=115, verification=verification,
+                                samples=samples)["identity"]["workload"])
+
 
 if __name__ == "__main__":
     unittest.main()
