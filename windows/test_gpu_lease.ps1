@@ -103,6 +103,18 @@ try {
     foreach ($tail in @(' & calc.exe', ' --extra', ' & echo guided-setup.bat')) {
         Assert-Gpu (-not (Test-NeuroGpuKnownLauncher ('cmd.exe /c "' + $fixtureBatch + '"' + $tail) $fixtureBatch)) 'chained or extra launcher arguments rejected'
     }
+    $leaseText = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'gpu_lease.ps1'))
+    $nativeText = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'GpuLeaseNative.cs'))
+    Assert-Gpu ($leaseText.IndexOf('LaunchVisibleProbe') -lt 0 -and $nativeText.IndexOf('LaunchVisibleProbe') -lt 0 -and $nativeText.IndexOf('Neuro GPU handoff preflight') -lt 0) 'GPU lease does not launch a preflight console'
+    $here = [Diagnostics.Process]::GetCurrentProcess().SessionId
+    $active = -1
+    try { $active = [Neuro.Windows.GpuLeaseNative]::ActiveOwnerSession($script:OwnerSid) } catch { $active = -1 }
+    if ($here -ne $active -or $here -le 0) {
+        Assert-GpuThrows { [Neuro.Windows.GpuLeaseNative]::AssertOwnerDesktop($script:OwnerSid, $here) } 'non-interactive session cannot pass desktop attach'
+    } else {
+        [Neuro.Windows.GpuLeaseNative]::AssertOwnerDesktop($script:OwnerSid, $here)
+        Assert-Gpu $true 'interactive desktop attach creates no probe process'
+    }
     Assert-Gpu (@(Get-NeuroGpuStopPlan $profile).Count -eq 1) 'empty stop plan is a defined object'
     $miner = Start-FixtureMiner
     Assert-Gpu ($miner.OwnerSid -ceq $script:OwnerSid -and $miner.ExecutablePath -ieq $fixtureExe) 'actual child identity records owner and path'
@@ -158,7 +170,7 @@ try {
     function Start-NeuroGpuWatchTask($Request, [string]$Directory, [string]$Hash) {
         Assert-Gpu ((Get-NeuroGpuHash (Join-Path $Directory 'request.json')) -ceq $Hash) 'watcher request hash binds real journal'
         $script:FakeRequest=$Request; $script:FakeDirectory=$Directory
-        & $originalWrite (Join-Path $Directory 'ready.json') @{ ready=$true; request_id=$Request.request_id; visible_probe_hwnd=1 }
+        & $originalWrite (Join-Path $Directory 'ready.json') @{ ready=$true; request_id=$Request.request_id; desktop_attached=$true }
     }
     function Write-NeuroGpuJson([string]$Path, $Value) {
         & $originalWrite $Path $Value

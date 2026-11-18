@@ -61,17 +61,18 @@ work around this by killing every cmd, conhost or process with a similar name.
 
 A one-shot Task Scheduler **interactive-token** watchdog starts in the owner's
 already active desktop session before the miner is touched. No password is
-stored and no System/S4U session is used. The watchdog first creates a harmless
-short-lived console probe using the inbox `System32\conhost.exe` and verifies one
-visible `ConsoleWindowClass` HWND in the owner's session. That window belongs
-either to the launched conhost or to its direct `System32\cmd.exe` client; a
-window from any other process is not accepted. The fixed restart action is
-registered before declaring readiness. A missing desktop, failed scheduler operation or unobservable console
-fails preflight while leaving mining untouched.
+stored and no System/S4U session is used. The watchdog does not open a console.
+It confirms that its own thread is attached to window station `WinSta0` and
+desktop `Default`, and that `Default` can be opened with `DESKTOP_CREATEWINDOW`.
+GPU probes, replay, the baseline recorder and this watchdog stay windowless
+(`CreateNoWindow` or `-WindowStyle Hidden`). The fixed restart action is
+registered before declaring readiness. A missing desktop or failed scheduler
+operation fails preflight while leaving mining untouched.
 
-Explicitly launching inbox conhost is a per-launch choice. It preserves the
-user's default Terminal settings and avoids treating a ConPTY message window as
-a visible desktop window. The real restart action runs:
+The only visible window this lease creates is the restored miner. Explicitly
+launching inbox conhost for that restart is a per-launch choice. It preserves
+the user's default Terminal settings and avoids treating a ConPTY message window
+as a visible desktop window. The real restart action runs:
 
 ```text
 System32\conhost.exe System32\cmd.exe /d /s /c ""<configured guided-setup.bat>""

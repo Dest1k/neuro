@@ -185,28 +185,10 @@ function Get-NeuroGpuRecoveryDecision($Request, [bool]$GpuReleased, [bool]$StopS
     if ($RestartIssued) { throw 'A restart was already issued; inspect its result instead of duplicating it.' }
     return 'restart_batch'
 }
-function Invoke-NeuroGpuVisiblePreflight($Request) {
-    $probe = [Neuro.Windows.GpuLeaseNative]::LaunchVisibleProbe($Request.profile.owner_sid, [int]$Request.session_id)
-    $clients = @(); $visible = 0L
-    try {
-        $until = [DateTime]::UtcNow.AddSeconds(10)
-        while ([DateTime]::UtcNow -lt $until -and $visible -eq 0) {
-            $visible = [Neuro.Windows.GpuLeaseNative]::VisibleConsoleWindow($probe.Pid, $probe.CreatedFileTime, $Request.profile.owner_sid, [int]$Request.session_id)
-            Start-Sleep -Milliseconds 100
-        }
-        foreach ($row in @(Get-CimInstance Win32_Process -Filter ('ParentProcessId=' + $probe.Pid))) {
-            $client = [Neuro.Windows.GpuLeaseNative]::Inspect([int]$row.ProcessId)
-            if ($null -ne $client -and $client.OwnerSid -ceq $Request.profile.owner_sid -and
-                $client.CreatedFileTime -ge $probe.CreatedFileTime -and $client.ExecutablePath -ieq (Join-Path ([Environment]::SystemDirectory) 'cmd.exe')) {
-                $clients += $client
-            }
-        }
-        if ($visible -eq 0) { throw 'Visible inbox console could not be observed in the owner session; miner remains untouched.' }
-        return $visible
-    } finally {
-        foreach ($client in $clients) { $null = Stop-NeuroGpuExact $client }
-        $null = Stop-NeuroGpuExact $probe
-    }
+function Invoke-NeuroGpuDesktopPreflight($Request) {
+    # No console and no extra process. GPU probes already use CreateNoWindow.
+    # The only visible window in this lease is the restored miner batch.
+    [Neuro.Windows.GpuLeaseNative]::AssertOwnerDesktop($Request.profile.owner_sid, [int]$Request.session_id)
 }
 function Start-NeuroGpuWatchTask($Request, [string]$Directory, [string]$Hash) {
     $service = New-Object -ComObject 'Schedule.Service'; $service.Connect()
@@ -331,11 +313,12 @@ function Enter-NeuroGpuLease {
         while (-not [IO.File]::Exists($readyPath) -and [DateTime]::UtcNow -lt $until) { Start-Sleep -Milliseconds 200 }
         if (-not [IO.File]::Exists($readyPath)) { throw 'Detached interactive GPU recovery watcher did not become ready.' }
         $ready = Read-NeuroGpuJson $readyPath
-        if ($ready.ready -ne $true -or $ready.request_id -cne $id -or $ready.visible_probe_hwnd -le 0) {
+        $attached = $ready.PSObject.Properties.Name -contains 'desktop_attached' -and $ready.desktop_attached -eq $true
+        if ($ready.ready -ne $true -or $ready.request_id -cne $id -or -not $attached) {
             $detail = $null
             if ($ready.PSObject.Properties.Name -contains 'error') { $detail = [string]$ready.error }
-            if ([string]::IsNullOrWhiteSpace($detail)) { $detail = 'visible restart probe was not confirmed' }
-            throw ('Owner desktop/visible restart preflight failed; miner remains untouched. ' + $detail)
+            if ([string]::IsNullOrWhiteSpace($detail)) { $detail = 'owner desktop was not attached' }
+            throw ('Owner desktop attach preflight failed; miner remains untouched. ' + $detail)
         }
         Assert-NeuroGpuProfileHashes $profile
         Write-NeuroGpuJson (Join-Path $directory 'stop-started.json') @{ request_id = $id }
@@ -425,8 +408,8 @@ function Invoke-NeuroGpuWatch([string]$Directory, [string]$ExpectedHash) {
         Assert-NeuroGpuProfileHashes $request.profile
         $restartTask = Register-NeuroGpuRestartTask $request
         $restartDefinition = [string]$restartTask.Xml
-        $window = Invoke-NeuroGpuVisiblePreflight $request
-        Write-NeuroGpuJson (Join-Path $Directory 'ready.json') @{ ready = $true; request_id = $request.request_id; visible_probe_hwnd = $window }
+        Invoke-NeuroGpuDesktopPreflight $request
+        Write-NeuroGpuJson (Join-Path $Directory 'ready.json') @{ ready = $true; request_id = $request.request_id; desktop_attached = $true }
         $until = [DateTime]::UtcNow.AddSeconds(930)
         while ([DateTime]::UtcNow -lt $until) {
             $result.owner_exit_observed = -not (Test-NeuroGpuIdentityAlive $request.owner)
@@ -478,7 +461,7 @@ function Invoke-NeuroGpuWatch([string]$Directory, [string]$ExpectedHash) {
             $result.original_preserved = $true; $result.passed = $true
         }
         if (-not [IO.File]::Exists((Join-Path $Directory 'ready.json'))) {
-            Write-NeuroGpuJson (Join-Path $Directory 'ready.json') @{ ready = $false; request_id = $request.request_id; visible_probe_hwnd = 0; error = $result.error }
+            Write-NeuroGpuJson (Join-Path $Directory 'ready.json') @{ ready = $false; request_id = $request.request_id; desktop_attached = $false; error = $result.error }
         }
     } finally {
         $result.finished_at = [DateTime]::UtcNow.ToString('o')

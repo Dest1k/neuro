@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Exact process identity, owner-session discovery and visible console launch.
+// Exact process identity, owner-session discovery and visible console observation.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -53,6 +53,14 @@ namespace Neuro.Windows
         [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassNameW(IntPtr window, StringBuilder name, int count);
         [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr window);
         [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+        [DllImport("kernel32.dll")] static extern uint GetCurrentThreadId();
+        [DllImport("user32.dll")] static extern IntPtr GetProcessWindowStation();
+        [DllImport("user32.dll")] static extern IntPtr GetThreadDesktop(uint threadId);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern bool GetUserObjectInformationW(IntPtr handle, int index, IntPtr buffer, uint length, out uint needed);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern IntPtr OpenDesktopW(string name, uint flags, bool inherit, uint access);
+        [DllImport("user32.dll", SetLastError = true)] static extern bool CloseDesktop(IntPtr desktop);
         const uint SnapshotProcesses = 2;
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         struct ProcessEntry
@@ -194,26 +202,40 @@ namespace Neuro.Windows
                 throw new ArgumentException("Only an explicit safe guided-setup.bat path is supported");
             return "/d /s /c \"\"" + batch + "\"\"";
         }
-        static GpuProcessIdentity LaunchInboxConsole(string arguments, string ownerSid, int session, string cwd)
+        const int UserObjectName = 2;
+        const uint DesktopCreateWindow = 0x0002;
+        static string UserObjectNameOf(IntPtr handle, string call)
         {
+            uint needed;
+            GetUserObjectInformationW(handle, UserObjectName, IntPtr.Zero, 0, out needed);
+            if (needed < 2 || needed > 1024) throw new InvalidOperationException("Unexpected " + call + " name size");
+            IntPtr buffer = Marshal.AllocHGlobal((int)needed);
+            try
+            {
+                Check(GetUserObjectInformationW(handle, UserObjectName, buffer, needed, out needed), call);
+                return Marshal.PtrToStringUni(buffer);
+            }
+            finally { Marshal.FreeHGlobal(buffer); }
+        }
+        public static void AssertOwnerDesktop(string ownerSid, int session)
+        {
+            // Attaches nothing and creates no process. A failed check must leave
+            // the owner miner untouched. The restored miner window is observed later.
             GpuProcessIdentity self = Inspect(Process.GetCurrentProcess().Id);
             if (self.OwnerSid != ownerSid || self.SessionId != session || session <= 0 || ActiveOwnerSession(ownerSid) != session)
-                throw new InvalidOperationException("Visible restart must run in the active owner session");
-            string system = Environment.GetFolderPath(Environment.SpecialFolder.System);
-            string host = Path.Combine(system, "conhost.exe"), cmd = Path.Combine(system, "cmd.exe");
-            StartupInfo startup = new StartupInfo(); startup.Size = Marshal.SizeOf(typeof(StartupInfo));
-            startup.Desktop = "winsta0\\default"; startup.Flags = 1; startup.Show = 5;
-            ProcessInfo process;
-            // Explicit inbox host is Microsoft's per-launch opt-out from default
-            // Terminal delegation; it does not modify system/user settings.
-            string command = "\"" + host + "\" \"" + cmd + "\" " + arguments;
-            Check(CreateProcessW(host, new StringBuilder(command), IntPtr.Zero, IntPtr.Zero,
-                false, 0x10, IntPtr.Zero, cwd, ref startup, out process), "CreateProcess(inbox console)");
-            try { return Read(process.Process, (int)process.ProcessId); }
-            finally { CloseHandle(process.Thread); CloseHandle(process.Process); }
+                throw new InvalidOperationException("Desktop attach must run in the active owner session");
+            IntPtr station = GetProcessWindowStation();
+            if (station == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error(), "GetProcessWindowStation");
+            if (!String.Equals(UserObjectNameOf(station, "GetUserObjectInformation(station)"), "WinSta0", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Recovery process is not attached to WinSta0");
+            IntPtr threadDesktop = GetThreadDesktop(GetCurrentThreadId());
+            if (threadDesktop == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error(), "GetThreadDesktop");
+            if (!String.Equals(UserObjectNameOf(threadDesktop, "GetUserObjectInformation(desktop)"), "Default", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Recovery thread is not attached to the Default desktop");
+            IntPtr opened = OpenDesktopW("Default", 0, false, DesktopCreateWindow);
+            if (opened == IntPtr.Zero) throw new Win32Exception(Marshal.GetLastWin32Error(), "OpenDesktop(Default)");
+            CloseDesktop(opened);
         }
-        public static GpuProcessIdentity LaunchVisibleProbe(string ownerSid, int session)
-        { return LaunchInboxConsole("/d /q /k title Neuro GPU handoff preflight", ownerSid, session, Environment.GetFolderPath(Environment.SpecialFolder.System)); }
         public static long VisibleConsoleWindow(int hostPid, long created, string sid, int session)
         {
             GpuProcessIdentity identity = Inspect(hostPid);
