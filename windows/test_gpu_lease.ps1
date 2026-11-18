@@ -38,8 +38,21 @@ class FixtureMiner { static void Main(string[] args) {
 } }
 '@)
 $csc = Join-Path $env:SystemRoot 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
-$compile = Start-Process -FilePath $csc -ArgumentList @('/nologo','/target:exe', ('/out:"' + $fixtureExe + '"'), ('"' + $source + '"')) -PassThru -NoNewWindow
-if (-not $compile.WaitForExit(30000) -or $compile.ExitCode -ne 0) { throw 'Windows fixture compiler failed.' }
+Add-Type -Path (Join-Path $PSScriptRoot 'BoundedProcess.cs')
+$compilerArguments = (@('/nologo', '/target:exe', ('/out:' + $fixtureExe), $source) | ForEach-Object {
+    [Neuro.Windows.BoundedProcess]::QuoteArgument($_)
+}) -join ' '
+$compiler = New-Object Diagnostics.ProcessStartInfo
+$compiler.FileName = $csc
+$compiler.Arguments = $compilerArguments
+$compiler.UseShellExecute = $false
+$compiler.CreateNoWindow = $true
+$compiler.RedirectStandardError = $true
+$compile = [Diagnostics.Process]::Start($compiler)
+$compilerError = $compile.StandardError.ReadToEnd()
+if (-not $compile.WaitForExit(30000) -or $compile.ExitCode -ne 0) {
+    throw ('Windows fixture compiler failed. ' + $compilerError)
+}
 [IO.File]::WriteAllText($fixtureBatch, '@echo off' + "`r`n" + '"%~dp0fixture-miner.exe" "%~dp0miner-started.txt"' + "`r`n", [Text.Encoding]::ASCII)
 $ownerProfile = [ordered]@{ schema_version=1; owner_sid=$script:OwnerSid; miner_executable=$fixtureExe
     miner_sha256=(Get-NeuroGpuHash $fixtureExe); restart_batch=$fixtureBatch; restart_batch_sha256=(Get-NeuroGpuHash $fixtureBatch) }
@@ -208,6 +221,17 @@ finally {
         $plan=Get-NeuroGpuStopPlan $ownerProfile
         foreach ($launcher in $plan.launchers) { $null=Stop-NeuroGpuExact $launcher }
         foreach ($value in $plan.miners) { $null=Stop-NeuroGpuExact $value }
+    } catch { }
+    try {
+        $service = New-Object -ComObject 'Schedule.Service'
+        $service.Connect()
+        $folder = $service.GetFolder('\')
+        foreach ($task in @($folder.GetTasks(1))) {
+            if ($task.Name -notlike 'NeuroGpu*') { continue }
+            if (([string]$task.Xml).IndexOf($fixture, [StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                $folder.DeleteTask($task.Name, 0)
+            }
+        }
     } catch { }
     $report.checks=$script:Checks
     $evidence=Join-Path $repo 'artifacts/windows'; [IO.Directory]::CreateDirectory($evidence) | Out-Null

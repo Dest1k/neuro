@@ -26,7 +26,8 @@ from replay_pool import (
     ROOT, TARGET, MAX_JSON_FRAME, Job, ReplayCase, ReplayError, Scenario,
     backend_arguments, decode_proof, encode_message, inspect_proof,
     require, require_attempt_submission, require_backend_execution,
-    require_official_acceptance, run_command, sha256, stop_child, strict_object,
+    require_official_acceptance, read_peer, run_command, sha256, stop_child,
+    strict_object,
 )
 
 
@@ -316,7 +317,7 @@ class RecoveryPhase(ReplayCase):
                         context = selected.data
                         if context.closed:
                             continue
-                        data = context.sock.recv(65536)
+                        data = read_peer(context.sock)
                         if not data:
                             context.reader.finish()
                             self.close(context)

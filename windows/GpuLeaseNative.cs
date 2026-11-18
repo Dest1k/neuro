@@ -53,6 +53,44 @@ namespace Neuro.Windows
         [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetClassNameW(IntPtr window, StringBuilder name, int count);
         [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr window);
         [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+        const uint SnapshotProcesses = 2;
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        struct ProcessEntry
+        {
+            public uint Size, Usage, ProcessId;
+            public UIntPtr DefaultHeap;
+            public uint ModuleId, Threads, ParentProcessId;
+            public int Priority;
+            public uint Flags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string ExeFile;
+        }
+        [DllImport("kernel32.dll", SetLastError = true)] static extern IntPtr CreateToolhelp32Snapshot(uint flags, uint pid);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32FirstW(IntPtr snapshot, ref ProcessEntry entry);
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)] static extern bool Process32NextW(IntPtr snapshot, ref ProcessEntry entry);
+        static List<int> DirectCmdClients(int hostPid, long hostCreated, string sid, int session)
+        {
+            List<int> accepted = new List<int>();
+            IntPtr snapshot = CreateToolhelp32Snapshot(SnapshotProcesses, 0);
+            if (snapshot == IntPtr.Zero || snapshot == new IntPtr(-1)) return accepted;
+            try
+            {
+                ProcessEntry entry = new ProcessEntry();
+                entry.Size = (uint)Marshal.SizeOf(typeof(ProcessEntry));
+                string cmd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe");
+                if (!Process32FirstW(snapshot, ref entry)) return accepted;
+                do
+                {
+                    if ((int)entry.ParentProcessId != hostPid) continue;
+                    GpuProcessIdentity child = Inspect((int)entry.ProcessId);
+                    if (child == null || child.CreatedFileTime < hostCreated || child.SessionId != session ||
+                        !String.Equals(child.OwnerSid, sid, StringComparison.Ordinal) ||
+                        !String.Equals(child.ExecutablePath, cmd, StringComparison.OrdinalIgnoreCase)) continue;
+                    accepted.Add(child.Pid);
+                } while (Process32NextW(snapshot, ref entry));
+            }
+            finally { CloseHandle(snapshot); }
+            return accepted;
+        }
 
         static void Check(bool ok, string name)
         { if (!ok) throw new Win32Exception(Marshal.GetLastWin32Error(), name); }
@@ -181,19 +219,24 @@ namespace Neuro.Windows
             GpuProcessIdentity identity = Inspect(hostPid);
             string hostPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "conhost.exe");
             if (!Matches(identity, hostPid, created, hostPath, sid) || identity.SessionId != session || session <= 0) return 0;
-            long found = 0;
+            // The launched process remains System32\conhost.exe. On Windows
+            // 10.0.26200 the visible ConsoleWindowClass belongs to its direct
+            // System32\cmd.exe client; older hosts own that window themselves.
+            List<int> owners = DirectCmdClients(hostPid, created, sid, session);
+            owners.Add(hostPid);
+            long found = 0; int hits = 0;
             WindowCallback callback = delegate(IntPtr window, IntPtr unused)
             {
                 uint pid; GetWindowThreadProcessId(window, out pid);
-                if (pid != hostPid || !IsWindowVisible(window)) return true;
+                if (!owners.Contains((int)pid) || !IsWindowVisible(window)) return true;
                 StringBuilder name = new StringBuilder(256);
                 if (GetClassNameW(window, name, name.Capacity) > 0 && name.ToString() == "ConsoleWindowClass")
-                { found = window.ToInt64(); return false; }
+                { hits++; found = window.ToInt64(); }
                 return true;
             };
             EnumWindows(callback, IntPtr.Zero);
             GC.KeepAlive(callback);
-            return found;
+            return hits == 1 ? found : 0;
         }
     }
 }

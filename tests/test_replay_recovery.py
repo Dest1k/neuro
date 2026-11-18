@@ -10,7 +10,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from replay_recovery import (OUTCOMES, Phase, RecoveryPhase, check_outcomes,
                              independent_case)
-from replay_pool import Job, ReplayError
+from replay_pool import Job, ReplayError, read_peer
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,6 +20,25 @@ def journal_report(**counts):
     outcomes.update(counts)
     return {"journal": {"enabled": True, "outcomes": outcomes,
                          "attempts_consumed": sum(outcomes.values())}}
+
+
+class PeerSocketTests(unittest.TestCase):
+    def test_aborted_peer_is_the_end_of_the_connection(self):
+        class Reset:
+            def recv(self, _size):
+                raise ConnectionResetError(10054, "reset")
+
+        class Abort:
+            def recv(self, _size):
+                raise ConnectionAbortedError(10053, "abort")
+
+        class Open:
+            def recv(self, _size):
+                return b"ok"
+
+        self.assertEqual(read_peer(Reset()), b"")
+        self.assertEqual(read_peer(Abort()), b"")
+        self.assertEqual(read_peer(Open()), b"ok")
 
 
 class DurableOutcomeEvidenceTests(unittest.TestCase):

@@ -62,10 +62,11 @@ work around this by killing every cmd, conhost or process with a similar name.
 A one-shot Task Scheduler **interactive-token** watchdog starts in the owner's
 already active desktop session before the miner is touched. No password is
 stored and no System/S4U session is used. The watchdog first creates a harmless
-short-lived console probe using the inbox `System32\conhost.exe` and verifies a
-visible `ConsoleWindowClass` HWND owned by that exact conhost process in the
-owner's session. It also registers the fixed restart action before declaring
-readiness. A missing desktop, failed scheduler operation or unobservable console
+short-lived console probe using the inbox `System32\conhost.exe` and verifies one
+visible `ConsoleWindowClass` HWND in the owner's session. That window belongs
+either to the launched conhost or to its direct `System32\cmd.exe` client; a
+window from any other process is not accepted. The fixed restart action is
+registered before declaring readiness. A missing desktop, failed scheduler operation or unobservable console
 fails preflight while leaving mining untouched.
 
 Explicitly launching inbox conhost is a per-launch choice. It preserves the

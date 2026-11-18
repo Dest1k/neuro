@@ -38,6 +38,19 @@ MAX_EVENT_LINE = 64 * 1024
 MAX_NATIVE_LOG = 512 * 1024
 EVENT_PREFIX = b"NEURO_EVENT "
 TARGET = (1 << 235).to_bytes(32, "big").hex()
+
+
+def read_peer(sock: socket.socket) -> bytes:
+    """Read one peer chunk. An aborting process resets the socket.
+
+    Windows raises ConnectionResetError for WSAECONNRESET instead of returning
+    an empty read. That reset ends the connection. The phase validator still
+    decides whether the process exit was the one the scenario requested.
+    """
+    try:
+        return sock.recv(65536)
+    except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError):
+        return b""
 HALF_TARGET = (1 << 234).to_bytes(32, "big").hex()
 
 
@@ -754,7 +767,7 @@ class ReplayCase:
                         context = selected.data
                         if context.closed:
                             continue
-                        data = context.sock.recv(65536)
+                        data = read_peer(context.sock)
                         if not data:
                             context.reader.finish()
                             self.close(context)

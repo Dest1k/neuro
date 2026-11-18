@@ -332,7 +332,10 @@ function Enter-NeuroGpuLease {
         if (-not [IO.File]::Exists($readyPath)) { throw 'Detached interactive GPU recovery watcher did not become ready.' }
         $ready = Read-NeuroGpuJson $readyPath
         if ($ready.ready -ne $true -or $ready.request_id -cne $id -or $ready.visible_probe_hwnd -le 0) {
-            throw 'Owner desktop/visible restart preflight failed; miner remains untouched.'
+            $detail = $null
+            if ($ready.PSObject.Properties.Name -contains 'error') { $detail = [string]$ready.error }
+            if ([string]::IsNullOrWhiteSpace($detail)) { $detail = 'visible restart probe was not confirmed' }
+            throw ('Owner desktop/visible restart preflight failed; miner remains untouched. ' + $detail)
         }
         Assert-NeuroGpuProfileHashes $profile
         Write-NeuroGpuJson (Join-Path $directory 'stop-started.json') @{ request_id = $id }

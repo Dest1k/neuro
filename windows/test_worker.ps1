@@ -63,8 +63,10 @@ param([string]$A, [string]$B, [string]$C, [string]$D)
         (@('-NoLogo', '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File', $echoScript) + $arguments),
         $temporary, 10000, 4096)
     Check ($quoted.ExitCode -eq 0 -and $quoted.OutputComplete) 'path with spaces executes'
-    $decoded = @($quoted.Stdout | ConvertFrom-Json)
-    Check ($decoded.Count -eq 4) 'argument count including empty string'
+    # @() wraps the one array object that Windows PowerShell 5.1 emits, so
+    # Count becomes 1 even though all four arguments arrived.
+    $decoded = $quoted.Stdout | ConvertFrom-Json
+    Check ($decoded -is [Array] -and $decoded.Length -eq 4) 'argument count including empty string'
     for ($i = 0; $i -lt 4; $i++) { Check ($decoded[$i] -ceq $arguments[$i]) "literal argument $i" }
 
     $sleepEncoded = Encode 'Start-Sleep -Seconds 30'
