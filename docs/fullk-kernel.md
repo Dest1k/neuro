@@ -65,7 +65,11 @@ The direct kernel uses explicit byte packing and direct global loads. A shape
 whose rows and columns are both multiples of 64, and whose A and Bt pointers
 are 16-byte aligned, uses a different launch: 512 threads stage one milestone
 (128 K values) of a 64x64 output tile through shared memory, then each warp
-runs the same 16x16 MMA, transcript XOR, and final-C scatter. Unaligned
+runs the same 16x16 MMA, transcript XOR, and final-C scatter. Fragment
+words in that staged tile are 4-byte aligned, so each one is a single
+little-endian shared load rather than four byte loads. Stored rows use a
+144-byte stride so successive rows do not land on the same shared bank.
+Unaligned
 pointers and every other legal shape, including the 32x48 gold fixture, stay
 on the direct kernel. Asynchronous copies and a persistent kernel remain later
 candidates. Compiler output reports 80 registers and no spills for the recorded

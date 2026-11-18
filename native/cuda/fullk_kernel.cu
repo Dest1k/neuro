@@ -19,6 +19,15 @@ __device__ __forceinline__ std::uint32_t pack_four(const std::int8_t* values) {
     return word;
 }
 
+// Staged panels are 16-byte aligned and every fragment coordinate starts on a
+// 4-byte K boundary. One little-endian word matches pack_four.
+__device__ __forceinline__ std::uint32_t load_shared_u32(const std::int8_t* values) {
+    const unsigned address = static_cast<unsigned>(__cvta_generic_to_shared(values));
+    std::uint32_t word;
+    asm volatile("ld.shared.b32 %0, [%1];\n" : "=r"(word) : "r"(address));
+    return word;
+}
+
 __device__ __forceinline__ void mma_16832(
     std::int32_t (&d)[4], const std::uint32_t (&a)[4], const std::uint32_t (&b)[2]) {
 #if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 800
@@ -106,18 +115,22 @@ void fullk_kernel(const std::int8_t* a, const std::int8_t* bt,
 constexpr int kStageRows = 64;
 constexpr int kStageCols = 64;
 constexpr int kStageK = rank;
+// 128 payload bytes plus 16 of padding. A 128-byte stride lands every row on
+// the same shared bank; 144 shifts successive rows by four banks.
+constexpr int kStageStride = kStageK + 16;
 constexpr int kStageThreads = (kStageRows / 16) * (kStageCols / 16) * 32;
 static_assert(kStageThreads == 512, "staged full-K block covers one uint4 per thread");
+static_assert(kStageStride % 16 == 0, "staged rows stay 16-byte aligned");
 
 __device__ __forceinline__ void stage_aligned_panel(
     std::int8_t* tile, const std::int8_t* matrix, int origin, int k_base) {
     constexpr int bytes = 16;
-    const int offset = static_cast<int>(threadIdx.x) * bytes;
-    const int row = offset / kStageK;
-    const int col = offset % kStageK;
+    const int packed = static_cast<int>(threadIdx.x) * bytes;
+    const int row = packed / kStageK;
+    const int col = packed % kStageK;
     const std::int8_t* src = matrix + (static_cast<std::size_t>(origin + row) * inner
                                         + static_cast<std::size_t>(k_base + col));
-    *reinterpret_cast<uint4*>(tile + offset) = *reinterpret_cast<const uint4*>(src);
+    *reinterpret_cast<uint4*>(tile + row * kStageStride + col) = *reinterpret_cast<const uint4*>(src);
 }
 
 __global__ __launch_bounds__(512)
@@ -136,8 +149,8 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
     const int tile_cols = shape.cols / hash_cols;
     const int tiles = (shape.rows / hash_rows) * tile_cols;
     const int upper_tile = (row_base / hash_rows) * tile_cols + col_base / hash_cols;
-    __shared__ __align__(16) std::int8_t stage_a[kStageRows * kStageK];
-    __shared__ __align__(16) std::int8_t stage_b[kStageCols * kStageK];
+    __shared__ __align__(16) std::int8_t stage_a[kStageRows * kStageStride];
+    __shared__ __align__(16) std::int8_t stage_b[kStageCols * kStageStride];
     std::int32_t left[4] = {}, right[4] = {};
 
     #pragma unroll 1
@@ -155,15 +168,15 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
                 const auto p = mma16832::a_coordinate(lane, word, 0, segment_k);
                 const int local_row = (row_base - block_row) + p.row;
                 const int local_k = p.col - k_base;
-                a_frag[word] = pack_four(stage_a + local_row * kStageK + local_k);
+                a_frag[word] = load_shared_u32(stage_a + local_row * kStageStride + local_k);
             }
             #pragma unroll
             for (int word = 0; word < 2; ++word) {
                 const auto p = mma16832::b_coordinate(lane, word, 0, segment_k);
                 const int local_k = p.row - k_base;
                 const int local_col = (col_base - block_col) + p.col;
-                b_left[word] = pack_four(stage_b + local_col * kStageK + local_k);
-                b_right[word] = pack_four(stage_b + (local_col + 8) * kStageK + local_k);
+                b_left[word] = load_shared_u32(stage_b + local_col * kStageStride + local_k);
+                b_right[word] = load_shared_u32(stage_b + (local_col + 8) * kStageStride + local_k);
             }
             mma_16832(left, a_frag, b_left);
             mma_16832(right, a_frag, b_right);
