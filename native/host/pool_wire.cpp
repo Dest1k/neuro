@@ -11,9 +11,11 @@
 #define NOMINMAX
 #endif
 #include <winsock2.h>
+#include <windows.h>
 #else
 #include <sys/select.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/time.h>
 #endif
 
@@ -31,8 +33,6 @@
 #include <string_view>
 #include <utility>
 #include <vector>
-
-#include <sys/stat.h>
 
 namespace neuro::wire {
 namespace {
@@ -411,16 +411,21 @@ std::optional<NamedEndpoint> load_pool_authorization(std::string_view path) {
     if (path.find('\0') != std::string_view::npos)
         throw std::invalid_argument("pool authorization path is invalid");
     const std::string file(path);
+    unsigned long long size = 0;
 #if defined(_WIN32)
-    struct _stat64 info {};
-    if (_stat64(file.c_str(), &info) != 0 || (info.st_mode & _S_IFMT) != _S_IFREG)
+    WIN32_FILE_ATTRIBUTE_DATA attributes {};
+    if (!GetFileAttributesExA(file.c_str(), GetFileExInfoStandard, &attributes) ||
+        (attributes.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 ||
+        (attributes.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0)
         throw std::invalid_argument("pool authorization path is not a regular file");
-    const auto size = info.st_size;
+    size = (static_cast<unsigned long long>(attributes.nFileSizeHigh) << 32) |
+           static_cast<unsigned long long>(attributes.nFileSizeLow);
 #else
     struct stat info {};
     if (lstat(file.c_str(), &info) != 0 || !S_ISREG(info.st_mode))
         throw std::invalid_argument("pool authorization path is not a regular file");
-    const auto size = static_cast<decltype(info.st_size)>(info.st_size);
+    if (info.st_size < 0) throw std::invalid_argument("pool authorization file cannot be read");
+    size = static_cast<unsigned long long>(info.st_size);
 #endif
     if (size < 1 || size > 512)
         throw std::invalid_argument("pool authorization file size is outside 1..512 bytes");
