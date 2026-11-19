@@ -211,7 +211,8 @@ CI run. This observation does not establish a connection to the owner's laptop.
 `native/cuda/mining_cuda.cu` implements the same Compute interface. It validates
 the bounded input before any CUDA call, selects an SM120 device, owns a stream
 and device buffers, uploads noisy A/Bt, invokes our actual full-K kernel, downloads
-the transcript/final matrix and synchronizes before returning. The normal host
+the transcript and synchronizes before returning. The final matrix is left empty;
+jackpot selection uses the transcript. The normal host
 generation/proof/submit checks apply to its result without a separate protocol.
 
 Build after preparing the real Rust library:

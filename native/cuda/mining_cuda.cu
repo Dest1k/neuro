@@ -59,12 +59,14 @@ void ensure_resident(Resident& item, int device, const fullk::Shape& shape,
     if (item.device == device && item.rows == shape.rows && item.cols == shape.cols) return;
     release(item);
     check(cudaStreamCreateWithFlags(&item.stream, cudaStreamNonBlocking), "cudaStreamCreateWithFlags");
-    if (cudaMalloc(reinterpret_cast<void**>(&item.a), a_count) != cudaSuccess
-        || cudaMalloc(reinterpret_cast<void**>(&item.bt), bt_count) != cudaSuccess
-        || cudaMalloc(reinterpret_cast<void**>(&item.transcript),
-                      transcript_count * sizeof(std::uint32_t)) != cudaSuccess
-        || cudaMalloc(reinterpret_cast<void**>(&item.final_c),
-                      final_count * sizeof(std::int32_t)) != cudaSuccess) {
+    const bool matrices = cudaMalloc(reinterpret_cast<void**>(&item.a), a_count) == cudaSuccess
+        && cudaMalloc(reinterpret_cast<void**>(&item.bt), bt_count) == cudaSuccess
+        && cudaMalloc(reinterpret_cast<void**>(&item.transcript),
+                      transcript_count * sizeof(std::uint32_t)) == cudaSuccess
+        && (final_count == 0
+            || cudaMalloc(reinterpret_cast<void**>(&item.final_c),
+                          final_count * sizeof(std::int32_t)) == cudaSuccess);
+    if (!matrices) {
         release(item);
         throw std::runtime_error("cudaMalloc: device buffer for the mining callback was not allocated");
     }
@@ -95,23 +97,21 @@ fullk::Result compute_cuda(const fullk::Input& input, int device) {
 
     fullk::Result output;
     output.transcript.resize(fullk::transcript_words(input.shape));
-    output.final_c.resize(static_cast<std::size_t>(input.shape.rows) * input.shape.cols);
+    // Jackpot selection and the selected-tile check read the transcript only.
+    // The kernel skips the final matrix store when this pointer is null.
     ensure_resident(cache().resident, device, input.shape, a_count, bt_count,
-                    output.transcript.size(), output.final_c.size());
+                    output.transcript.size(), 0);
     Resident& resident = cache().resident;
     check(cudaMemcpyAsync(resident.a, input.a.data(), a_count, cudaMemcpyHostToDevice, resident.stream),
           "upload noisy A");
     check(cudaMemcpyAsync(resident.bt, input.bt.data(), bt_count, cudaMemcpyHostToDevice, resident.stream),
           "upload noisy Bt");
-    check(fullk::launch_fullk(resident.a, resident.bt, resident.transcript, resident.final_c,
+    check(fullk::launch_fullk(resident.a, resident.bt, resident.transcript, nullptr,
                               input.shape, resident.stream),
           "launch full-K kernel");
     check(cudaMemcpyAsync(output.transcript.data(), resident.transcript, output.transcript.size() * sizeof(std::uint32_t),
                           cudaMemcpyDeviceToHost, resident.stream),
           "download transcript");
-    check(cudaMemcpyAsync(output.final_c.data(), resident.final_c, output.final_c.size() * sizeof(std::int32_t),
-                          cudaMemcpyDeviceToHost, resident.stream),
-          "download final C");
     check(cudaStreamSynchronize(resident.stream), "complete CUDA compute callback");
     // An invalidated ticket still owns this result until the synchronization
     // above. The Coordinator discards it before proof or submission.
