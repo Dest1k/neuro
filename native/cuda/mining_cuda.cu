@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 
@@ -17,31 +18,60 @@ void check(cudaError_t result, const char* operation) {
         throw std::runtime_error(std::string(operation) + ": " + cudaGetErrorString(result));
 }
 
-class Stream {
-public:
-    Stream() { check(cudaStreamCreateWithFlags(&stream_, cudaStreamNonBlocking), "cudaStreamCreateWithFlags"); }
-    ~Stream() { if (stream_) (void)cudaStreamDestroy(stream_); }
-    Stream(const Stream&) = delete;
-    Stream& operator=(const Stream&) = delete;
-    cudaStream_t get() const { return stream_; }
-private:
-    cudaStream_t stream_ = nullptr;
+// One resident shape for this process. Attempts of the same shape reuse the
+// stream and device buffers; a different shape or device releases them first.
+// The allocation is intentionally not freed at shutdown: a static destructor
+// would call into the CUDA runtime while it is already tearing down.
+struct Resident {
+    int device = -1;
+    int rows = 0;
+    int cols = 0;
+    cudaStream_t stream = nullptr;
+    std::int8_t* a = nullptr;
+    std::int8_t* bt = nullptr;
+    std::uint32_t* transcript = nullptr;
+    std::int32_t* final_c = nullptr;
 };
 
-template<class T> class Buffer {
-public:
-    explicit Buffer(std::size_t count) : count_(count) {
-        check(cudaMalloc(reinterpret_cast<void**>(&data_), bytes()), "cudaMalloc");
-    }
-    ~Buffer() { if (data_) (void)cudaFree(data_); }
-    Buffer(const Buffer&) = delete;
-    Buffer& operator=(const Buffer&) = delete;
-    T* get() const { return data_; }
-    std::size_t bytes() const { return count_ * sizeof(T); }
-private:
-    T* data_ = nullptr;
-    std::size_t count_;
+void release(Resident& item) noexcept {
+    if (item.a) cudaFree(item.a);
+    if (item.bt) cudaFree(item.bt);
+    if (item.transcript) cudaFree(item.transcript);
+    if (item.final_c) cudaFree(item.final_c);
+    if (item.stream) cudaStreamDestroy(item.stream);
+    item = {};
+}
+
+struct Cache {
+    std::mutex mutex;
+    Resident resident;
+    int checked_device = -1;
 };
+
+Cache& cache() {
+    static auto* instance = new Cache();
+    return *instance;
+}
+
+void ensure_resident(Resident& item, int device, const fullk::Shape& shape,
+                     std::size_t a_count, std::size_t bt_count,
+                     std::size_t transcript_count, std::size_t final_count) {
+    if (item.device == device && item.rows == shape.rows && item.cols == shape.cols) return;
+    release(item);
+    check(cudaStreamCreateWithFlags(&item.stream, cudaStreamNonBlocking), "cudaStreamCreateWithFlags");
+    if (cudaMalloc(reinterpret_cast<void**>(&item.a), a_count) != cudaSuccess
+        || cudaMalloc(reinterpret_cast<void**>(&item.bt), bt_count) != cudaSuccess
+        || cudaMalloc(reinterpret_cast<void**>(&item.transcript),
+                      transcript_count * sizeof(std::uint32_t)) != cudaSuccess
+        || cudaMalloc(reinterpret_cast<void**>(&item.final_c),
+                      final_count * sizeof(std::int32_t)) != cudaSuccess) {
+        release(item);
+        throw std::runtime_error("cudaMalloc: device buffer for the mining callback was not allocated");
+    }
+    item.device = device;
+    item.rows = shape.rows;
+    item.cols = shape.cols;
+}
 
 } // namespace
 
@@ -53,32 +83,38 @@ fullk::Result compute_cuda(const fullk::Input& input, int device) {
     if (input.a.size() != a_count || input.bt.size() != bt_count)
         throw std::invalid_argument("CUDA backend input lengths do not match the bounded shape");
 
+    std::lock_guard<std::mutex> lock(cache().mutex);
     check(cudaSetDevice(device), "cudaSetDevice");
-    cudaDeviceProp properties{};
-    check(cudaGetDeviceProperties(&properties, device), "cudaGetDeviceProperties");
-    if (properties.major != 12 || properties.minor != 0 || properties.warpSize != 32)
-        throw std::runtime_error("The recorded mining CUDA build targets SM120 with 32-thread warps");
+    if (cache().checked_device != device) {
+        cudaDeviceProp properties{};
+        check(cudaGetDeviceProperties(&properties, device), "cudaGetDeviceProperties");
+        if (properties.major != 12 || properties.minor != 0 || properties.warpSize != 32)
+            throw std::runtime_error("The recorded mining CUDA build targets SM120 with 32-thread warps");
+        cache().checked_device = device;
+    }
 
     fullk::Result output;
     output.transcript.resize(fullk::transcript_words(input.shape));
     output.final_c.resize(static_cast<std::size_t>(input.shape.rows) * input.shape.cols);
-    Stream stream;
-    Buffer<std::int8_t> a(a_count), bt(bt_count);
-    Buffer<std::uint32_t> transcript(output.transcript.size());
-    Buffer<std::int32_t> final_c(output.final_c.size());
-    check(cudaMemcpyAsync(a.get(), input.a.data(), a.bytes(), cudaMemcpyHostToDevice, stream.get()),
+    ensure_resident(cache().resident, device, input.shape, a_count, bt_count,
+                    output.transcript.size(), output.final_c.size());
+    Resident& resident = cache().resident;
+    check(cudaMemcpyAsync(resident.a, input.a.data(), a_count, cudaMemcpyHostToDevice, resident.stream),
           "upload noisy A");
-    check(cudaMemcpyAsync(bt.get(), input.bt.data(), bt.bytes(), cudaMemcpyHostToDevice, stream.get()),
+    check(cudaMemcpyAsync(resident.bt, input.bt.data(), bt_count, cudaMemcpyHostToDevice, resident.stream),
           "upload noisy Bt");
-    check(fullk::launch_fullk(a.get(), bt.get(), transcript.get(), final_c.get(), input.shape, stream.get()),
+    check(fullk::launch_fullk(resident.a, resident.bt, resident.transcript, resident.final_c,
+                              input.shape, resident.stream),
           "launch full-K kernel");
-    check(cudaMemcpyAsync(output.transcript.data(), transcript.get(), transcript.bytes(),
-                          cudaMemcpyDeviceToHost, stream.get()), "download transcript");
-    check(cudaMemcpyAsync(output.final_c.data(), final_c.get(), final_c.bytes(),
-                          cudaMemcpyDeviceToHost, stream.get()), "download final C");
-    check(cudaStreamSynchronize(stream.get()), "complete CUDA compute callback");
-    // An invalidated ticket still owns these buffers until this synchronization.
-    // The Coordinator discards its result before proof or submission afterward.
+    check(cudaMemcpyAsync(output.transcript.data(), resident.transcript, output.transcript.size() * sizeof(std::uint32_t),
+                          cudaMemcpyDeviceToHost, resident.stream),
+          "download transcript");
+    check(cudaMemcpyAsync(output.final_c.data(), resident.final_c, output.final_c.size() * sizeof(std::int32_t),
+                          cudaMemcpyDeviceToHost, resident.stream),
+          "download final C");
+    check(cudaStreamSynchronize(resident.stream), "complete CUDA compute callback");
+    // An invalidated ticket still owns this result until the synchronization
+    // above. The Coordinator discards it before proof or submission.
     return output;
 }
 

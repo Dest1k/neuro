@@ -6,8 +6,10 @@
 namespace neuro::host {
 
 // Synchronous, bounded CUDA compute callback for the host Coordinator.
-// It owns its stream/device buffers until all transfers/kernel work complete.
-// It does not submit shares or initialize CUDA before validating host inputs.
+// The call validates host inputs before touching CUDA, then synchronizes its
+// stream before returning. Device buffers for the same shape are kept for the
+// next call; a different shape or device releases that resident set first.
+// It does not submit shares.
 // Built only when both NEURO_ENABLE_PROOF and NEURO_ENABLE_CUDA are enabled.
 fullk::Result compute_cuda(const fullk::Input& input, int device);
 
