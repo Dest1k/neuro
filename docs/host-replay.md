@@ -262,7 +262,12 @@ The replay client defaults to one deterministic zero-B attempt per generation;
 synthetic root seed and small 128/256 dimensions. It is not a continuous
 production entropy/search scheduler. The peer exercises 128x128 jobs. Real pool
 configuration, production work scheduling and performance tuning remain separate
-tasks. Iteration 6 implements local model-cost reservations and reconciliation
+tasks. The donor connect used here receives only the numeric host `127.0.0.1`,
+and that literal is checked again at the socket call. `assess_endpoint` classifies
+every other host as external and does not resolve it. Gitignored
+`configs/pool-endpoint.local.json` may name one exact endpoint; a named external
+endpoint stays undialable, and the file is rejected when it carries a wallet,
+worker, or password. Accepted shares remain unobserved. Iteration 6 implements local model-cost reservations and reconciliation
 in `neuroctl budget`; actual DSH/provider dispatch and billing still need their
 own integration and observations. See `docs/model-selection.md`.
 

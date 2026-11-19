@@ -20,14 +20,19 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <cctype>
 #include <charconv>
 #include <cmath>
 #include <cstdlib>
+#include <fstream>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
+
+#include <sys/stat.h>
 
 namespace neuro::wire {
 namespace {
@@ -316,6 +321,137 @@ Message parse_message(std::string_view text, std::optional<double> confirmed_dif
     return message;
 }
 
+namespace {
+
+void validate_endpoint_port(int port) {
+    if (port < 1 || port > 65535)
+        throw std::invalid_argument("pool port is outside 1..65535");
+}
+
+void validate_endpoint_host(std::string_view host) {
+    if (host.empty() || host.size() > 253)
+        throw std::invalid_argument("pool host length is outside 1..253");
+    if (host.front() == '.' || host.back() == '.' || host.front() == '-' || host.back() == '-')
+        throw std::invalid_argument("pool host is not a bare name");
+    std::size_t label = 0;
+    for (const char c : host) {
+        const auto u = static_cast<unsigned char>(c);
+        if (u >= 128 || c == '/' || c == '\\' || c == '@' || c == ':' || c == '%' ||
+            c == ' ' || c == '?' || c == '#' || c == '[' || c == ']' || c == ',')
+            throw std::invalid_argument("pool host contains a character this dialer does not accept");
+        if (c == '.') {
+            if (label == 0) throw std::invalid_argument("pool host has an empty label");
+            label = 0;
+            continue;
+        }
+        const bool ok = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
+                        (c >= '0' && c <= '9') || c == '-';
+        if (!ok) throw std::invalid_argument("pool host contains a character this dialer does not accept");
+        if (++label > 63) throw std::invalid_argument("pool host label exceeds 63 characters");
+    }
+}
+
+int parse_port_text(std::string_view text) {
+    if (text.empty() || text.size() > 5 || (text.size() > 1 && text.front() == '0'))
+        throw std::invalid_argument("pool authorization port is not a canonical integer");
+    int port = 0;
+    const auto converted = std::from_chars(text.data(), text.data() + text.size(), port);
+    if (converted.ec != std::errc{} || converted.ptr != text.data() + text.size())
+        throw std::invalid_argument("pool authorization port is not a canonical integer");
+    validate_endpoint_port(port);
+    return port;
+}
+
+void reject_authorization_secrets(std::string_view text) {
+    std::string lower(text);
+    for (char& c : lower)
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    for (const char* word : {"wallet", "password", "worker", "secret", "mnemonic"}) {
+        if (lower.find(word) != std::string::npos)
+            throw std::invalid_argument("pool authorization file must name an endpoint only");
+    }
+}
+
+} // namespace
+
+NamedEndpoint parse_pool_authorization(std::string_view text) {
+    if (text.size() > 512 || text.find('\0') != std::string_view::npos)
+        throw std::invalid_argument("pool authorization text exceeds 512 bytes");
+    reject_authorization_secrets(text);
+    if (!text.empty() && text.back() == '\n') text.remove_suffix(1);
+    if (!text.empty() && text.back() == '\r') text.remove_suffix(1);
+    const auto split = text.find('\n');
+    if (split == std::string_view::npos || text.find('\n', split + 1) != std::string_view::npos)
+        throw std::invalid_argument("pool authorization must be exactly two lines");
+    auto schema = text.substr(0, split);
+    auto endpoint = text.substr(split + 1);
+    if (!schema.empty() && schema.back() == '\r') schema.remove_suffix(1);
+    if (!endpoint.empty() && endpoint.back() == '\r') endpoint.remove_suffix(1);
+    if (schema != "neuro.pool_endpoint_authorization.v1")
+        throw std::invalid_argument("pool authorization schema is not recognized");
+    constexpr std::string_view prefix("endpoint=");
+    if (endpoint.size() < prefix.size() || endpoint.compare(0, prefix.size(), prefix) != 0)
+        throw std::invalid_argument("pool authorization is missing endpoint");
+    const auto value = endpoint.substr(prefix.size());
+    const auto colon = value.rfind(':');
+    if (colon == std::string_view::npos || colon == 0 || colon + 1 >= value.size())
+        throw std::invalid_argument("pool authorization endpoint must be host:port");
+    const auto host = value.substr(0, colon);
+    validate_endpoint_host(host);
+    NamedEndpoint named;
+    named.host.assign(host.begin(), host.end());
+    named.port = parse_port_text(value.substr(colon + 1));
+    if (named.host == "127.0.0.1")
+        throw std::invalid_argument("pool authorization must not rename the loopback dial");
+    return named;
+}
+
+std::optional<NamedEndpoint> load_pool_authorization(std::string_view path) {
+    if (path.empty()) return std::nullopt;
+    if (path.find('\0') != std::string_view::npos)
+        throw std::invalid_argument("pool authorization path is invalid");
+    const std::string file(path);
+#if defined(_WIN32)
+    struct _stat64 info {};
+    if (_stat64(file.c_str(), &info) != 0 || (info.st_mode & _S_IFMT) != _S_IFREG)
+        throw std::invalid_argument("pool authorization path is not a regular file");
+    const auto size = info.st_size;
+#else
+    struct stat info {};
+    if (lstat(file.c_str(), &info) != 0 || !S_ISREG(info.st_mode))
+        throw std::invalid_argument("pool authorization path is not a regular file");
+    const auto size = static_cast<decltype(info.st_size)>(info.st_size);
+#endif
+    if (size < 1 || size > 512)
+        throw std::invalid_argument("pool authorization file size is outside 1..512 bytes");
+    std::ifstream in(file, std::ios::binary);
+    if (!in) throw std::invalid_argument("pool authorization file cannot be read");
+    std::string body(static_cast<std::size_t>(size), '\0');
+    in.read(body.data(), static_cast<std::streamsize>(size));
+    if (in.gcount() != static_cast<std::streamsize>(size))
+        throw std::invalid_argument("pool authorization file changed while it was read");
+    char extra = 0;
+    in.read(&extra, 1);
+    if (in.gcount() != 0)
+        throw std::invalid_argument("pool authorization file changed while it was read");
+    return parse_pool_authorization(body);
+}
+
+EndpointStatus assess_endpoint(std::string_view host, int port, const std::optional<NamedEndpoint>& named) {
+    validate_endpoint_host(host);
+    validate_endpoint_port(port);
+    if (host == "127.0.0.1") return EndpointStatus::loopback_dialable;
+    if (named && named->host == host && named->port == port)
+        return EndpointStatus::external_named_undialable;
+    return EndpointStatus::external_not_named;
+}
+
+std::string loopback_dial_host(int port) {
+    if (assess_endpoint("127.0.0.1", port, std::nullopt) != EndpointStatus::loopback_dialable)
+        throw std::logic_error("numeric loopback is not dialable");
+    return "127.0.0.1";
+}
+
 LoopbackPool::LoopbackPool(int port, int io_timeout_ms) {
     if (port < 1 || port > 65535 || io_timeout_ms < 1 || io_timeout_ms > 10000)
         throw std::invalid_argument("loopback port/timeout is outside supported bounds");
@@ -325,7 +461,10 @@ LoopbackPool::LoopbackPool(int port, int io_timeout_ms) {
     owned_ = true;
     try {
         cp_pool_disconnect();
-        if (!cp_pool_connect("127.0.0.1", port)) throw std::runtime_error("loopback pool connection failed");
+        const std::string host = loopback_dial_host(port);
+        if (host != "127.0.0.1")
+            throw std::logic_error("donor connect host escaped the loopback dial");
+        if (!cp_pool_connect(host.c_str(), port)) throw std::runtime_error("loopback pool connection failed");
         connected_ = true;
 #ifdef _WIN32
         const SOCKET socket = static_cast<SOCKET>(cp_pool_socket());

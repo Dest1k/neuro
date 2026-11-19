@@ -13,13 +13,22 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <exception>
+#include <fstream>
 #include <iostream>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
+
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+#endif
 
 #ifndef _WIN32
 #include <sys/select.h>
@@ -249,6 +258,92 @@ std::string read_string(const char* scope, const char* key, std::size_t maximum 
     return output.data();
 }
 
+std::string fixture_path(const char* name) {
+#ifdef _WIN32
+    const int pid = _getpid();
+#else
+    const int pid = static_cast<int>(::getpid());
+#endif
+    return std::string(name) + "-" + std::to_string(pid) + ".txt";
+}
+
+class TempFile {
+public:
+    explicit TempFile(std::string path) : path_(std::move(path)) {}
+    ~TempFile() { std::remove(path_.c_str()); }
+    TempFile(const TempFile&) = delete;
+    TempFile& operator=(const TempFile&) = delete;
+    const std::string& path() const { return path_; }
+    void write(std::string_view body) const {
+        std::ofstream out(path_, std::ios::binary | std::ios::trunc);
+        if (!out.write(body.data(), static_cast<std::streamsize>(body.size())))
+            throw std::runtime_error("cannot write pool authorization fixture");
+    }
+private:
+    std::string path_;
+};
+
+std::string authorization(std::string_view endpoint) {
+    return "neuro.pool_endpoint_authorization.v1\nendpoint=" + std::string(endpoint) + "\n";
+}
+
+void endpoint_cases() {
+    // Classification only. None of these hosts is passed to the donor connect.
+    require(assess_endpoint("127.0.0.1", 9) == EndpointStatus::loopback_dialable, "numeric loopback is dialable");
+    require(loopback_dial_host(9) == "127.0.0.1", "dial host is the numeric loopback literal");
+    require(assess_endpoint("8.8.8.8", 53) == EndpointStatus::external_not_named, "unnamed public address is not dialable");
+    require(assess_endpoint("127.0.0.2", 9) == EndpointStatus::external_not_named, "other loopback numbers are not the dial host");
+    require(assess_endpoint("localhost", 9) == EndpointStatus::external_not_named, "hostname is not resolved or dialed");
+    const auto named = parse_pool_authorization(authorization("203.0.113.9:3333"));
+    require(named.host == "203.0.113.9" && named.port == 3333, "authorization names one endpoint");
+    require(assess_endpoint("203.0.113.9", 3333, named) == EndpointStatus::external_named_undialable,
+            "named public endpoint stays undialable");
+    require(assess_endpoint("203.0.113.9", 3334, named) == EndpointStatus::external_not_named,
+            "a different port is not the named endpoint");
+    require(assess_endpoint("198.51.100.1", 3333, named) == EndpointStatus::external_not_named,
+            "a different host is not the named endpoint");
+    require(assess_endpoint("127.0.0.1", 3333, named) == EndpointStatus::loopback_dialable,
+            "naming an external endpoint does not change the loopback dial");
+    require(!load_pool_authorization("").has_value(), "empty authorization path reads no file");
+    rejects([&] { (void)loopback_dial_host(0); }, "dial host rejects port 0");
+    rejects([&] { (void)loopback_dial_host(65536); }, "dial host rejects port 65536");
+    rejects([&] { (void)assess_endpoint("::1", 9); }, "ipv6 text is not a dial host");
+    rejects([&] { (void)assess_endpoint("127.0.0.1 ", 9); }, "padded loopback is not the dial host");
+    rejects([&] { (void)assess_endpoint("127.0.0.1/x", 9); }, "loopback with a path is not the dial host");
+    rejects([&] { (void)parse_pool_authorization(authorization("127.0.0.1:9")); }, "authorization must not rename loopback");
+    rejects([&] { (void)parse_pool_authorization(authorization("203.0.113.9:0333")); }, "authorization port must be canonical");
+    rejects([&] { (void)parse_pool_authorization(authorization("203.0.113.9:3333") + "endpoint=198.51.100.1:7\n"); },
+            "authorization names one endpoint only");
+    rejects([&] { (void)parse_pool_authorization(authorization("203.0.113.9:3333") + "wallet=rejected\n"); },
+            "authorization must not carry a wallet");
+    rejects([&] { (void)parse_pool_authorization("neuro.pool_endpoint_authorization.v1\nendpoint=203.0.113.9:3333\npassword=x\n"); },
+            "authorization must not carry a password");
+    const auto crlf = parse_pool_authorization("neuro.pool_endpoint_authorization.v1\r\nendpoint=203.0.113.9:3333\r\n");
+    require(crlf.host == "203.0.113.9" && crlf.port == 3333, "CRLF authorization parses");
+    TempFile file(fixture_path("neuro-pool-auth"));
+    file.write(authorization("203.0.113.9:3333"));
+    const auto loaded = load_pool_authorization(file.path());
+    require(loaded.has_value() &&
+            assess_endpoint(loaded->host, loaded->port, loaded) == EndpointStatus::external_named_undialable,
+            "loaded authorization still does not dial");
+    rejects([&] { (void)load_pool_authorization(fixture_path("neuro-pool-auth-missing")); }, "missing authorization file");
+    TempFile oversized(fixture_path("neuro-pool-auth-large"));
+    oversized.write(std::string(513, 'a'));
+    rejects([&] { (void)load_pool_authorization(oversized.path()); }, "oversized authorization file");
+    TempFile secret(fixture_path("neuro-pool-auth-secret"));
+    secret.write(authorization("203.0.113.9:3333") + "worker=no\n");
+    rejects([&] { (void)load_pool_authorization(secret.path()); }, "authorization file must not name a worker");
+#ifndef _WIN32
+    TempFile link_target(fixture_path("neuro-pool-auth-target"));
+    link_target.write(authorization("203.0.113.9:3333"));
+    const auto link = fixture_path("neuro-pool-auth-link");
+    std::remove(link.c_str());
+    require(::symlink(link_target.path().c_str(), link.c_str()) == 0, "authorization symlink fixture");
+    TempFile unlink_link(link);
+    rejects([&] { (void)load_pool_authorization(link); }, "symlink authorization is not a regular file");
+#endif
+}
+
 void socket_cases() {
     Listener listener;
     {
@@ -340,11 +435,13 @@ void socket_cases() {
 
 int main() {
     try {
+        endpoint_cases();
         if (cp_net_init() != 0) throw std::runtime_error("cannot initialize test socket platform");
         parser_cases();
         socket_cases();
         std::cout << "PASS bounded pool wire: positive_checks=" << checks << " rejected_cases=" << rejections
-                  << " real_loopback_connections=5 donor_notify_parser=used donor_serializers=used real_gzip=used\n";
+                  << " real_loopback_connections=5 donor_notify_parser=used donor_serializers=used real_gzip=used"
+                  << " external_dial=refused\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "FAIL bounded pool wire: " << error.what() << '\n';

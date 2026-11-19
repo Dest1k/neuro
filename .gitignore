@@ -16,5 +16,6 @@ __pycache__/
 /configs/local.json
 /configs/remote.local.json
 /configs/gpu-owner.local.json
+/configs/pool-endpoint.local.json
 /start/
 /dist/

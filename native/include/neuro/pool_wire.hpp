@@ -44,10 +44,33 @@ struct Received {
     std::string text;
 };
 
-// One process-global donor connection, owned by one event-loop thread. Only
-// numeric 127.0.0.1 is supported here; there is no DNS or external pool access.
-// The donor reader/session is never started. Calls made outside this adapter
-// directly to donor pool globals are outside its ownership contract.
+// Dial policy for the one donor connect call. No DNS and no address rewrite.
+// Only the exact host 127.0.0.1 is dialable. A parsed authorization may name
+// one other endpoint; that name stays undialable and is never resolved.
+enum class EndpointStatus {
+    loopback_dialable,
+    external_not_named,
+    external_named_undialable,
+};
+
+struct NamedEndpoint {
+    std::string host;
+    int port = 0;
+};
+
+NamedEndpoint parse_pool_authorization(std::string_view text);
+// Empty path reads nothing and returns nullopt. Any other path must be one
+// regular file of 1..512 bytes. The file is an endpoint name, not a wallet.
+std::optional<NamedEndpoint> load_pool_authorization(std::string_view path);
+EndpointStatus assess_endpoint(std::string_view host, int port,
+                               const std::optional<NamedEndpoint>& named = std::nullopt);
+// The only host string the donor connect may receive.
+std::string loopback_dial_host(int port);
+
+// One process-global donor connection, owned by one event-loop thread. The
+// connect host is loopback_dial_host and is checked again before the donor
+// call. The donor reader/session is never started. Calls made outside this
+// adapter directly to donor pool globals are outside its ownership contract.
 class LoopbackPool {
 public:
     explicit LoopbackPool(int port, int io_timeout_ms = 1000);

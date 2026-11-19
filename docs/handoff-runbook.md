@@ -414,5 +414,7 @@ checked against the scalar reference. It is a separate experiment from the
 workload. Compare a candidate with `evaluate()`: same hardware, workload,
 profile, environment, and power limit; repetition spread at most 0.15;
 regression limit 2%. Do not overwrite the baseline artifact. The implemented
-host currently uses local synthetic peers; an external pool adapter and
-accepted shares remain future work, not something this startup sequence promises.
+host dials only numeric `127.0.0.1`. A named endpoint in gitignored
+`configs/pool-endpoint.local.json` does not open a socket. An external pool
+adapter and accepted shares remain future work, not something this startup
+sequence promises.
