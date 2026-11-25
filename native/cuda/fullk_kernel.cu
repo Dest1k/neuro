@@ -112,7 +112,7 @@ void fullk_kernel(const std::int8_t* a, const std::int8_t* bt,
 // output tile in shared memory, then run the same per-warp MMA and transcript
 // mapping. A and Bt are otherwise reread from global memory once per 16-wide
 // neighbor. Fragments leave shared memory through ldmatrix.x4, so a K32 step
-// issues three wide loads instead of eight scalar ones; profiling showed the
+// issues two wide loads instead of eight scalar ones; profiling showed the
 // kernel was MIO-queue bound rather than L2 bound. This is not a persistent
 // kernel and it does not change the launch contract. Other shapes keep the
 // direct kernel, including the 32x48 gold.
@@ -150,6 +150,7 @@ __device__ __forceinline__ void ldmatrix_x4(std::uint32_t* r, std::uint32_t addr
 __global__ __launch_bounds__(kStageThreads)
 void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
                          std::uint32_t* transcript, std::int32_t* final_c, Shape shape) {
+#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 800
     constexpr int warps_per_side = kStageRows / 16;
     const int lane = static_cast<int>(threadIdx.x) & 31;
     const int warp = static_cast<int>(threadIdx.x) >> 5;
@@ -216,6 +217,9 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
             final_c[(row_base + p.row) * shape.cols + col_base + 8 + p.col] = right[reg];
         }
     }
+#else
+    asm volatile("trap;");
+#endif
 }
 
 } // namespace

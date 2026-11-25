@@ -77,7 +77,7 @@ is a separate launch and its register count is not that figure.
 
 A K32 step needs a 16x32 A fragment and two 8x32 Bt fragments. The staged
 launch loads them with `ldmatrix.sync.aligned.m8n8.x4.shared.b16`: one x4 for A
-and one x4 for both n8 halves of Bt, so three wide shared instructions replace
+and one x4 for both n8 halves of Bt, so two wide shared instructions replace
 the eight scalar 32-bit reads that the same step performed before. Addresses
 follow the 8x16 tile order the instruction expects, and the 144-byte row stride
 maps each tile row onto a distinct bank group. Nsight Compute attributed 48.4%
