@@ -65,7 +65,9 @@ The direct kernel uses explicit byte packing and direct global loads. A shape
 whose rows and columns are both multiples of 64, and whose A and Bt pointers
 are 16-byte aligned, uses a different launch: 512 threads stage one milestone
 (128 K values) of a 64x64 output tile through shared memory, then each warp
-runs the same 16x16 MMA, transcript XOR, and final-C scatter. Fragment
+runs the same 16x16 MMA, transcript XOR, and final-C scatter. When both
+dimensions are also multiples of 128, the wider launch described below takes
+precedence. Fragment
 words in that staged tile are 4-byte aligned, so each one is a single
 little-endian shared load rather than four byte loads. Stored rows use a
 144-byte stride so successive rows do not land on the same shared bank.
@@ -75,6 +77,17 @@ on the direct kernel. Asynchronous copies and a persistent kernel remain later
 candidates. Compiler output reports 80 registers and no spills for the recorded
 direct SM120 object; these counts are not a speed estimate. The staged kernel
 is a separate launch and its register count is not that figure.
+
+A third launch covers panels whose rows and columns are both multiples of 128
+with 16-byte aligned pointers. One 512-thread block stages a 128x128 tile per
+milestone: four warps per tile axis, each warp owning a 32x32 region (four
+16x16 MMA tiles, 32 accumulator registers). Doubling the tile in both
+dimensions halves how often each A row and each Bt row are read from
+global/L2: eight block columns and eight block rows instead of sixteen of
+each. Compiler output for the recorded SM120 object reports 64 registers, no
+spills and 36,864 bytes of static shared memory per block, so at most two such
+blocks fit per SM. As above these counts are not a speed estimate; the
+measured 1024x1024 comparison is recorded in the trial report.
 
 ## Independent correctness checks
 
