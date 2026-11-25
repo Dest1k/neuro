@@ -17,11 +17,12 @@ import os
 import platform
 import subprocess
 import sys
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from neuroctl.experiments import run_command, write_result  # noqa: E402
+from neuroctl.experiments import _observed_ok, run_command, write_result  # noqa: E402
 
 CASE = "coordinate_mix"
 ROWS = 32
@@ -47,13 +48,32 @@ def parse_json_line(stdout: str) -> dict:
     lines = [line for line in stdout.splitlines() if line.strip()]
     if len(lines) != 1:
         raise BaselineError("probe must emit one JSON line")
+
+    def unique_keys(pairs):
+        payload = {}
+        for key, value in pairs:
+            if key in payload:
+                raise BaselineError("probe JSON repeats a key")
+            payload[key] = value
+        return payload
+
+    def no_constants(token):
+        raise BaselineError("probe JSON uses a non-finite constant")
+
     try:
-        payload = json.loads(lines[0])
+        payload = json.loads(lines[0], object_pairs_hook=unique_keys,
+                             parse_constant=no_constants)
     except json.JSONDecodeError as exc:
         raise BaselineError("probe JSON is unreadable") from exc
     if not isinstance(payload, dict):
         raise BaselineError("probe JSON must be an object")
     return payload
+
+
+def _exact_int(payload: dict, key: str, expected: int) -> bool:
+    """A JSON boolean or float is not an integer field, even if it compares equal."""
+    value = payload.get(key)
+    return type(value) is int and value == expected
 
 
 def _reject_mining_claim(payload: dict) -> None:
@@ -64,7 +84,8 @@ def _reject_mining_claim(payload: dict) -> None:
 def _exact_probe(payload: dict) -> None:
     if (payload.get("schema") != "neuro.fullk_probe.v1" or payload.get("status") != "PASS"
             or payload.get("exact") is not True or payload.get("gpu_execution_observed") is not True
-            or payload.get("cases") != 1 or payload.get("launches") != 2):
+            or not _exact_int(payload, "cases", 1) or not _exact_int(payload, "launches", 2)
+            or not _exact_int(payload, "k", K)):
         raise BaselineError("verification was not one exact GPU fixture")
     _reject_mining_claim(payload)
 
@@ -72,15 +93,21 @@ def _exact_probe(payload: dict) -> None:
 def parse_verification(stdout: str) -> dict:
     payload = parse_json_line(stdout)
     _exact_probe(payload)
+    # The gold protocol has no shape fields. If one is present it must describe
+    # this 32x48 fixture, so a panel payload cannot pass as gold verification.
+    if (("case" in payload and payload["case"] != CASE)
+            or any(key in payload and not _exact_int(payload, key, value)
+                   for key, value in (("rows", ROWS), ("cols", COLS)))):
+        raise BaselineError("verification was not the gold fixture")
     return payload
 
 
 def parse_panel_verification(stdout: str) -> dict:
     payload = parse_json_line(stdout)
     _exact_probe(payload)
-    if (payload.get("case") != PANEL_CASE or payload.get("rows") != PANEL_ROWS
-            or payload.get("cols") != PANEL_COLS or payload.get("seed") != PANEL_SEED
-            or payload.get("k") != K):
+    if (payload.get("case") != PANEL_CASE or not _exact_int(payload, "seed", PANEL_SEED)
+            or not _exact_int(payload, "rows", PANEL_ROWS)
+            or not _exact_int(payload, "cols", PANEL_COLS)):
         raise BaselineError("verification was not the reference panel")
     return payload
 
@@ -88,17 +115,23 @@ def parse_panel_verification(stdout: str) -> dict:
 def parse_timing(stdout: str, *, case: str = CASE, rows: int = ROWS, cols: int = COLS,
                  launches: int = LAUNCHES, seed: int | None = None) -> float:
     payload = parse_json_line(stdout)
-    elapsed = payload.get("elapsed_s")
     if (payload.get("schema") != "neuro.fullk_kernel_time.v1" or payload.get("status") != "PASS"
             or payload.get("exact") is not True or payload.get("gpu_execution_observed") is not True
-            or payload.get("case") != case or payload.get("rows") != rows or payload.get("cols") != cols
-            or payload.get("k") != K or payload.get("launches") != launches
+            or payload.get("case") != case
+            or not _exact_int(payload, "rows", rows) or not _exact_int(payload, "cols", cols)
+            or not _exact_int(payload, "k", K) or not _exact_int(payload, "launches", launches)
             or payload.get("interval") != INTERVAL
-            or (seed is not None and payload.get("seed") != seed)):
+            or (seed is not None and not _exact_int(payload, "seed", seed))):
         raise BaselineError("timing sample does not match the full-K baseline contract")
     _reject_mining_claim(payload)
-    if (isinstance(elapsed, bool) or not isinstance(elapsed, (int, float))
-            or not math.isfinite(elapsed) or elapsed <= 0):
+    elapsed = payload.get("elapsed_s")
+    if isinstance(elapsed, bool) or type(elapsed) not in (int, float):
+        raise BaselineError("timing sample has no positive finite elapsed_s")
+    try:
+        usable = math.isfinite(elapsed) and elapsed > 0
+    except OverflowError:  # an integer literal too large for a float is not a time
+        usable = False
+    if not usable:
         raise BaselineError("timing sample has no positive finite elapsed_s")
     return float(elapsed)
 
@@ -156,6 +189,29 @@ def owner_miner_running() -> bool:
     return count_image(completed.stdout, "SRBMiner-MULTI.exe") != 0
 
 
+def _run_key(record) -> uuid.UUID | None:
+    try:
+        return uuid.UUID(str(record.get("run_id"))) if isinstance(record, dict) else None
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+def require_observation(observation, stage: str) -> dict:
+    """A payload is evidence only if its own process completed successfully.
+
+    The JSON text cannot replace the process outcome: zero integer return code,
+    no timeout or launch error, a fully drained capture, a valid observation ID
+    and untruncated stdout are all part of the proof.
+    """
+    if not isinstance(observation, dict) or not _observed_ok(observation, stage):
+        raise BaselineError(f"{stage} process did not complete successfully")
+    if observation.get("stdout_truncated") is not False:
+        raise BaselineError(f"{stage} stdout was truncated")
+    if not observation.get("stdout"):
+        raise BaselineError(f"{stage} process printed nothing")
+    return observation
+
+
 def assemble_experiment(*, hardware: str, environment: str, power_limit_w: float,
                         verification: dict, samples: list[tuple[float, dict]],
                         workload: str | None = None, verifier_id: str | None = None) -> dict:
@@ -167,6 +223,9 @@ def assemble_experiment(*, hardware: str, environment: str, power_limit_w: float
         raise BaselineError("power limit must be positive")
     if len(samples) < 3:
         raise BaselineError("at least three measured repetitions are required")
+    keys = [_run_key(record) for record in [verification, *(record for _, record in samples)]]
+    if any(key is None for key in keys) or len(set(keys)) != len(keys):
+        raise BaselineError("verification and samples must be independent observations")
     if workload is None:
         workload = (f"fullk gold {CASE} {ROWS}x{COLS} k={K} keep_c "
                     f"launches_per_sample={LAUNCHES} interval={INTERVAL}")
@@ -201,6 +260,8 @@ def _probe(native: Path, device: int, stage: str, extra: list[str], timeout_s: i
 def record(native: Path, device: int, samples: int, output: Path, *, panel: bool = False) -> dict:
     if not native.is_file():
         raise BaselineError("full-K probe executable is missing")
+    if isinstance(samples, bool) or not isinstance(samples, int) or not 3 <= samples <= 7:
+        raise BaselineError("samples must be from 3 to 7")
     if owner_miner_running():
         raise BaselineError("SRBMiner-MULTI.exe is running; acquire the GPU lease first")
     name, driver, watts, limit_token = query_gpu(device)
@@ -220,6 +281,7 @@ def record(native: Path, device: int, samples: int, output: Path, *, panel: bool
         timeout_s = 60
         schema = "neuro.gpu_baseline.v1"
     verification = _probe(native, device, "verification", prefix, timeout_s)
+    require_observation(verification, "verification")
     if panel:
         parse_panel_verification(verification.get("stdout", ""))
     else:
@@ -228,6 +290,7 @@ def record(native: Path, device: int, samples: int, output: Path, *, panel: bool
     for _ in range(samples):
         observation = _probe(
             native, device, "measurement", [*prefix, "--time-launches", str(LAUNCHES)], timeout_s)
+        require_observation(observation, "measurement")
         elapsed = parse_timing(
             observation.get("stdout", ""),
             **({} if not panel else {"case": PANEL_CASE, "rows": PANEL_ROWS,
