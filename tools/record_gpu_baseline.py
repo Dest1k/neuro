@@ -63,7 +63,7 @@ def parse_json_line(stdout: str) -> dict:
     try:
         payload = json.loads(lines[0], object_pairs_hook=unique_keys,
                              parse_constant=no_constants)
-    except json.JSONDecodeError as exc:
+    except (ValueError, RecursionError) as exc:
         raise BaselineError("probe JSON is unreadable") from exc
     if not isinstance(payload, dict):
         raise BaselineError("probe JSON must be an object")
@@ -203,7 +203,9 @@ def require_observation(observation, stage: str) -> dict:
     no timeout or launch error, a fully drained capture, a valid observation ID
     and untruncated stdout are all part of the proof.
     """
-    if not isinstance(observation, dict) or not _observed_ok(observation, stage):
+    if not isinstance(observation, dict) or "launch_error" not in observation:
+        raise BaselineError(f"{stage} process did not complete successfully")
+    if not _observed_ok(observation, stage):
         raise BaselineError(f"{stage} process did not complete successfully")
     if observation.get("stdout_truncated") is not False:
         raise BaselineError(f"{stage} stdout was truncated")
@@ -302,17 +304,26 @@ def record(native: Path, device: int, samples: int, output: Path, *, panel: bool
     experiment = assemble_experiment(
         hardware=name, environment=environment, power_limit_w=watts,
         verification=verification, samples=measured, workload=workload, verifier_id=verifier_id)
-    document = write_result(output, experiment)
     elapsed = [item[0] for item in measured]
     ordered = sorted(elapsed)
-    median = ordered[len(ordered) // 2] if len(ordered) % 2 else (ordered[len(ordered) // 2 - 1] + ordered[len(ordered) // 2]) / 2
+    middle = len(ordered) // 2
+    if len(ordered) % 2:
+        median = ordered[middle]
+    else:
+        lower = ordered[middle - 1]
+        median = lower + (ordered[middle] - lower) / 2
     spread = (max(elapsed) - min(elapsed)) / median
-    print(json.dumps({
-        "schema": schema, "passed": True, "samples": len(elapsed),
-        "median_elapsed_s": median, "relative_spread": spread,
-        "spread_exceeds_comparison_limit": spread > 0.15,
-        "output": str(output),
-    }, allow_nan=False))
+    try:
+        summary = json.dumps({
+            "schema": schema, "passed": True, "samples": len(elapsed),
+            "median_elapsed_s": median, "relative_spread": spread,
+            "spread_exceeds_comparison_limit": spread > 0.15,
+            "output": str(output),
+        }, allow_nan=False)
+    except (ValueError, OverflowError) as exc:
+        raise BaselineError("baseline summary is not finite") from exc
+    document = write_result(output, experiment)
+    print(summary)
     return document
 
 

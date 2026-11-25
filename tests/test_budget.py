@@ -14,6 +14,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -471,6 +472,83 @@ class BudgetTests(unittest.TestCase):
         self.assertEqual(replay["state"], "SETTLED")
         self.assertEqual(replay["observed_input_tokens"], 1000)
         self.assertEqual(replay["observed_output_tokens"], 10)
+
+    def test_legacy_unresolved_usage_restores_floors_without_losing_history(self):
+        if sqlite3.sqlite_version_info < (3, 35, 0):
+            self.skipTest("DROP COLUMN requires SQLite 3.35 or newer")
+        self.dispatch("old-settled")
+        self.ledger.reconcile("old-settled", {
+            "prompt_tokens": 1000, "completion_tokens": 10,
+        }, "openai")
+        self.dispatch()
+        first = self.ledger.reconcile("r1", {
+            "input_tokens": 60_000, "output_tokens": 100,
+        }, "anthropic")
+        self.assertEqual(first["state"], "UNRESOLVED")
+        configuration = self.ledger.configuration_sha256
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.row_factory = sqlite3.Row
+            old_settled = dict(connection.execute("""SELECT state,settled_cost_usd,held_cost_usd,usage_json
+                FROM budget_reservations WHERE reservation_id='old-settled'""").fetchone())
+            connection.execute("ALTER TABLE budget_reservations DROP COLUMN observed_input_tokens")
+            connection.execute("ALTER TABLE budget_reservations DROP COLUMN observed_output_tokens")
+        reopened = BudgetLedger(self.path, self.policy, prices())
+        self.assertEqual(reopened.configuration_sha256, configuration)
+        with closing(sqlite3.connect(self.path)) as connection:
+            connection.row_factory = sqlite3.Row
+            restored = dict(connection.execute("""SELECT state,held_cost_usd,observed_input_tokens,
+                observed_output_tokens FROM budget_reservations WHERE reservation_id='r1'""").fetchone())
+            preserved = dict(connection.execute("""SELECT state,settled_cost_usd,held_cost_usd,usage_json
+                FROM budget_reservations WHERE reservation_id='old-settled'""").fetchone())
+        self.assertEqual(restored, {"state": "UNRESOLVED", "held_cost_usd": "0.007408",
+                                    "observed_input_tokens": 60_000, "observed_output_tokens": 100})
+        self.assertEqual(preserved, old_settled)
+        smaller = reopened.reconcile("r1", {
+            "input_tokens": 100, "output_tokens": 100,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }, "anthropic")
+        self.assertEqual(smaller["state"], "UNRESOLVED")
+        self.assertEqual(smaller["error_code"], "contradicts_observed_floor")
+        self.assertEqual(smaller["held_cost_usd"], "0.007408")
+        reopened = BudgetLedger(self.path, self.policy, prices())
+        settled = reopened.reconcile("r1", {
+            "input_tokens": 60_000, "output_tokens": 100,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }, "anthropic")
+        self.assertEqual(settled["state"], "SETTLED")
+        self.assertEqual(settled["settled_cost_usd"], "0.004651")
+        self.assertEqual(settled["held_cost_usd"], "0")
+        self.assertEqual(settled["observed_input_tokens"], 60_000)
+        self.assertEqual(settled["observed_output_tokens"], 100)
+
+    def test_usage_serialization_failure_is_durable_and_overrun_is_sticky(self):
+        self.dispatch()
+        payload = {"prompt_tokens": 100_000, "completion_tokens": 10}
+        with mock.patch("neuroctl.budget._json", side_effect=ValueError("injected usage serialization failure")):
+            result = self.ledger.reconcile("r1", payload, "openai")
+        self.assertEqual(result["state"], "UNRESOLVED")
+        self.assertEqual(result["error_code"], "invalid_final_usage")
+        self.assertEqual(result["held_cost_usd"], "0.0077031")
+        self.assertIsNone(result["settled_cost_usd"])
+        self.assertTrue(result["overrun"])
+        reopened = BudgetLedger(self.path, self.policy, prices())
+        with closing(sqlite3.connect(self.path)) as connection:
+            connection.row_factory = sqlite3.Row
+            persisted = dict(connection.execute("""SELECT state,error_code,held_cost_usd,
+                settled_cost_usd,overrun FROM budget_reservations WHERE reservation_id='r1'""").fetchone())
+        self.assertEqual(persisted, {"state": "UNRESOLVED", "error_code": "invalid_final_usage",
+                                     "held_cost_usd": "0.0077031", "settled_cost_usd": None, "overrun": 1})
+        self.assertTrue(reopened.status(campaign_id="campaign")["campaign"]["blocked"])
+        with self.assertRaises(BudgetDenied):
+            reopened.reserve(campaign_id="campaign", session_id="session", reservation_id="blocked")
+        with self.assertRaises(BudgetError):
+            reopened.begin_dispatch("r1")
+        settled = reopened.reconcile("r1", payload, "openai")
+        self.assertEqual(settled["state"], "SETTLED")
+        self.assertEqual(settled["settled_cost_usd"], "0.0077031")
+        self.assertTrue(settled["overrun"])
+        self.assertEqual(settled["error_code"], "request_bounds_exceeded")
+        self.assertTrue(reopened.status(campaign_id="campaign")["campaign"]["blocked"])
 
 
 if __name__ == "__main__":

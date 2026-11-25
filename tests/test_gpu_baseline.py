@@ -341,6 +341,57 @@ class PublicationGateTests(unittest.TestCase):
         self.assertIn("reference", document["identity"]["workload"])
         self.assertEqual(document["samples"][1]["elapsed_s"], 0.21)
 
+    def test_missing_launch_error_is_not_explicit_success(self):
+        records = self.gold_records()
+        broken = dict(records[0])
+        del broken["launch_error"]
+        records[0] = broken
+        self.expect_failure(records)
+
+    def test_nonfinite_summary_neither_creates_nor_replaces_an_artifact(self):
+        for existing in (None, b'{"kept": true}\n'):
+            with self.subTest(existing=existing):
+                content = self.expect_failure(
+                    self.gold_records(elapsed=(5e-324, 5e-324, 1e308)), existing=existing)
+                self.assertEqual(content, existing)
+
+    def test_even_extreme_samples_have_a_finite_median(self):
+        document, content, printed, failed = self.run_record(
+            self.gold_records(elapsed=(1e308, 1e308, 1e308, 1e308)), samples=4)
+        self.assertIsNone(failed, failed)
+        self.assertIsNotNone(content)
+        summary = json.loads(printed)
+        self.assertEqual(summary["median_elapsed_s"], 1e308)
+        self.assertEqual(summary["relative_spread"], 0.0)
+
+    def test_json_integer_digit_limit_is_a_controlled_rejection(self):
+        line = timing_line(0.01).replace('"elapsed_s": 0.01',
+                                         '"elapsed_s": ' + '9' * 5000)
+        with self.assertRaises(baseline.BaselineError):
+            baseline.parse_timing(line)
+
+    def test_cli_real_record_does_not_publish_a_failed_probe(self):
+        with tempfile.TemporaryDirectory() as directory:
+            native = Path(directory) / "fullk_probe.exe"
+            native.write_bytes(b"stand-in; physical probe boundary is substituted")
+            output = Path(directory) / "baseline.json"
+            original = b'{"kept": true}\n'
+            output.write_bytes(original)
+            out, err = io.StringIO(), io.StringIO()
+            with mock.patch.object(
+                    baseline, "_probe",
+                    side_effect=lambda *a, **k: probe_record("verification", PROBE_SCHEMA, 9)), \
+                    mock.patch.object(baseline, "query_gpu",
+                                      return_value=("fixture GPU", "000.00", 115.0, "[N/A]")), \
+                    mock.patch.object(baseline, "owner_miner_running", return_value=False), \
+                    contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = baseline.main(["--native", str(native), "--output", str(output)])
+            self.assertEqual(code, 1)
+            self.assertEqual(out.getvalue(), "")
+            self.assertEqual(json.loads(err.getvalue())["passed"], False)
+            self.assertIn("verification process", json.loads(err.getvalue())["error"])
+            self.assertEqual(output.read_bytes(), original)
+
 
 if __name__ == "__main__":
     unittest.main()

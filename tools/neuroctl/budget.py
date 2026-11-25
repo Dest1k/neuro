@@ -236,6 +236,44 @@ class BudgetLedger:
                     ("schema", "neuro.budget.v1"), ("configuration", self.configuration_json)))
             elif stored.get("schema") != "neuro.budget.v1" or stored.get("configuration") != self.configuration_json:
                 raise BudgetError("Ledger policy/prices differ; keep the existing budget history and reconcile explicitly")
+            self._restore_stored_observation_floors(connection)
+
+    @staticmethod
+    def _restore_stored_observation_floors(connection) -> None:
+        def unique_keys(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("duplicate key in stored usage")
+                result[key] = value
+            return result
+
+        rows = list(connection.execute("""SELECT reservation_id,state,usage_json,
+            observed_input_tokens,observed_output_tokens FROM budget_reservations
+            WHERE usage_json IS NOT NULL"""))
+        for row in rows:
+            try:
+                usage = json.loads(row["usage_json"], object_pairs_hook=unique_keys)
+                if not isinstance(usage, dict):
+                    raise ValueError("stored usage is not an object")
+                counters = []
+                for name in ("input_tokens", "output_tokens"):
+                    value = usage.get(name)
+                    if type(value) is not int or value < 0:
+                        raise ValueError("stored usage has no reliable counter floor")
+                    counters.append(min(value, 2**63 - 1))
+            except (TypeError, ValueError, RecursionError):
+                if row["state"] == "IN_FLIGHT":
+                    connection.execute("""UPDATE budget_reservations SET state='UNRESOLVED',
+                        error_code='invalid_stored_usage',updated_utc=? WHERE reservation_id=?""",
+                        (_now(), row["reservation_id"]))
+                continue
+            restored = tuple(max(row[name] or 0, value) for name, value in zip(
+                ("observed_input_tokens", "observed_output_tokens"), counters))
+            if restored != (row["observed_input_tokens"], row["observed_output_tokens"]):
+                connection.execute("""UPDATE budget_reservations SET observed_input_tokens=?,
+                    observed_output_tokens=?,updated_utc=? WHERE reservation_id=?""",
+                    (*restored, _now(), row["reservation_id"]))
 
     @classmethod
     def from_project(cls, db_path: str | Path, project_path: str | Path,
@@ -469,8 +507,11 @@ class BudgetLedger:
                 reason = "invalid_final_usage"
             try:
                 usage_json = _json(asdict(usage)) if usage is not None else None
-            except (TypeError, ValueError):
+            except (TypeError, ValueError, RecursionError):
                 usage_json = None
+                reason = "invalid_final_usage"
+                settled = None
+                quote = None
             observed_input, observed_output = self._observation_floors(row, usage)
             if row["state"] == "SETTLED":
                 if reason is None and usage_json == row["usage_json"]:

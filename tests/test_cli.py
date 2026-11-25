@@ -86,7 +86,12 @@ class CliTests(unittest.TestCase):
                 self.assertNotIn("Traceback", failed.stderr)
                 data = json.loads(failed.stdout)
                 self.assertEqual(data["state"], "UNRESOLVED")
-                self.assertTrue(data["receipt_read_error"])
+                if name == "duplicate.json":
+                    self.assertTrue(data["receipt_read_error"])
+                else:
+                    # Some Python parsers accept this depth; reconciliation must
+                    # still reject the non-usage document and retain the hold.
+                    self.assertFalse(data["reconciled"])
                 self.assertEqual(data["held_cost_usd"], "0.007408")
             blocked = self.invoke(*common, "reserve", "--campaign", "cli-campaign",
                                   "--session", "cli-session", "--request", "two")
