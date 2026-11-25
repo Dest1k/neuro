@@ -159,6 +159,11 @@ The JSON schema is `neuro.fullk_kernel_time.v1`. It always sets
 `mining_evidence` false and `hashrate` null. `tools/record_gpu_baseline.py`
 turns three such samples for `coordinate_mix` into one `neuro.experiment.v1`
 baseline. That record is a kernel interval, not accepted pool work.
+The recorder publishes only after each probe process completed successfully:
+zero integer return code, no timeout or launch error, a fully drained and
+untruncated stdout, and a valid observation ID. Verification and every sample
+must be distinct processes; a `PASS` line alone is not enough, and a failed run
+leaves an existing artifact byte-identical.
 
 `--panel-rows R --panel-cols C` times a different workload. R and C must be
 multiples of 128 in [128, 1024], the range shared by this kernel and the Pearl
