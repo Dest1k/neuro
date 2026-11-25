@@ -102,7 +102,7 @@ def main(argv=None):
                 receipt_read_error = False
                 try:
                     payload = None if args.missing_usage else read_json(args.usage)
-                except (OSError, ValueError, UnicodeError):
+                except (OSError, ValueError, UnicodeError, RecursionError):
                     # The call was already dispatched. A broken/missing receipt
                     # must become explicit uncertainty, never free budget.
                     payload = None

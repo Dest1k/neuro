@@ -241,6 +241,33 @@ class CostTests(unittest.TestCase):
         price = load_pricing(ROOT / "configs" / "model-prices.json", "openai/gpt-6.1-sol")
         self.assertEqual(estimate_cost(usage, price)["total_cost_usd"], "2.079")
 
+    def test_conflicting_top_level_copy_of_wrapped_usage_is_rejected(self):
+        for payload in (
+            {"usage": {"prompt_tokens": 100, "completion_tokens": 10},
+             "prompt_tokens": 1_000_000, "completion_tokens": 10},
+            {"usage": {"input_tokens": 10, "output_tokens": 1},
+             "input_tokens": 10, "output_tokens": 2},
+            {"usage": {"input_tokens": 10, "output_tokens": 1,
+                       "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0},
+             "cache_read_input_tokens": 5000},
+        ):
+            with self.subTest(payload=payload), self.assertRaises(UsageError):
+                normalize_usage(payload, "auto")
+
+    def test_agreeing_top_level_copy_is_still_a_valid_receipt(self):
+        usage = normalize_usage({
+            "usage": {"prompt_tokens": 100, "completion_tokens": 10},
+            "prompt_tokens": 100, "completion_tokens": 10,
+        }, "openai")
+        self.assertEqual((usage.input_tokens, usage.output_tokens), (100, 10))
+
+    def test_top_level_counter_without_wrapper_counterpart_is_ambiguous(self):
+        with self.assertRaises(UsageError):
+            normalize_usage({
+                "usage": {"input_tokens": 10, "output_tokens": 1},
+                "cache_read_input_tokens": 5000,
+            }, "anthropic")
+
     def test_user_scenario_m3_cache_discount(self):
         usage = normalize_usage({
             "input_tokens": 6_400_000, "output_tokens": 200_000,

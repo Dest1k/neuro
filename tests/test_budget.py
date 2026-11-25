@@ -405,5 +405,73 @@ class BudgetTests(unittest.TestCase):
             self.assertEqual(connection.execute("SELECT value FROM unrelated").fetchone()[0], "keep")
 
 
+    def test_wrapper_and_top_level_conflict_is_durable_unresolved(self):
+        self.dispatch()
+        result = self.ledger.reconcile("r1", {
+            "usage": {"prompt_tokens": 100, "completion_tokens": 10},
+            "prompt_tokens": 1_000_000, "completion_tokens": 10,
+        }, "openai")
+        self.assertEqual(result["state"], "UNRESOLVED")
+        self.assertEqual(result["error_code"], "invalid_final_usage")
+        self.assertEqual(result["held_cost_usd"], "0.007408")
+        restarted = BudgetLedger(self.path, self.policy, prices())
+        self.assertEqual(restarted.status(campaign_id="campaign")["campaign"]["blocking_reasons"],
+                         ["unresolved_usage"])
+        with self.assertRaises(BudgetDenied):
+            restarted.reserve(campaign_id="campaign", session_id="session", reservation_id="blocked")
+
+    def test_counter_too_large_for_the_representation_is_unresolved_not_a_crash(self):
+        self.dispatch()
+        result = self.ledger.reconcile("r1", {"prompt_tokens": 10 ** 5000, "completion_tokens": 0}, "openai")
+        self.assertEqual(result["state"], "UNRESOLVED")
+        self.assertEqual(result["error_code"], "invalid_final_usage")
+        self.assertTrue(self.status()["campaign"]["blocked"])
+
+    def test_observed_counters_are_floors_and_contradiction_is_not_settled(self):
+        self.dispatch()
+        first = self.ledger.reconcile("r1", {"input_tokens": 200_000, "output_tokens": 50}, "anthropic")
+        self.assertEqual(first["state"], "UNRESOLVED")
+        self.assertEqual(first["observed_input_tokens"], 200_000)
+        self.assertEqual(first["observed_output_tokens"], 50)
+        contradictory = self.ledger.reconcile("r1", {
+            "input_tokens": 100, "output_tokens": 50,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }, "anthropic")
+        self.assertEqual(contradictory["state"], "UNRESOLVED")
+        self.assertEqual(contradictory["error_code"], "contradicts_observed_floor")
+        self.assertGreaterEqual(Decimal(contradictory["held_cost_usd"]),
+                                Decimal(first["held_cost_usd"]))
+        confirmed = self.ledger.reconcile("r1", {
+            "input_tokens": 200_000, "output_tokens": 50,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }, "anthropic")
+        self.assertEqual(confirmed["state"], "SETTLED")
+        self.assertEqual(confirmed["settled_cost_usd"], "0.0154155")
+        self.assertEqual(confirmed["observed_input_tokens"], 200_000)
+        self.assertEqual(confirmed["observed_output_tokens"], 50)
+        replay = self.ledger.reconcile("r1", {
+            "input_tokens": 200_000, "output_tokens": 50,
+            "cache_read_input_tokens": 0, "cache_creation_input_tokens": 0,
+        }, "anthropic")
+        self.assertEqual(replay["settled_cost_usd"], "0.0154155")
+        self.assertEqual(replay["observed_input_tokens"], 200_000)
+
+    def test_older_journal_without_floor_columns_is_upgraded_in_place(self):
+        if sqlite3.sqlite_version_info < (3, 35, 0):
+            self.skipTest("DROP COLUMN requires SQLite 3.35 or newer")
+        self.dispatch()
+        self.ledger.reconcile("r1", {"prompt_tokens": 1000, "completion_tokens": 10}, "openai")
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute("ALTER TABLE budget_reservations DROP COLUMN observed_input_tokens")
+            connection.execute("ALTER TABLE budget_reservations DROP COLUMN observed_output_tokens")
+        reopened = BudgetLedger(self.path, self.policy, prices())
+        self.assertEqual(reopened.status(campaign_id="campaign")["campaign"]["settled_cost_usd"],
+                         "0.0000801")
+        replay = reopened.reconcile("r1", {"prompt_tokens": 1000, "completion_tokens": 10}, "openai")
+        self.assertEqual(replay["state"], "SETTLED")
+        self.assertEqual(replay["observed_input_tokens"], 1000)
+        self.assertEqual(replay["observed_output_tokens"], 10)
+
+
 if __name__ == "__main__":
     unittest.main()

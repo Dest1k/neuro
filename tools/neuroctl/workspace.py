@@ -13,14 +13,34 @@ from .experiments import run_command
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def _unique_object(pairs):
+    """Reject duplicate keys instead of silently keeping the last value.
+
+    ``json.load`` collapses duplicates while building a mapping, so a receipt
+    can look complete after one of its contradictory counters was discarded.
+    """
+    result = {}
+    for name, value in pairs:
+        if name in result:
+            raise ValueError(f"Duplicate JSON object key: {name!r}")
+        result[name] = value
+    return result
+
+
 def read_json(path):
     path = Path(path)
     if path.stat().st_size > 2 * 1024 * 1024:
         raise ValueError("JSON input exceeds the 2 MiB control-record limit")
     def reject(value):
         raise ValueError(f"Non-finite JSON value: {value}")
-    with path.open(encoding="utf-8") as stream:
-        return json.load(stream, parse_constant=reject)
+    try:
+        with path.open(encoding="utf-8") as stream:
+            return json.load(stream, parse_constant=reject, object_pairs_hook=_unique_object)
+    except RecursionError as exc:
+        # Deep nesting is a document fault.  Keep read_json's ValueError
+        # contract so callers turn it into an explicit unresolved receipt
+        # instead of an uncaught interpreter traceback.
+        raise ValueError("JSON input is nested too deeply") from exc
 
 
 def process_ok(result):

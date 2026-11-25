@@ -71,6 +71,55 @@ def _required_alias(data: Mapping[str, Any], names: tuple[str, ...]) -> int:
     return present[0][1]
 
 
+# A final provider document names one usage source: either a wrapper object
+# ("usage") or bare counters.  Duplicating counters at both levels is legal
+# only while both copies agree; otherwise the document has no single meaning.
+_TOP_LEVEL_COUNTERS = (
+    "prompt_tokens", "input_tokens", "completion_tokens", "output_tokens",
+    "total_tokens", "cache_read_input_tokens", "cache_creation_input_tokens",
+    "cache_write_tokens", "cache_creation_tokens", "cache_creation",
+    "prompt_tokens_details", "input_tokens_details",
+    "completion_tokens_details", "output_tokens_details",
+)
+_COUNTER_ALIASES = {
+    "prompt_tokens": "input_tokens", "input_tokens": "prompt_tokens",
+    "completion_tokens": "output_tokens", "output_tokens": "completion_tokens",
+}
+
+
+def _counter_counterpart(name: str, wrapper: Mapping[str, Any]) -> str | None:
+    for key in (name, _COUNTER_ALIASES.get(name)):
+        if key is not None and key in wrapper:
+            return key
+    return None
+
+
+def _same_counter(wrapper_value: Any, top_value: Any, where: str) -> None:
+    if isinstance(wrapper_value, Mapping) or isinstance(top_value, Mapping):
+        if not (isinstance(wrapper_value, Mapping) and isinstance(top_value, Mapping)):
+            raise UsageError(f"Conflicting {where} between the top level and usage object")
+        for key, value in top_value.items():
+            if key not in wrapper_value:
+                raise UsageError(
+                    f"Ambiguous usage: top-level {where}.{key} has no usage counterpart")
+            _same_counter(wrapper_value[key], value, f"{where}.{key}")
+        return
+    # bool is an int subclass; a boolean copy is never a valid token count.
+    if type(wrapper_value) is not type(top_value) or wrapper_value != top_value:
+        raise UsageError(f"Conflicting {where} between the top level and usage object")
+
+
+def _reject_duplicated_counters(payload: Mapping[str, Any], wrapper: Mapping[str, Any]) -> None:
+    for name in _TOP_LEVEL_COUNTERS:
+        if name not in payload:
+            continue
+        counterpart = _counter_counterpart(name, wrapper)
+        if counterpart is None:
+            raise UsageError(
+                f"Ambiguous usage: top-level {name} has no usage counterpart")
+        _same_counter(wrapper[counterpart], payload[name], name)
+
+
 @dataclass(frozen=True)
 class ModelPricing:
     model_id: str
@@ -154,6 +203,8 @@ def normalize_usage(payload: Mapping[str, Any], api_format: str = "auto") -> Usa
     ) or payload.get("object") == "chat.completion.chunk":
         raise UsageError("Use one complete final usage snapshot, not a streaming fragment")
     data = _mapping(payload["usage"], "usage") if "usage" in payload else payload
+    if "usage" in payload:
+        _reject_duplicated_counters(payload, data)
     _validate_token_counters(data)
     if not isinstance(api_format, str):
         raise UsageError("api_format must be a string")
