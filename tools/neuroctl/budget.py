@@ -224,6 +224,12 @@ class BudgetLedger:
                 error_code TEXT, overrun INTEGER NOT NULL DEFAULT 0,
                 created_utc TEXT NOT NULL, updated_utc TEXT NOT NULL)""")
             connection.execute("CREATE INDEX IF NOT EXISTS budget_campaign ON budget_reservations(campaign_id)")
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(budget_reservations)")}
+            for name in ("observed_input_tokens", "observed_output_tokens"):
+                if name not in columns:
+                    # Additive migration: older journals keep every row and gain
+                    # an unknown (NULL) observation floor.
+                    connection.execute(f"ALTER TABLE budget_reservations ADD COLUMN {name} INTEGER")
             stored = dict(connection.execute("SELECT name,value FROM budget_meta"))
             if not stored:
                 connection.executemany("INSERT INTO budget_meta(name,value) VALUES (?,?)", (
@@ -403,6 +409,29 @@ class BudgetLedger:
                 WHERE reservation_id=?""", (_now(), reservation_id))
             return self._record(self._find(connection, reservation_id))
 
+    @staticmethod
+    def _observation_floors(row, usage):
+        """Confirmed lower bounds of observed input/output counters, never lower."""
+        stored_input = row["observed_input_tokens"]
+        stored_output = row["observed_output_tokens"]
+        if usage is None:
+            return stored_input, stored_output
+        limit = 2**63 - 1
+        return (max(stored_input or 0, min(usage.input_tokens, limit)),
+                max(stored_output or 0, min(usage.output_tokens, limit)))
+
+    @staticmethod
+    def _below_observed_floor(row, usage) -> bool:
+        return (usage.input_tokens < (row["observed_input_tokens"] or 0)
+                or usage.output_tokens < (row["observed_output_tokens"] or 0))
+
+    def _held_floor(self, usage: Usage, model_id: str) -> Decimal | None:
+        try:
+            return _ordinary_cost(usage.input_tokens, usage.output_tokens, self.prices[model_id])
+        except (ArithmeticError, PricingError, TypeError, ValueError):
+            # A counter too large to price cannot lower the existing hold.
+            return None
+
     def reconcile(self, reservation_id: str, payload: Mapping[str, Any] | None,
                   api_format: str = "auto") -> dict[str, Any]:
         _identifier(reservation_id, "reservation_id")
@@ -425,13 +454,34 @@ class BudgetLedger:
                         pricing = self.prices[row["model_id"]]
                         settled = Decimal(estimate_cost(usage, _budget_pricing(pricing))["total_cost_usd"])
                         quote = estimate_cost(usage, pricing)["total_cost_usd"]
-            except (UsageError, RecursionError):
+                        if self._below_observed_floor(row, usage):
+                            # Fewer counters than an earlier reconcile already
+                            # observed cannot be the authoritative final usage.
+                            reason = "contradicts_observed_floor"
+                            settled = None
+            except UsageError:
                 reason = "invalid_final_usage"
             except PricingError:
                 reason = "unpriced_cache_write_class"
-            usage_json = _json(asdict(usage)) if usage is not None else None
+            except (ArithmeticError, TypeError, ValueError, RecursionError):
+                # An input that cannot be represented or priced is still
+                # uncertainty; never lose the durable hold over it.
+                reason = "invalid_final_usage"
+            try:
+                usage_json = _json(asdict(usage)) if usage is not None else None
+            except (TypeError, ValueError):
+                usage_json = None
+            observed_input, observed_output = self._observation_floors(row, usage)
             if row["state"] == "SETTLED":
                 if reason is None and usage_json == row["usage_json"]:
+                    if (row["observed_input_tokens"], row["observed_output_tokens"]) != (
+                            observed_input, observed_output):
+                        # Replays of older journals also backfill the floors.
+                        connection.execute("""UPDATE budget_reservations
+                            SET observed_input_tokens=?,observed_output_tokens=?,updated_utc=?
+                            WHERE reservation_id=?""",
+                            (observed_input, observed_output, _now(), reservation_id))
+                        row = self._find(connection, reservation_id)
                     return self._record(row)
                 raise BudgetError("Conflicting final usage for an already settled reservation")
             beyond_tokens = usage is not None and (
@@ -442,15 +492,21 @@ class BudgetLedger:
                 if usage is not None:
                     # An incomplete response may already reveal more than was
                     # reserved. Retain that observed ordinary-price floor too.
-                    floor = _ordinary_cost(usage.input_tokens, usage.output_tokens, self.prices[row["model_id"]])
-                    held = max(held, floor)
+                    floor = self._held_floor(usage, row["model_id"])
+                    if floor is not None:
+                        held = max(held, floor)
                 connection.execute("""UPDATE budget_reservations SET state='UNRESOLVED',held_cost_usd=?,
-                    usage_json=COALESCE(?,usage_json),error_code=?,overrun=?,updated_utc=? WHERE reservation_id=?""",
-                    (_text(held), usage_json, reason, int(overrun), _now(), reservation_id))
+                    usage_json=COALESCE(?,usage_json),error_code=?,overrun=?,
+                    observed_input_tokens=?,observed_output_tokens=?,updated_utc=?
+                    WHERE reservation_id=?""",
+                    (_text(held), usage_json, reason, int(overrun),
+                     observed_input, observed_output, _now(), reservation_id))
             else:
                 overrun = overrun or settled > Decimal(row["reserved_cost_usd"])
                 connection.execute("""UPDATE budget_reservations SET state='SETTLED',held_cost_usd='0',
-                    settled_cost_usd=?,quote_cost_usd=?,usage_json=?,error_code=?,overrun=?,updated_utc=?
+                    settled_cost_usd=?,quote_cost_usd=?,usage_json=?,error_code=?,overrun=?,
+                    observed_input_tokens=?,observed_output_tokens=?,updated_utc=?
                     WHERE reservation_id=?""", (_text(settled), quote, usage_json,
-                    "request_bounds_exceeded" if overrun else None, int(overrun), _now(), reservation_id))
+                    "request_bounds_exceeded" if overrun else None, int(overrun),
+                    observed_input, observed_output, _now(), reservation_id))
             return self._record(self._find(connection, reservation_id))

@@ -66,6 +66,46 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertEqual(json.loads(result.stdout)["returncode"], 7)
 
+    def test_duplicate_keys_and_deep_nesting_become_unresolved_receipts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            common = ("budget", "--db", str(base / "budget.sqlite3"))
+            self.assertEqual(self.invoke(*common, "reserve", "--campaign", "cli-campaign",
+                                         "--session", "cli-session", "--request", "one").returncode, 0)
+            self.assertEqual(self.invoke(*common, "begin", "--request", "one").returncode, 0)
+            receipts = {
+                "duplicate.json": '{"usage": {"prompt_tokens": 1000000, "completion_tokens": 10, '
+                                  '"prompt_tokens": 100}}',
+                "deep.json": "[" * 20000 + "0" + "]" * 20000,
+            }
+            for name, text in receipts.items():
+                receipt = base / name
+                receipt.write_text(text, encoding="utf-8")
+                failed = self.invoke(*common, "reconcile", "--request", "one", "--usage", str(receipt))
+                self.assertEqual(failed.returncode, 1, failed.stderr)
+                self.assertNotIn("Traceback", failed.stderr)
+                data = json.loads(failed.stdout)
+                self.assertEqual(data["state"], "UNRESOLVED")
+                self.assertTrue(data["receipt_read_error"])
+                self.assertEqual(data["held_cost_usd"], "0.007408")
+            blocked = self.invoke(*common, "reserve", "--campaign", "cli-campaign",
+                                  "--session", "cli-session", "--request", "two")
+            self.assertEqual(blocked.returncode, 2)
+            settled = self.invoke(*common, "reconcile", "--request", "one",
+                                  "--usage", "examples/usage-openai-uncached.json")
+            self.assertEqual(settled.returncode, 0, settled.stderr)
+            self.assertEqual(json.loads(settled.stdout)["state"], "SETTLED")
+
+    def test_cost_command_rejects_duplicate_keys_without_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "usage.json"
+            path.write_text('{"prompt_tokens": 100, "completion_tokens": 1, "prompt_tokens": 200}',
+                            encoding="utf-8")
+            result = self.invoke("cost", "--usage", str(path), "--model", "openai/gpt-6.1-sol")
+        self.assertEqual(result.returncode, 2)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertIn("Duplicate JSON object key", result.stderr)
+
     def test_empty_command_is_an_error(self):
         result = self.invoke("run")
         self.assertEqual(result.returncode, 2)
