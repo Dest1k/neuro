@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <cuda_runtime.h>
 
+
 namespace neuro::fullk {
 namespace {
 
@@ -110,8 +111,11 @@ void fullk_kernel(const std::int8_t* a, const std::int8_t* bt,
 // Shapes that are multiples of 64 stage one milestone (K=128) of a 64x64
 // output tile in shared memory, then run the same per-warp MMA and transcript
 // mapping. A and Bt are otherwise reread from global memory once per 16-wide
-// neighbor. This is not a persistent kernel and it does not change the launch
-// contract. Other shapes keep the direct kernel, including the 32x48 gold.
+// neighbor. Fragments leave shared memory through ldmatrix.x4, so a K32 step
+// issues three wide loads instead of eight scalar ones; profiling showed the
+// kernel was MIO-queue bound rather than L2 bound. This is not a persistent
+// kernel and it does not change the launch contract. Other shapes keep the
+// direct kernel, including the 32x48 gold.
 constexpr int kStageRows = 64;
 constexpr int kStageCols = 64;
 constexpr int kStageK = rank;
@@ -133,10 +137,19 @@ __device__ __forceinline__ void stage_aligned_panel(
     *reinterpret_cast<uint4*>(tile + row * kStageStride + col) = *reinterpret_cast<const uint4*>(src);
 }
 
-__global__ __launch_bounds__(512)
+// ldmatrix consumes one 8x16 shared tile per lane group, so a 16x32 A panel
+// needs a single x4 instruction instead of four scalar shared loads, and the
+// 16x32 B panel of both n8 halves fits one x4 as well. The measured kernel is
+// MIO-queue bound, so wider shared loads attack the dominant stall directly.
+__device__ __forceinline__ void ldmatrix_x4(std::uint32_t* r, std::uint32_t address) {
+    asm volatile("ldmatrix.sync.aligned.m8n8.x4.shared.b16 {%0, %1, %2, %3}, [%4];\n"
+                 : "=r"(r[0]), "=r"(r[1]), "=r"(r[2]), "=r"(r[3])
+                 : "r"(address));
+}
+
+__global__ __launch_bounds__(kStageThreads)
 void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
                          std::uint32_t* transcript, std::int32_t* final_c, Shape shape) {
-#if defined(__CUDA_ARCH__) && __CUDA_ARCH__ >= 800
     constexpr int warps_per_side = kStageRows / 16;
     const int lane = static_cast<int>(threadIdx.x) & 31;
     const int warp = static_cast<int>(threadIdx.x) >> 5;
@@ -153,6 +166,11 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
     __shared__ __align__(16) std::int8_t stage_b[kStageCols * kStageStride];
     std::int32_t left[4] = {}, right[4] = {};
 
+    const int a_tile = lane >> 3;
+    const int a_row = warp_row * 16 + ((a_tile & 1) << 3) + (lane & 7);
+    const int b_row = warp_col * 16 + ((lane >> 4) << 3) + (lane & 7);
+    const int b_k_group = ((lane >> 3) & 1) << 4;
+
     #pragma unroll 1
     for (int milestone = 0; milestone < milestones; ++milestone) {
         const int k_base = milestone * rank;
@@ -161,23 +179,16 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
         __syncthreads();
         #pragma unroll
         for (int segment = 0; segment < rank / 32; ++segment) {
-            const int segment_k = k_base + segment * 32;
-            std::uint32_t a_frag[4], b_left[2], b_right[2];
-            #pragma unroll
-            for (int word = 0; word < 4; ++word) {
-                const auto p = mma16832::a_coordinate(lane, word, 0, segment_k);
-                const int local_row = (row_base - block_row) + p.row;
-                const int local_k = p.col - k_base;
-                a_frag[word] = load_shared_u32(stage_a + local_row * kStageStride + local_k);
-            }
-            #pragma unroll
-            for (int word = 0; word < 2; ++word) {
-                const auto p = mma16832::b_coordinate(lane, word, 0, segment_k);
-                const int local_k = p.row - k_base;
-                const int local_col = (col_base - block_col) + p.col;
-                b_left[word] = load_shared_u32(stage_b + local_col * kStageStride + local_k);
-                b_right[word] = load_shared_u32(stage_b + (local_col + 8) * kStageStride + local_k);
-            }
+            const int segment_k = segment * 32;
+            std::uint32_t a_frag[4], b_frag[4];
+            const std::uint32_t a_address = static_cast<std::uint32_t>(__cvta_generic_to_shared(
+                stage_a + a_row * kStageStride + segment_k + ((a_tile >> 1) << 4)));
+            const std::uint32_t b_address = static_cast<std::uint32_t>(__cvta_generic_to_shared(
+                stage_b + b_row * kStageStride + segment_k + b_k_group));
+            ldmatrix_x4(a_frag, a_address);
+            ldmatrix_x4(b_frag, b_address);
+            const auto& b_left = *reinterpret_cast<const std::uint32_t(*)[2]>(b_frag);
+            const auto& b_right = *reinterpret_cast<const std::uint32_t(*)[2]>(b_frag + 2);
             mma_16832(left, a_frag, b_left);
             mma_16832(right, a_frag, b_right);
         }
@@ -205,9 +216,6 @@ void fullk_kernel_staged(const std::int8_t* a, const std::int8_t* bt,
             final_c[(row_base + p.row) * shape.cols + col_base + 8 + p.col] = right[reg];
         }
     }
-#else
-    asm volatile("trap;");
-#endif
 }
 
 } // namespace
